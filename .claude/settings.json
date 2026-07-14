@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git check-ignore *)",
+      "Bash(NODE_OPTIONS=\"--use-system-ca\" npm install zod)",
+      "Bash(NODE_OPTIONS=\"--use-system-ca\" npx shadcn@latest add input label -y)",
+      "Skill(run)",
+      "Skill(run:*)",
+      "Bash(chromium-cli --help)",
+      "Bash(npx --no-install playwright --version)",
+      "Bash(find / -maxdepth 4 -iname \"*playwright*\" -type d)",
+      "Bash(npm ls *)",
+      "Bash(NODE_OPTIONS=\"--use-system-ca\" npm install --no-save playwright)",
+      "Bash(NODE_OPTIONS=\"--use-system-ca\" npx playwright install chromium)",
+      "Bash(NODE_OPTIONS=\"--use-system-ca\" npm run dev)",
+      "Bash(timeout 30 bash -c 'until curl -sf http://localhost:3000 >/dev/null; do sleep 1; done')",
+      "Bash(npm uninstall *)",
+      "Bash(NODE_OPTIONS=\"--use-system-ca\" npx shadcn@latest add select textarea badge card -y)",
+      "Bash(mkdir -p \"/Users/hyoudou_takuya/linkra-by-gmo/src/app/\\(dashboard\\)/companies/new\" \"/Users/hyoudou_takuya/linkra-by-gmo/src/app/\\(dashboard\\)/companies/[companyId]\" \"/Users/hyoudou_takuya/linkra-by-gmo/src/app/\\(dashboard\\)/invitations/[token]\")",
+      "Bash(cd /Users/hyoudou_takuya/linkra-by-gmo *)",
+      "Bash(gh auth *)",
+      "Bash(npx --no-install vercel --version)"
+    ],
+    "additionalDirectories": [
+      "/Users/hyoudou_takuya/linkra-by-gmo/src/app/(dashboard)/companies",
+      "/private/tmp"
+    ]
+  }
+}
