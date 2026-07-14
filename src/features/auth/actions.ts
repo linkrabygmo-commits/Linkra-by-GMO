@@ -5,8 +5,12 @@ import * as repository from "@/features/auth/repository";
 import {
   LoginSchema,
   SignUpSchema,
+  RequestPasswordResetSchema,
+  ResetPasswordSchema,
   type LoginFormState,
   type SignUpFormState,
+  type RequestPasswordResetFormState,
+  type ResetPasswordFormState,
 } from "@/features/auth/schema";
 
 export async function signUpAction(
@@ -80,4 +84,64 @@ export async function loginAction(
 export async function logoutAction() {
   await repository.signOut();
   redirect("/login");
+}
+
+export async function requestPasswordResetAction(
+  _prevState: RequestPasswordResetFormState,
+  formData: FormData,
+): Promise<RequestPasswordResetFormState> {
+  const validatedFields = RequestPasswordResetSchema.safeParse({
+    email: formData.get("email"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      status: "error",
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  try {
+    await repository.requestPasswordReset(validatedFields.data.email);
+  } catch (error) {
+    return {
+      status: "error",
+      message:
+        error instanceof Error ? error.message : "送信に失敗しました。",
+    };
+  }
+
+  return {
+    status: "success",
+    message:
+      "パスワード再設定用のメールを送信しました。メール内のリンクから新しいパスワードを設定してください。",
+  };
+}
+
+export async function updatePasswordAction(
+  _prevState: ResetPasswordFormState,
+  formData: FormData,
+): Promise<ResetPasswordFormState> {
+  const validatedFields = ResetPasswordSchema.safeParse({
+    password: formData.get("password"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      status: "error",
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  try {
+    await repository.updatePassword(validatedFields.data.password);
+  } catch (error) {
+    return {
+      status: "error",
+      message:
+        error instanceof Error ? error.message : "更新に失敗しました。",
+    };
+  }
+
+  redirect("/dashboard");
 }

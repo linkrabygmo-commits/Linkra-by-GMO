@@ -19,7 +19,11 @@
       "Bash(mkdir -p \"/Users/hyoudou_takuya/linkra-by-gmo/src/app/\\(dashboard\\)/companies/new\" \"/Users/hyoudou_takuya/linkra-by-gmo/src/app/\\(dashboard\\)/companies/[companyId]\" \"/Users/hyoudou_takuya/linkra-by-gmo/src/app/\\(dashboard\\)/invitations/[token]\")",
       "Bash(cd /Users/hyoudou_takuya/linkra-by-gmo *)",
       "Bash(gh auth *)",
-      "Bash(npx --no-install vercel --version)"
+      "Bash(npx --no-install vercel --version)",
+      "Bash(git commit -m ' *)",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(pkill -f \"next dev\" 2>/dev/null; sleep 1 *)"
     ],
     "additionalDirectories": [
       "/Users/hyoudou_takuya/linkra-by-gmo/src/app/(dashboard)/companies",

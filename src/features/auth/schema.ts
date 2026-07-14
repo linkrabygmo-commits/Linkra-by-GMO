@@ -42,3 +42,32 @@ export type LoginFormState =
       message?: string;
     }
   | undefined;
+
+export const RequestPasswordResetSchema = z.object({
+  email: z.email({ error: "有効なメールアドレスを入力してください。" }).trim(),
+});
+
+export type RequestPasswordResetFormState =
+  | {
+      status: "error";
+      errors?: { email?: string[] };
+      message?: string;
+    }
+  | { status: "success"; message: string }
+  | undefined;
+
+export const ResetPasswordSchema = z.object({
+  password: z
+    .string()
+    .min(8, { error: "8文字以上で入力してください。" })
+    .regex(/[a-zA-Z]/, { error: "英字を1文字以上含めてください。" })
+    .regex(/[0-9]/, { error: "数字を1文字以上含めてください。" }),
+});
+
+export type ResetPasswordFormState =
+  | {
+      status: "error";
+      errors?: { password?: string[] };
+      message?: string;
+    }
+  | undefined;

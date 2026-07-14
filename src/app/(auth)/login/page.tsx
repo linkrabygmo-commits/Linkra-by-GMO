@@ -14,6 +14,14 @@ export default function LoginPage() {
       </h1>
       <LoginForm />
       <p className="text-center text-sm text-muted-foreground">
+        <Link
+          href="/forgot-password"
+          className="font-medium text-primary hover:underline"
+        >
+          パスワードをお忘れですか?
+        </Link>
+      </p>
+      <p className="text-center text-sm text-muted-foreground">
         アカウントをお持ちでない方は{" "}
         <Link href="/signup" className="font-medium text-primary hover:underline">
           新規登録
