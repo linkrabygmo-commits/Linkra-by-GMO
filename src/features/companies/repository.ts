@@ -160,8 +160,10 @@ export async function listMembers(companyId: string): Promise<MemberDto[]> {
   if (membersError) throw new Error(membersError.message);
   if (!members || members.length === 0) return [];
 
+  // profilesを直接SELECTすると"Authenticated users can view profiles"の全カラム公開
+  // ポリシーに依存してしまうため、マスキング済みのmember_directoryビュー経由で取得する。
   const { data: profiles, error: profilesError } = await supabase
-    .from("profiles")
+    .from("member_directory")
     .select("id, display_name, avatar_url")
     .in(
       "id",

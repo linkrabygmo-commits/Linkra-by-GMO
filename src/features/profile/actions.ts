@@ -15,6 +15,16 @@ export async function updateProfileAction(
     displayName: formData.get("displayName"),
     title: formData.get("title") || undefined,
     avatarUrl: formData.get("avatarUrl") || undefined,
+    companyName: formData.get("companyName") || undefined,
+    industry: formData.get("industry") || undefined,
+    phone: formData.get("phone") || undefined,
+    address: formData.get("address") || undefined,
+    bio: formData.get("bio") || undefined,
+    canOffer: formData.get("canOffer") || undefined,
+    lookingFor: formData.get("lookingFor") || undefined,
+    twitterUrl: formData.get("twitterUrl") || undefined,
+    facebookUrl: formData.get("facebookUrl") || undefined,
+    linkedinUrl: formData.get("linkedinUrl") || undefined,
   });
 
   if (!validatedFields.success) {

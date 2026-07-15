@@ -24,3 +24,20 @@ export const verifySession = cache(async () => {
 
   return user;
 });
+
+export const requireAdmin = cache(async () => {
+  const user = await verifySession();
+  const supabase = await createClient();
+
+  const { data } = await supabase
+    .from("profiles")
+    .select("member_status")
+    .eq("id", user.id)
+    .single();
+
+  if (data?.member_status !== "admin") {
+    redirect("/dashboard");
+  }
+
+  return user;
+});

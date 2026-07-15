@@ -3,6 +3,7 @@
 export type CompanyType = "client" | "partner" | "group";
 export type CompanyRole = "owner" | "admin" | "member";
 export type InvitationStatus = "pending" | "accepted" | "revoked";
+export type MemberStatus = "registered" | "approved" | "admin";
 
 export type Database = {
   public: {
@@ -13,6 +14,15 @@ export type Database = {
           display_name: string;
           avatar_url: string | null;
           title: string | null;
+          member_status: MemberStatus;
+          phone: string | null;
+          address: string | null;
+          sns_links: Record<string, string> | null;
+          bio: string | null;
+          can_offer: string | null;
+          looking_for: string | null;
+          industry: string | null;
+          company_name: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -21,6 +31,15 @@ export type Database = {
           display_name: string;
           avatar_url?: string | null;
           title?: string | null;
+          member_status?: MemberStatus;
+          phone?: string | null;
+          address?: string | null;
+          sns_links?: Record<string, string> | null;
+          bio?: string | null;
+          can_offer?: string | null;
+          looking_for?: string | null;
+          industry?: string | null;
+          company_name?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -29,6 +48,15 @@ export type Database = {
           display_name?: string;
           avatar_url?: string | null;
           title?: string | null;
+          member_status?: MemberStatus;
+          phone?: string | null;
+          address?: string | null;
+          sns_links?: Record<string, string> | null;
+          bio?: string | null;
+          can_offer?: string | null;
+          looking_for?: string | null;
+          industry?: string | null;
+          company_name?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -128,7 +156,27 @@ export type Database = {
         Relationships: [];
       };
     };
-    Views: Record<string, never>;
+    Views: {
+      member_directory: {
+        Row: {
+          id: string;
+          display_name: string;
+          avatar_url: string | null;
+          company_name: string | null;
+          title: string | null;
+          industry: string | null;
+          member_status: MemberStatus;
+          created_at: string;
+          phone: string | null;
+          address: string | null;
+          sns_links: Record<string, string> | null;
+          bio: string | null;
+          can_offer: string | null;
+          looking_for: string | null;
+        };
+        Relationships: [];
+      };
+    };
     Functions: {
       create_company: {
         Args: {
@@ -141,6 +189,14 @@ export type Database = {
       accept_invitation: {
         Args: { invitation_token: string };
         Returns: Database["public"]["Tables"]["company_members"]["Row"];
+      };
+      current_member_status: {
+        Args: Record<string, never>;
+        Returns: MemberStatus;
+      };
+      approve_member: {
+        Args: { target_id: string };
+        Returns: Database["public"]["Tables"]["profiles"]["Row"];
       };
     };
   };

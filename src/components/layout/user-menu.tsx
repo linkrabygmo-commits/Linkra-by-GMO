@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronsUpDown, LogOut, User } from "lucide-react";
+import { ChevronsUpDown, LogOut, Shield, User } from "lucide-react";
 import { getMyProfile } from "@/features/profile/repository";
 import { logoutAction } from "@/features/auth/actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -45,6 +45,14 @@ export async function UserMenu() {
                 プロフィール
               </Link>
             </DropdownMenuItem>
+            {profile.memberStatus === "admin" && (
+              <DropdownMenuItem asChild>
+                <Link href="/admin">
+                  <Shield />
+                  管理画面
+                </Link>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild variant="destructive">
               <form action={logoutAction} className="w-full">
