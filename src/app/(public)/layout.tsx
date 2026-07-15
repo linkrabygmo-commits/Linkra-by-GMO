@@ -32,8 +32,11 @@ export default function PublicLayout({
         </div>
       </header>
       <main className="flex flex-1 flex-col">{children}</main>
-      <footer className="border-t border-border px-6 py-8 text-center text-xs text-muted-foreground">
-        {siteConfig.name}
+      <footer className="flex flex-col items-center gap-2 border-t border-border px-6 py-8 text-center text-xs text-muted-foreground">
+        <span>{siteConfig.name}</span>
+        <Link href="/advertise" className="transition-colors hover:text-foreground">
+          広告掲載について
+        </Link>
       </footer>
     </div>
   );

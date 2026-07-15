@@ -4,6 +4,8 @@ export type CompanyType = "client" | "partner" | "group";
 export type CompanyRole = "owner" | "admin" | "member";
 export type InvitationStatus = "pending" | "accepted" | "revoked";
 export type MemberStatus = "registered" | "approved" | "admin";
+export type AdPlacement = "top_hero" | "sidebar" | "inline";
+export type AdStatus = "pending" | "approved" | "rejected";
 
 export type Database = {
   public: {
@@ -152,6 +154,57 @@ export type Database = {
           invited_by?: string;
           expires_at?: string;
           created_at?: string;
+        };
+        Relationships: [];
+      };
+      advertisements: {
+        Row: {
+          id: string;
+          title: string;
+          description: string | null;
+          image_url: string | null;
+          video_url: string | null;
+          link_url: string;
+          placement: AdPlacement;
+          status: AdStatus;
+          requested_by: string;
+          approved_by: string | null;
+          starts_at: string | null;
+          ends_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          description?: string | null;
+          image_url?: string | null;
+          video_url?: string | null;
+          link_url: string;
+          placement?: AdPlacement;
+          status?: AdStatus;
+          requested_by: string;
+          approved_by?: string | null;
+          starts_at?: string | null;
+          ends_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          description?: string | null;
+          image_url?: string | null;
+          video_url?: string | null;
+          link_url?: string;
+          placement?: AdPlacement;
+          status?: AdStatus;
+          requested_by?: string;
+          approved_by?: string | null;
+          starts_at?: string | null;
+          ends_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
         };
         Relationships: [];
       };

@@ -21,6 +21,12 @@ export default function AdminLayout({
           >
             会員承認
           </Link>
+          <Link
+            href="/admin/ads"
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
+            広告承認
+          </Link>
         </div>
         <Link
           href="/dashboard"

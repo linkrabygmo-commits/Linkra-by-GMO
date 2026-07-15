@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { ArrowRight, Building2, Handshake, Sparkles } from "lucide-react";
 import { listNewMembers } from "@/features/members/repository";
 import { MemberCard } from "@/features/members/components/member-card";
-import { listActiveHeroBanners } from "@/features/ads/data";
+import { listActiveAds } from "@/features/ads/repository";
 import { HeroBannerCarousel } from "@/features/ads/components/hero-banner-carousel";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
@@ -39,9 +39,7 @@ const FEATURES = [
   },
 ];
 
-export default async function TopPage() {
-  const banners = await listActiveHeroBanners();
-
+export default function TopPage() {
   return (
     <div className="flex flex-1 flex-col">
       <div className="hero-warp">
@@ -89,7 +87,13 @@ export default async function TopPage() {
             </div>
 
             <div className="flex justify-center lg:justify-end">
-              <HeroBannerCarousel banners={banners} />
+              <Suspense
+                fallback={
+                  <div className="aspect-[4/3] w-[min(92vw,24rem)] animate-pulse rounded-2xl bg-white/5 sm:w-[26rem] lg:w-[29rem]" />
+                }
+              >
+                <HeroBanners />
+              </Suspense>
             </div>
           </div>
 
@@ -126,6 +130,11 @@ export default async function TopPage() {
       </section>
     </div>
   );
+}
+
+async function HeroBanners() {
+  const banners = await listActiveAds("top_hero");
+  return <HeroBannerCarousel banners={banners} />;
 }
 
 async function NewMembers() {
