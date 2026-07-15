@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 export function MaskedField({
   label,
   value,
@@ -24,13 +22,6 @@ export function MaskedField({
       <p className="text-xs font-medium text-muted-foreground">{label}</p>
       <p className="text-sm tracking-widest text-muted-foreground">
         ＊＊＊＊＊＊＊＊＊＊
-      </p>
-      <p className="text-xs text-muted-foreground">
-        続きを見るには
-        <Link href="/signup" className="mx-1 text-primary hover:underline">
-          会員登録
-        </Link>
-        してください。
       </p>
     </div>
   );

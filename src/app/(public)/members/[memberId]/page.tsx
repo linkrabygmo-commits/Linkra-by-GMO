@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getMemberById } from "@/features/members/repository";
 import { MaskedField } from "@/features/members/components/masked-field";
@@ -52,6 +53,15 @@ async function MemberDetailContent({
       </div>
 
       <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6 shadow-sm">
+        {!member.canViewFull && (
+          <p className="text-sm text-muted-foreground">
+            ＊を外して見るには
+            <Link href="/signup" className="mx-1 text-primary hover:underline">
+              会員登録
+            </Link>
+            してください。
+          </p>
+        )}
         <MaskedField
           label="自己紹介"
           value={member.bio}
