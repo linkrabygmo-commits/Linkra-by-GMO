@@ -70,6 +70,47 @@ export async function listCompanies(): Promise<CompanyDto[]> {
   }));
 }
 
+export interface MyCompanyDto {
+  id: string;
+  name: string;
+  type: CompanyType;
+  role: CompanyRole;
+}
+
+export async function listMyCompanies(): Promise<MyCompanyDto[]> {
+  const user = await verifySession();
+  const supabase = await createClient();
+
+  const { data: memberships, error: membershipsError } = await supabase
+    .from("company_members")
+    .select("company_id, role")
+    .eq("user_id", user.id);
+
+  if (membershipsError) throw new Error(membershipsError.message);
+  if (!memberships || memberships.length === 0) return [];
+
+  const { data: companies, error: companiesError } = await supabase
+    .from("companies")
+    .select("id, name, type")
+    .in(
+      "id",
+      memberships.map((m) => m.company_id),
+    );
+
+  if (companiesError) throw new Error(companiesError.message);
+
+  const roleByCompanyId = new Map(
+    memberships.map((m) => [m.company_id, m.role]),
+  );
+
+  return (companies ?? []).map((company) => ({
+    id: company.id,
+    name: company.name,
+    type: company.type,
+    role: roleByCompanyId.get(company.id) ?? "member",
+  }));
+}
+
 export async function getCompanyById(
   companyId: string,
 ): Promise<CompanyDetailDto | null> {
