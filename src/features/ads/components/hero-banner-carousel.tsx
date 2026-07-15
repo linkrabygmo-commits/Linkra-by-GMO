@@ -36,35 +36,38 @@ export function HeroBannerCarousel({ banners }: { banners: HeroBanner[] }) {
 
   return (
     <div
-      className="w-[min(88vw,20rem)] sm:w-80 lg:w-[22rem]"
+      className="w-[min(92vw,24rem)] sm:w-[26rem] lg:w-[29rem]"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       role="region"
       aria-label="広告"
       aria-roledescription="carousel"
     >
-      <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/15 shadow-xl shadow-black/40">
-        {banners.map((banner, i) => (
-          <a
-            key={`${banner.href}-${i}`}
-            href={banner.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-hidden={i !== index}
-            tabIndex={i === index ? 0 : -1}
-            className="absolute inset-0 transition-[opacity,transform] duration-500 ease-in-out"
-            style={{
-              opacity: i === index ? 1 : 0,
-              transform:
-                i === index
-                  ? "translateX(0)"
-                  : `translateX(${i < index ? "-" : ""}12px)`,
-              pointerEvents: i === index ? "auto" : "none",
-            }}
-          >
-            <BannerSlide banner={banner} />
-          </a>
-        ))}
+      {/* px分の余白を矢印ボタン用に確保し、ボタンが画像/カードに重ならないようにする */}
+      <div className="relative px-8 sm:px-9">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/15 shadow-xl shadow-black/40">
+          {banners.map((banner, i) => (
+            <a
+              key={`${banner.href}-${i}`}
+              href={banner.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-hidden={i !== index}
+              tabIndex={i === index ? 0 : -1}
+              className="absolute inset-0 transition-[opacity,transform] duration-500 ease-in-out"
+              style={{
+                opacity: i === index ? 1 : 0,
+                transform:
+                  i === index
+                    ? "translateX(0)"
+                    : `translateX(${i < index ? "-" : ""}12px)`,
+                pointerEvents: i === index ? "auto" : "none",
+              }}
+            >
+              <BannerSlide banner={banner} />
+            </a>
+          ))}
+        </div>
 
         {banners.length > 1 && (
           <>
@@ -72,7 +75,7 @@ export function HeroBannerCarousel({ banners }: { banners: HeroBanner[] }) {
               type="button"
               onClick={() => goTo(index - 1)}
               aria-label="前の広告"
-              className="absolute top-1/2 left-2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/60"
+              className="absolute top-1/2 left-0 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/60"
             >
               <ChevronLeft className="size-4" />
             </button>
@@ -80,7 +83,7 @@ export function HeroBannerCarousel({ banners }: { banners: HeroBanner[] }) {
               type="button"
               onClick={() => goTo(index + 1)}
               aria-label="次の広告"
-              className="absolute top-1/2 right-2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/60"
+              className="absolute top-1/2 right-0 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/60"
             >
               <ChevronRight className="size-4" />
             </button>
@@ -119,7 +122,7 @@ function BannerSlide({ banner }: { banner: HeroBanner }) {
           alt={banner.title}
           className="size-full object-cover"
         />
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-9 py-4">
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-5">
           <p className="text-sm font-medium text-white">{banner.title}</p>
         </div>
       </div>
@@ -127,7 +130,7 @@ function BannerSlide({ banner }: { banner: HeroBanner }) {
   }
 
   return (
-    <div className="flex size-full flex-col justify-center gap-2 bg-gradient-to-br from-slate-50 to-blue-50 px-10 py-6">
+    <div className="flex size-full flex-col justify-center gap-2 bg-gradient-to-br from-slate-50 to-blue-50 p-7">
       <p className="text-base font-semibold text-blue-700">{banner.title}</p>
       {banner.description && (
         <p className="text-sm leading-relaxed text-slate-600">
