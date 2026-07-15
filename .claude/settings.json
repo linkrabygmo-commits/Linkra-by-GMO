@@ -29,7 +29,8 @@
       "Bash(npx -y supabase migration new member_status_and_directory)",
       "Bash(npx -y supabase migration new add_created_at_to_member_directory)",
       "Bash(mkdir -p \"/Users/hyoudou_takuya/linkra-by-gmo/src/app/\\(public\\)/members/[memberId]\")",
-      "Bash(curl -s http://localhost:3000/members/0473e9e5-9652-439c-aa0b-88dc25683fdf)"
+      "Bash(curl -s http://localhost:3000/members/0473e9e5-9652-439c-aa0b-88dc25683fdf)",
+      "Bash(NODE_OPTIONS=--use-system-ca node -e ' *)"
     ],
     "additionalDirectories": [
       "/Users/hyoudou_takuya/linkra-by-gmo/src/app/(dashboard)/companies",

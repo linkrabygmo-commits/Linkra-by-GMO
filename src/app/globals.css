@@ -128,3 +128,70 @@
     @apply font-sans;
   }
 }
+
+/*
+ * トップページ専用の「ワープ」ヒーロー背景。ライト/ダークモードに関わらず
+ * 常に同じダークな配色で表示する、ブランド演出用の固定セクション。
+ * Canvas/Three.js不使用、CSSグラデーションのみで表現。
+ */
+.hero-warp {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 88% 12%, oklch(0.55 0.16 262 / 35%) 0%, transparent 42%),
+    radial-gradient(circle at 72% 42%, oklch(0.6 0.14 258 / 22%) 0%, transparent 58%),
+    radial-gradient(ellipse 120% 90% at 72% 42%, oklch(0.22 0.09 264) 0%, oklch(0.12 0.05 264) 45%, oklch(0.05 0.02 264) 80%);
+}
+
+.hero-warp::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-conic-gradient(
+    from 0deg at 72% 42%,
+    oklch(0.9 0.03 258 / 16%) 0deg 0.5deg,
+    transparent 0.5deg 3.2deg
+  );
+  mask-image: radial-gradient(circle at 72% 42%, black 0%, black 30%, transparent 68%);
+  -webkit-mask-image: radial-gradient(circle at 72% 42%, black 0%, black 30%, transparent 68%);
+  animation: hero-warp-spin 50s linear infinite;
+}
+
+.hero-warp::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 72% 42%,
+    oklch(0.95 0.02 250 / 95%) 0%,
+    oklch(0.75 0.14 258 / 55%) 9%,
+    oklch(0.55 0.18 262 / 28%) 22%,
+    transparent 48%
+  );
+  filter: blur(3px);
+  animation: hero-warp-pulse 7s ease-in-out infinite;
+}
+
+@keyframes hero-warp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes hero-warp-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-warp::before,
+  .hero-warp::after {
+    animation: none;
+  }
+}
