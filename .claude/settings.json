@@ -27,11 +27,13 @@
       "Bash(NODE_OPTIONS=\"--use-system-ca\" npx shadcn@latest add sidebar avatar dropdown-menu separator sheet tooltip skeleton -y)",
       "Bash(NODE_OPTIONS=\"--use-system-ca\" npm run build -- --debug-prerender)",
       "Bash(npx -y supabase migration new member_status_and_directory)",
-      "Bash(npx -y supabase migration new add_created_at_to_member_directory)"
+      "Bash(npx -y supabase migration new add_created_at_to_member_directory)",
+      "Bash(mkdir -p \"/Users/hyoudou_takuya/linkra-by-gmo/src/app/\\(public\\)/members/[memberId]\")"
     ],
     "additionalDirectories": [
       "/Users/hyoudou_takuya/linkra-by-gmo/src/app/(dashboard)/companies",
-      "/private/tmp"
+      "/private/tmp",
+      "/Users/hyoudou_takuya/linkra-by-gmo/src/app/(public)/members"
     ]
   }
 }

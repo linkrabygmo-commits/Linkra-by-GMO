@@ -7,7 +7,11 @@ const PUBLIC_PATHS = [
   "/signup",
   "/forgot-password",
   "/auth/confirm",
+  "/members",
 ];
+
+// "/members/[memberId]" のような動的セグメント配下も公開パスとして扱うためのprefix
+const PUBLIC_PATH_PREFIXES = ["/members/"];
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -37,7 +41,11 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isPublicPath = PUBLIC_PATHS.includes(request.nextUrl.pathname);
+  const isPublicPath =
+    PUBLIC_PATHS.includes(request.nextUrl.pathname) ||
+    PUBLIC_PATH_PREFIXES.some((prefix) =>
+      request.nextUrl.pathname.startsWith(prefix),
+    );
 
   if (!user && !isPublicPath) {
     const redirectUrl = request.nextUrl.clone();
