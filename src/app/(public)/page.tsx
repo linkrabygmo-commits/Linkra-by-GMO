@@ -119,6 +119,22 @@ export default function TopPage() {
       <section className="border-t border-border px-6 py-20">
         <div className="mx-auto flex max-w-4xl flex-col gap-6">
           <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-foreground">
+              新着メンバー
+            </h2>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/members">会員ディレクトリを見る</Link>
+            </Button>
+          </div>
+          <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
+            <NewMembers />
+          </Suspense>
+        </div>
+      </section>
+
+      <section className="border-t border-border px-6 py-20">
+        <div className="mx-auto flex max-w-4xl flex-col gap-6">
+          <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-foreground">イベント</h2>
             <Button asChild variant="outline" size="sm">
               <Link href="/events">イベント一覧を見る</Link>
@@ -140,22 +156,6 @@ export default function TopPage() {
           </div>
           <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
             <LatestAnnouncements />
-          </Suspense>
-        </div>
-      </section>
-
-      <section className="border-t border-border px-6 py-20">
-        <div className="mx-auto flex max-w-4xl flex-col gap-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-foreground">
-              新着メンバー
-            </h2>
-            <Button asChild variant="outline" size="sm">
-              <Link href="/members">会員ディレクトリを見る</Link>
-            </Button>
-          </div>
-          <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
-            <NewMembers />
           </Suspense>
         </div>
       </section>
