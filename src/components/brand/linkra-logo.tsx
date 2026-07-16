@@ -7,7 +7,6 @@ export type LinkraLogoTone = "dark" | "light";
 interface SizeTokens {
   linkra: string;
   by: string;
-  gmoText: string;
   gmoImgHeight: string;
   gap: string;
 }
@@ -16,28 +15,24 @@ const SIZES: Record<LinkraLogoSize, SizeTokens> = {
   sm: {
     linkra: "text-sm",
     by: "text-[10px]",
-    gmoText: "text-sm",
     gmoImgHeight: "h-3.5",
     gap: "gap-1",
   },
   md: {
     linkra: "text-base",
     by: "text-[11px]",
-    gmoText: "text-base",
     gmoImgHeight: "h-4",
     gap: "gap-1.5",
   },
   lg: {
     linkra: "text-xl",
     by: "text-xs",
-    gmoText: "text-xl",
     gmoImgHeight: "h-5",
     gap: "gap-2",
   },
   hero: {
     linkra: "text-5xl sm:text-6xl",
     by: "text-xl sm:text-2xl",
-    gmoText: "text-5xl sm:text-6xl",
     gmoImgHeight: "h-10 sm:h-12",
     gap: "gap-3",
   },
@@ -98,31 +93,14 @@ export function LinkraLogo({
   );
 }
 
-// 公式ブランドアセット(白抜き版)を暗い背景(tone="light")で使用する。
-// 明るい背景(tone="dark")向けの色版アセットが用意でき次第、そちらも画像に
-// 差し替える。それまでの間は、視覚バランスのみ近づけた仮のテキスト表現。
+// 公式ブランドアセット: 暗い背景(tone="light")には白抜き版、
+// 明るい背景(tone="dark")にはブランドブルー版を使用する。
 function GmoMark({ size, tone }: { size: LinkraLogoSize; tone: LinkraLogoTone }) {
   const tokens = SIZES[size];
-
-  if (tone === "light") {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src="/brand/gmo-logo-white.png"
-        alt="GMO"
-        className={cn("w-auto self-center", tokens.gmoImgHeight)}
-      />
-    );
-  }
+  const src = tone === "light" ? "/brand/gmo-logo-white.png" : "/brand/gmo-logo-blue.png";
 
   return (
-    <span
-      className={cn(
-        "font-extrabold tracking-tight text-foreground",
-        tokens.gmoText,
-      )}
-    >
-      GMO
-    </span>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={src} alt="GMO" className={cn("w-auto self-center", tokens.gmoImgHeight)} />
   );
 }
