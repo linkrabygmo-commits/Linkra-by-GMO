@@ -18,16 +18,3 @@ export async function deleteMemberAction(targetId: string) {
   await repository.deleteMember(targetId);
   revalidatePath("/admin/members");
 }
-
-export async function approveAdAction(adId: string) {
-  await repository.approveAd(adId);
-  revalidatePath("/admin/ads");
-  revalidatePath("/");
-  revalidatePath("/advertise");
-}
-
-export async function rejectAdAction(adId: string) {
-  await repository.rejectAd(adId);
-  revalidatePath("/admin/ads");
-  revalidatePath("/advertise");
-}

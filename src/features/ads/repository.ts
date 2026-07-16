@@ -1,18 +1,9 @@
 import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
-import { verifySession } from "@/lib/auth/session";
-import { ForbiddenError } from "@/lib/repository/base";
+import { requireAdmin } from "@/lib/auth/session";
 import type { AdPlacement, AdStatus } from "@/types/database";
 import type { HeroBanner } from "@/features/ads/types";
-
-export interface MyAdRequestDto {
-  id: string;
-  title: string;
-  placement: AdPlacement;
-  status: AdStatus;
-  createdAt: string;
-}
 
 export async function listActiveAds(
   placement: AdPlacement,
@@ -35,7 +26,81 @@ export async function listActiveAds(
   }));
 }
 
-interface RequestAdInput {
+export interface AdDto {
+  id: string;
+  title: string;
+  description: string | null;
+  linkUrl: string;
+  imageUrl: string | null;
+  placement: AdPlacement;
+  status: AdStatus;
+  startsAt: string | null;
+  endsAt: string | null;
+  createdAt: string;
+}
+
+const AD_COLUMNS =
+  "id, title, description, link_url, image_url, placement, status, starts_at, ends_at, created_at";
+
+interface AdRow {
+  id: string;
+  title: string;
+  description: string | null;
+  link_url: string;
+  image_url: string | null;
+  placement: AdPlacement;
+  status: AdStatus;
+  starts_at: string | null;
+  ends_at: string | null;
+  created_at: string;
+}
+
+function toAdDto(row: AdRow): AdDto {
+  return {
+    id: row.id,
+    title: row.title,
+    description: row.description,
+    linkUrl: row.link_url,
+    imageUrl: row.image_url,
+    placement: row.placement,
+    status: row.status,
+    startsAt: row.starts_at,
+    endsAt: row.ends_at,
+    createdAt: row.created_at,
+  };
+}
+
+export async function listAllAdsForAdmin(): Promise<AdDto[]> {
+  await requireAdmin();
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("advertisements")
+    .select(AD_COLUMNS)
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+
+  return (data ?? []).map(toAdDto);
+}
+
+export async function getAdByIdForAdmin(adId: string): Promise<AdDto | null> {
+  await requireAdmin();
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("advertisements")
+    .select(AD_COLUMNS)
+    .eq("id", adId)
+    .maybeSingle();
+
+  if (error) throw new Error(error.message);
+  if (!data) return null;
+
+  return toAdDto(data);
+}
+
+export interface AdInput {
   title: string;
   description?: string;
   linkUrl: string;
@@ -45,8 +110,8 @@ interface RequestAdInput {
   endsAt?: string;
 }
 
-export async function requestAd(input: RequestAdInput): Promise<void> {
-  const user = await verifySession();
+export async function createAd(input: AdInput): Promise<void> {
+  const admin = await requireAdmin();
   const supabase = await createClient();
 
   const { error } = await supabase.from("advertisements").insert({
@@ -55,39 +120,41 @@ export async function requestAd(input: RequestAdInput): Promise<void> {
     link_url: input.linkUrl,
     image_url: input.imageUrl || null,
     placement: input.placement,
-    requested_by: user.id,
+    status: "approved",
+    requested_by: admin.id,
+    approved_by: admin.id,
     starts_at: input.startsAt || null,
     ends_at: input.endsAt || null,
   });
 
-  if (error) {
-    // approved/admin以外の会員がRLSに弾かれた場合、分かりやすいメッセージにする
-    if (error.code === "42501") {
-      throw new ForbiddenError(
-        "広告掲載の申請には運営の承認済み会員である必要があります。",
-      );
-    }
-    throw new Error(error.message);
-  }
+  if (error) throw new Error(error.message);
 }
 
-export async function listMyAdRequests(): Promise<MyAdRequestDto[]> {
-  const user = await verifySession();
+export async function updateAd(adId: string, input: AdInput): Promise<void> {
+  await requireAdmin();
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("advertisements")
-    .select("id, title, placement, status, created_at")
-    .eq("requested_by", user.id)
-    .order("created_at", { ascending: false });
+    .update({
+      title: input.title,
+      description: input.description || null,
+      link_url: input.linkUrl,
+      image_url: input.imageUrl || null,
+      placement: input.placement,
+      starts_at: input.startsAt || null,
+      ends_at: input.endsAt || null,
+    })
+    .eq("id", adId);
 
   if (error) throw new Error(error.message);
+}
 
-  return (data ?? []).map((row) => ({
-    id: row.id,
-    title: row.title,
-    placement: row.placement,
-    status: row.status,
-    createdAt: row.created_at,
-  }));
+export async function deleteAd(adId: string): Promise<void> {
+  await requireAdmin();
+  const supabase = await createClient();
+
+  const { error } = await supabase.from("advertisements").delete().eq("id", adId);
+
+  if (error) throw new Error(error.message);
 }

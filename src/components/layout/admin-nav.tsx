@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 const ADMIN_NAV_ITEMS = [
   { href: "/admin", label: "概要" },
   { href: "/admin/members", label: "会員管理" },
-  { href: "/admin/ads", label: "広告承認" },
+  { href: "/admin/ads", label: "広告設定" },
   { href: "/admin/events", label: "イベント管理" },
   { href: "/admin/announcements", label: "お知らせ管理" },
   { href: "/admin/companies/new", label: "プロフィールを設定" },

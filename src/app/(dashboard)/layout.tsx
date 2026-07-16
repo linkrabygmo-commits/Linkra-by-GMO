@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { AppSidebar, AppSidebarSkeleton } from "@/components/layout/app-sidebar";
+import { BackButton, BackButtonSkeleton } from "@/components/layout/back-button";
 import { UserMenu } from "@/components/layout/user-menu";
 import {
   SidebarInset,
@@ -52,7 +53,14 @@ export default function DashboardLayout({
               <ArrowUpRight className="size-3.5" />
             </Link>
           </header>
-          <main className="flex flex-1 flex-col">{children}</main>
+          <main className="flex flex-1 flex-col">
+            <Suspense fallback={<BackButtonSkeleton className="mx-6 mt-4 sm:mx-10 sm:mt-6" />}>
+              <div className="px-6 pt-4 sm:px-10 sm:pt-6">
+                <BackButton />
+              </div>
+            </Suspense>
+            {children}
+          </main>
         </SidebarInset>
       </SidebarProvider>
     </div>

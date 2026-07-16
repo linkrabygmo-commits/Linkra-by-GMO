@@ -8,7 +8,6 @@ const PUBLIC_PATHS = [
   "/forgot-password",
   "/auth/confirm",
   "/members",
-  "/advertise",
   "/events",
   "/announcements",
 ];

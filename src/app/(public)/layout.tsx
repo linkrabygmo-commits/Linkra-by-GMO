@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { AuthNav } from "@/components/layout/auth-nav";
+import { BackButton, BackButtonSkeleton } from "@/components/layout/back-button";
 import { LinkraLogo } from "@/components/brand/linkra-logo";
 
 export default function PublicLayout({
@@ -38,12 +39,16 @@ export default function PublicLayout({
           </Suspense>
         </div>
       </header>
-      <main className="flex flex-1 flex-col">{children}</main>
+      <main className="flex flex-1 flex-col">
+        <Suspense fallback={<BackButtonSkeleton className="mx-6 mt-4" />}>
+          <div className="px-6 pt-4">
+            <BackButton />
+          </div>
+        </Suspense>
+        {children}
+      </main>
       <footer className="flex flex-col items-center gap-2 border-t border-border px-6 py-8 text-center text-xs text-muted-foreground">
         <LinkraLogo size="sm" tone="dark" href="/" />
-        <Link href="/advertise" className="transition-colors hover:text-foreground">
-          広告掲載について
-        </Link>
       </footer>
     </div>
   );
