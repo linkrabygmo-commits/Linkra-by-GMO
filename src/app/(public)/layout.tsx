@@ -41,9 +41,7 @@ export default function PublicLayout({
       </header>
       <main className="flex flex-1 flex-col">
         <Suspense fallback={<BackButtonSkeleton className="mx-6 mt-4" />}>
-          <div className="px-6 pt-4">
-            <BackButton />
-          </div>
+          <BackButton className="mx-6 mt-4" />
         </Suspense>
         {children}
       </main>

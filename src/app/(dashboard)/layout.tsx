@@ -55,9 +55,7 @@ export default function DashboardLayout({
           </header>
           <main className="flex flex-1 flex-col">
             <Suspense fallback={<BackButtonSkeleton className="mx-6 mt-4 sm:mx-10 sm:mt-6" />}>
-              <div className="px-6 pt-4 sm:px-10 sm:pt-6">
-                <BackButton />
-              </div>
+              <BackButton className="mx-6 mt-4 sm:mx-10 sm:mt-6" />
             </Suspense>
             {children}
           </main>
