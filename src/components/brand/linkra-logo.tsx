@@ -7,18 +7,38 @@ export type LinkraLogoTone = "dark" | "light";
 interface SizeTokens {
   linkra: string;
   by: string;
-  gmo: string;
+  gmoText: string;
+  gmoImgHeight: string;
   gap: string;
 }
 
 const SIZES: Record<LinkraLogoSize, SizeTokens> = {
-  sm: { linkra: "text-sm", by: "text-[10px]", gmo: "text-sm", gap: "gap-1" },
-  md: { linkra: "text-base", by: "text-[11px]", gmo: "text-base", gap: "gap-1.5" },
-  lg: { linkra: "text-xl", by: "text-xs", gmo: "text-xl", gap: "gap-2" },
+  sm: {
+    linkra: "text-sm",
+    by: "text-[10px]",
+    gmoText: "text-sm",
+    gmoImgHeight: "h-3.5",
+    gap: "gap-1",
+  },
+  md: {
+    linkra: "text-base",
+    by: "text-[11px]",
+    gmoText: "text-base",
+    gmoImgHeight: "h-4",
+    gap: "gap-1.5",
+  },
+  lg: {
+    linkra: "text-xl",
+    by: "text-xs",
+    gmoText: "text-xl",
+    gmoImgHeight: "h-5",
+    gap: "gap-2",
+  },
   hero: {
     linkra: "text-5xl sm:text-6xl",
     by: "text-xl sm:text-2xl",
-    gmo: "text-5xl sm:text-6xl",
+    gmoText: "text-5xl sm:text-6xl",
+    gmoImgHeight: "h-10 sm:h-12",
     gap: "gap-3",
   },
 };
@@ -78,18 +98,28 @@ export function LinkraLogo({
   );
 }
 
-// GMOの正式なブランドアセット(SVG等)が用意でき次第、テキストではなく
-// その画像アセットを描画するように差し替える。それまでの間は、視覚的な
-// バランス(太さ・字間)だけを参考画像に近づけた仮のテキスト表現。
+// 公式ブランドアセット(白抜き版)を暗い背景(tone="light")で使用する。
+// 明るい背景(tone="dark")向けの色版アセットが用意でき次第、そちらも画像に
+// 差し替える。それまでの間は、視覚バランスのみ近づけた仮のテキスト表現。
 function GmoMark({ size, tone }: { size: LinkraLogoSize; tone: LinkraLogoTone }) {
   const tokens = SIZES[size];
+
+  if (tone === "light") {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src="/brand/gmo-logo-white.png"
+        alt="GMO"
+        className={cn("w-auto self-center", tokens.gmoImgHeight)}
+      />
+    );
+  }
 
   return (
     <span
       className={cn(
-        "font-extrabold tracking-tight",
-        tokens.gmo,
-        tone === "light" ? "text-white" : "text-foreground",
+        "font-extrabold tracking-tight text-foreground",
+        tokens.gmoText,
       )}
     >
       GMO
