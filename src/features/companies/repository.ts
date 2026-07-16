@@ -3,12 +3,11 @@ import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import { verifySession } from "@/lib/auth/session";
 import { ForbiddenError } from "@/lib/repository/base";
-import type { CompanyRole, CompanyType } from "@/types/database";
+import type { CompanyRole } from "@/types/database";
 
 export interface CompanyDto {
   id: string;
   name: string;
-  type: CompanyType;
   description: string | null;
   logoUrl: string | null;
   memberCount: number;
@@ -62,7 +61,6 @@ export async function listCompanies(): Promise<CompanyDto[]> {
   return (companies ?? []).map((row) => ({
     id: row.id,
     name: row.name,
-    type: row.type,
     description: row.description,
     logoUrl: row.logo_url,
     memberCount: memberCounts.get(row.id) ?? 0,
@@ -73,7 +71,6 @@ export async function listCompanies(): Promise<CompanyDto[]> {
 export interface MyCompanyDto {
   id: string;
   name: string;
-  type: CompanyType;
   role: CompanyRole;
 }
 
@@ -91,7 +88,7 @@ export async function listMyCompanies(): Promise<MyCompanyDto[]> {
 
   const { data: companies, error: companiesError } = await supabase
     .from("companies")
-    .select("id, name, type")
+    .select("id, name")
     .in(
       "id",
       memberships.map((m) => m.company_id),
@@ -106,7 +103,6 @@ export async function listMyCompanies(): Promise<MyCompanyDto[]> {
   return (companies ?? []).map((company) => ({
     id: company.id,
     name: company.name,
-    type: company.type,
     role: roleByCompanyId.get(company.id) ?? "member",
   }));
 }
@@ -139,7 +135,6 @@ export async function getCompanyById(
   return {
     id: company.id,
     name: company.name,
-    type: company.type,
     description: company.description,
     logoUrl: company.logo_url,
     memberCount: (members ?? []).length,
@@ -212,7 +207,6 @@ export async function listInvitations(
 
 interface CreateCompanyInput {
   name: string;
-  type: CompanyType;
   description?: string;
 }
 
@@ -224,7 +218,6 @@ export async function createCompany(
 
   const { data, error } = await supabase.rpc("create_company", {
     company_name: input.name,
-    company_type: input.type,
     company_description: input.description ?? null,
   });
 
@@ -233,7 +226,6 @@ export async function createCompany(
   return {
     id: data.id,
     name: data.name,
-    type: data.type,
     description: data.description,
     logoUrl: data.logo_url,
     memberCount: 1,

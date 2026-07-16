@@ -5,7 +5,6 @@ import {
   listMembers,
   listInvitations,
 } from "@/features/companies/repository";
-import { COMPANY_TYPE_LABELS } from "@/features/companies/components/create-company-form";
 import { InviteMemberForm } from "@/features/companies/components/invite-member-form";
 import { leaveCompanyAction } from "@/features/companies/actions";
 import { Badge } from "@/components/ui/badge";
@@ -54,9 +53,6 @@ async function CompanyDetailContent({
           <h1 className="text-2xl font-semibold text-foreground">
             {company.name}
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {COMPANY_TYPE_LABELS[company.type]}
-          </p>
         </div>
         {company.currentUserRole && (
           <form action={leaveCompanyAction.bind(null, companyId)}>

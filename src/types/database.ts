@@ -71,7 +71,7 @@ export type Database = {
         Row: {
           id: string;
           name: string;
-          type: CompanyType;
+          type: CompanyType | null;
           description: string | null;
           logo_url: string | null;
           created_by: string;
@@ -81,7 +81,7 @@ export type Database = {
         Insert: {
           id?: string;
           name: string;
-          type: CompanyType;
+          type?: CompanyType;
           description?: string | null;
           logo_url?: string | null;
           created_by: string;
@@ -372,7 +372,7 @@ export type Database = {
       create_company: {
         Args: {
           company_name: string;
-          company_type: CompanyType;
+          company_type?: CompanyType;
           company_description?: string | null;
         };
         Returns: Database["public"]["Tables"]["companies"]["Row"];

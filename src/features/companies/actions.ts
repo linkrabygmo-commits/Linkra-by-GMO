@@ -16,7 +16,6 @@ export async function createCompanyAction(
 ): Promise<CreateCompanyFormState> {
   const validatedFields = CreateCompanySchema.safeParse({
     name: formData.get("name"),
-    type: formData.get("type"),
     description: formData.get("description") || undefined,
   });
 

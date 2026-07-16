@@ -1,6 +1,5 @@
 import * as z from "zod";
 
-export const CompanyTypeValues = ["client", "partner", "group"] as const;
 export const CompanyRoleValues = ["owner", "admin", "member"] as const;
 
 export const CreateCompanySchema = z.object({
@@ -9,9 +8,6 @@ export const CreateCompanySchema = z.object({
     .min(1, { error: "会社名を入力してください。" })
     .max(100, { error: "会社名は100文字以内で入力してください。" })
     .trim(),
-  type: z.enum(CompanyTypeValues, {
-    error: "種別を選択してください。",
-  }),
   description: z
     .string()
     .max(500, { error: "説明は500文字以内で入力してください。" })
@@ -24,7 +20,6 @@ export type CreateCompanyFormState =
       status: "error";
       errors?: {
         name?: string[];
-        type?: string[];
         description?: string[];
       };
       message?: string;

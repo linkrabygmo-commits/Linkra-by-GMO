@@ -2,16 +2,9 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { getMyProfile } from "@/features/profile/repository";
 import { listMyCompanies } from "@/features/companies/repository";
-import { COMPANY_TYPE_LABELS } from "@/features/companies/components/create-company-form";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export default function DashboardHomePage() {
   return (
@@ -52,7 +45,7 @@ async function DashboardHomeContent() {
           <p className="text-sm text-muted-foreground">
             まだどの企業にも所属していません。
             <Link href="/companies/new" className="ml-1 text-primary hover:underline">
-              会社を作成
+              会社情報を設定
             </Link>
             するか、招待をお待ちください。
           </p>
@@ -63,9 +56,6 @@ async function DashboardHomeContent() {
                 <Card className="transition-shadow hover:shadow-md">
                   <CardHeader>
                     <CardTitle>{company.name}</CardTitle>
-                    <CardDescription>
-                      {COMPANY_TYPE_LABELS[company.type]}
-                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <Badge

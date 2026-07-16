@@ -6,19 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-const COMPANY_TYPE_LABELS = {
-  client: "クライアント企業",
-  partner: "協力会社",
-  group: "グループ会社",
-} as const;
 
 export function CreateCompanyForm() {
   const [state, action, pending] = useActionState(createCompanyAction, undefined);
@@ -30,25 +17,6 @@ export function CreateCompanyForm() {
         <Input id="name" name="name" required />
         {state?.status === "error" && state.errors?.name && (
           <p className="text-sm text-destructive">{state.errors.name[0]}</p>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="type">種別</Label>
-        <Select name="type" required>
-          <SelectTrigger id="type" className="w-full">
-            <SelectValue placeholder="種別を選択" />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.entries(COMPANY_TYPE_LABELS).map(([value, label]) => (
-              <SelectItem key={value} value={value}>
-                {label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {state?.status === "error" && state.errors?.type && (
-          <p className="text-sm text-destructive">{state.errors.type[0]}</p>
         )}
       </div>
 
@@ -69,10 +37,8 @@ export function CreateCompanyForm() {
       )}
 
       <Button type="submit" disabled={pending}>
-        {pending ? "作成中..." : "会社を作成"}
+        {pending ? "保存中..." : "会社情報を設定"}
       </Button>
     </form>
   );
 }
-
-export { COMPANY_TYPE_LABELS };
