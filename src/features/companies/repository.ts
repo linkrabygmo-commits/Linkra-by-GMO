@@ -203,6 +203,15 @@ export async function createCompany(
   };
 }
 
+export async function deleteCompany(companyId: string): Promise<void> {
+  await requireAdmin();
+  const supabase = await createClient();
+
+  const { error } = await supabase.rpc("delete_company", { target_id: companyId });
+
+  if (error) throw new Error(error.message);
+}
+
 export async function leaveCompany(companyId: string): Promise<void> {
   const user = await verifySession();
   const supabase = await createClient();

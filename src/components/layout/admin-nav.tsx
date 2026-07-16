@@ -10,7 +10,7 @@ const ADMIN_NAV_ITEMS = [
   { href: "/admin/ads", label: "広告設定" },
   { href: "/admin/events", label: "イベント管理" },
   { href: "/admin/announcements", label: "お知らせ管理" },
-  { href: "/admin/companies/new", label: "プロフィールを設定" },
+  { href: "/admin/companies", label: "企業管理" },
 ];
 
 export function AdminNav() {

@@ -41,3 +41,9 @@ export async function leaveCompanyAction(companyId: string) {
   revalidatePath(`/companies/${companyId}`);
   redirect("/companies");
 }
+
+export async function deleteCompanyAction(companyId: string) {
+  await repository.deleteCompany(companyId);
+  revalidatePath("/admin/companies");
+  revalidatePath("/companies");
+}

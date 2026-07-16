@@ -389,6 +389,10 @@ export type Database = {
         Args: { target_id: string; new_status: MemberStatus };
         Returns: Database["public"]["Tables"]["profiles"]["Row"];
       };
+      delete_company: {
+        Args: { target_id: string };
+        Returns: undefined;
+      };
     };
   };
 };
