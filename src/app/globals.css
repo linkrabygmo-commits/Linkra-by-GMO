@@ -83,6 +83,74 @@
   --sidebar-ring: oklch(0.55 0.17 262);
 }
 
+/* ログイン後の業務画面(ダッシュボード/管理画面)専用のライトテーマ。
+   公開サイト(:root)はそのままに、柔らかいブルーグレーの背景層とGMOブルーの
+   アクセントで、業務用途に適した読みやすさ・落ち着きを持たせる。 */
+.app-shell {
+  --background: oklch(0.975 0.006 250);
+  --foreground: oklch(0.22 0.02 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.02 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.02 260);
+  --primary: oklch(0.55 0.19 262);
+  --primary-foreground: oklch(0.99 0.004 250);
+  --secondary: oklch(0.955 0.008 250);
+  --secondary-foreground: oklch(0.32 0.03 260);
+  --muted: oklch(0.96 0.008 250);
+  --muted-foreground: oklch(0.5 0.02 260);
+  --accent: oklch(0.94 0.025 255);
+  --accent-foreground: oklch(0.4 0.15 262);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.91 0.01 255);
+  --input: oklch(0.91 0.01 255);
+  --ring: oklch(0.6 0.18 262);
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.32 0.02 260);
+  --sidebar-primary: oklch(0.55 0.19 262);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.94 0.025 255);
+  --sidebar-accent-foreground: oklch(0.4 0.15 262);
+  --sidebar-border: oklch(0.93 0.008 255);
+  --sidebar-ring: oklch(0.6 0.18 262);
+}
+
+/* ダッシュボード/管理画面用の控えめなHeroバナー背景。
+   トップページのhero-warpより主張を抑えた、白ベース+淡いブルーの光の帯。 */
+.app-hero {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%, oklch(0.94 0.03 255 / 70%), transparent 60%),
+    radial-gradient(ellipse 60% 80% at 90% 80%, oklch(0.93 0.035 255 / 60%), transparent 65%),
+    linear-gradient(135deg, oklch(0.99 0.004 250), oklch(0.965 0.012 252));
+}
+
+.app-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-conic-gradient(
+    from 45deg at 85% 30%,
+    oklch(0.6 0.15 262 / 8%) 0deg 2deg,
+    transparent 2deg 8deg
+  );
+  mask-image: radial-gradient(ellipse 55% 70% at 85% 30%, black, transparent 70%);
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .app-hero::before {
+    animation: app-hero-rotate 40s linear infinite;
+  }
+}
+
+@keyframes app-hero-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .dark {
   --background: oklch(0.16 0.02 260);
   --foreground: oklch(0.94 0.01 260);

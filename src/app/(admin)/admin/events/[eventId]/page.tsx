@@ -28,7 +28,7 @@ interface AdminEventPageProps {
 
 export default function AdminEventApplicationsPage({ params }: AdminEventPageProps) {
   return (
-    <div className="flex flex-1 flex-col gap-6 px-6 py-10">
+    <div className="flex flex-1 flex-col gap-6 px-6 py-8 sm:px-10 sm:py-10">
       <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
         <ApplicationsList paramsPromise={params} />
       </Suspense>
@@ -60,7 +60,7 @@ async function ApplicationsList({ paramsPromise }: { paramsPromise: AdminEventPa
           {applications.map((application) => (
             <li
               key={`${application.type}-${application.id}`}
-              className="flex items-start justify-between gap-4 rounded-lg border border-border px-4 py-3"
+              className="flex items-start justify-between gap-4 rounded-xl border border-border bg-card px-4 py-3 ring-1 ring-foreground/10"
             >
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">

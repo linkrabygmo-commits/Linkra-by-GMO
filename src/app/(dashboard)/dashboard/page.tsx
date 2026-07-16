@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { Building2 } from "lucide-react";
 import { getMyProfile } from "@/features/profile/repository";
 import { listMyCompanies } from "@/features/companies/repository";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export default function DashboardHomePage() {
   return (
-    <div className="flex flex-1 flex-col gap-6 px-6 py-10">
+    <div className="flex flex-1 flex-col gap-10 px-6 py-8 sm:px-10 sm:py-10">
       <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
         <DashboardHomeContent />
       </Suspense>
@@ -24,18 +25,19 @@ async function DashboardHomeContent() {
 
   return (
     <>
-      <div>
-        <h1 className="text-2xl font-semibold text-foreground">
+      <div className="app-hero flex flex-col gap-2 rounded-2xl border border-border px-8 py-10 sm:px-10">
+        <span className="h-1 w-8 rounded-full bg-primary" />
+        <h1 className="text-2xl font-semibold text-foreground sm:text-3xl">
           ようこそ、{profile.displayName} さん
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           {profile.title ?? "プロフィールに肩書きを設定できます。"}
         </p>
       </div>
 
-      <section className="flex flex-col gap-3">
+      <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-medium text-foreground">所属企業</h2>
+          <h2 className="text-lg font-semibold text-foreground">所属企業</h2>
           <Button asChild variant="outline" size="sm">
             <Link href="/companies">すべての企業を見る</Link>
           </Button>
@@ -49,9 +51,14 @@ async function DashboardHomeContent() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {myCompanies.map((company) => (
               <Link key={company.id} href={`/companies/${company.id}`}>
-                <Card className="transition-shadow hover:shadow-md">
+                <Card className="transition-all hover:-translate-y-0.5 hover:shadow-md">
                   <CardHeader>
-                    <CardTitle>{company.name}</CardTitle>
+                    <div className="flex items-center gap-3">
+                      <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
+                        <Building2 className="size-4" />
+                      </span>
+                      <CardTitle>{company.name}</CardTitle>
+                    </div>
                   </CardHeader>
                   <CardContent>
                     <Badge

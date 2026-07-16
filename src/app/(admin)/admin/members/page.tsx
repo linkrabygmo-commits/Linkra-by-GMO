@@ -24,7 +24,7 @@ const STATUS_BADGE_VARIANTS = {
 
 export default function AdminMembersPage() {
   return (
-    <div className="flex flex-1 flex-col gap-6 px-6 py-10">
+    <div className="flex flex-1 flex-col gap-6 px-6 py-8 sm:px-10 sm:py-10">
       <h1 className="text-2xl font-semibold text-foreground">会員管理</h1>
       <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
         <MembersList />
@@ -45,7 +45,7 @@ async function MembersList() {
       {members.map((member) => (
         <li
           key={member.id}
-          className="flex items-center justify-between gap-4 rounded-lg border border-border px-4 py-3"
+          className="flex items-center justify-between gap-4 rounded-xl border border-border bg-card px-4 py-3 ring-1 ring-foreground/10"
         >
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">

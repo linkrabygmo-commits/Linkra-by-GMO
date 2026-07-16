@@ -11,7 +11,7 @@ export default function CompanyDetailPage({
   params: Promise<{ companyId: string }>;
 }) {
   return (
-    <div className="flex flex-1 flex-col gap-8 px-6 py-10">
+    <div className="flex flex-1 flex-col gap-8 px-6 py-8 sm:px-10 sm:py-10">
       <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
         <CompanyDetailContent paramsPromise={params} />
       </Suspense>
@@ -72,7 +72,7 @@ async function CompanyDetailContent({
           {members.map((member) => (
             <li
               key={member.userId}
-              className="flex items-center justify-between rounded-lg border border-border px-4 py-2"
+              className="flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3 ring-1 ring-foreground/10"
             >
               <span className="text-sm text-foreground">
                 {member.displayName}
