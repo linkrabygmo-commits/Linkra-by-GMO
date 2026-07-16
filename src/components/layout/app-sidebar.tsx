@@ -14,7 +14,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { siteConfig } from "@/config/site";
+import { LinkraLogo } from "@/components/brand/linkra-logo";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "ホーム", icon: Home },
@@ -30,9 +30,12 @@ function SidebarBrand() {
       <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-primary text-xs font-semibold text-primary-foreground">
         L
       </span>
-      <span className="truncate text-sm font-semibold text-foreground group-data-[collapsible=icon]:hidden">
-        {siteConfig.name}
-      </span>
+      <LinkraLogo
+        size="sm"
+        tone="dark"
+        href={null}
+        className="truncate group-data-[collapsible=icon]:hidden"
+      />
     </Link>
   );
 }

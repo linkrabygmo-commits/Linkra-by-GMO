@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { siteConfig } from "@/config/site";
 import { AdminNav, AdminNavSkeleton } from "@/components/layout/admin-nav";
+import { LinkraLogo } from "@/components/brand/linkra-logo";
 
 // requireAdmin()はcookieを読むため、各ページ側(Suspense配下)で呼び出す。
 // レイアウト自体は静的な外枠のみ。
@@ -16,9 +16,10 @@ export default function AdminLayout({
     <div className="app-shell flex min-h-full flex-1 flex-col bg-background text-foreground">
       <header className="flex flex-wrap items-center justify-between gap-4 border-b border-border bg-card/60 px-6 py-3 backdrop-blur-sm">
         <div className="flex flex-wrap items-center gap-4">
-          <span className="text-sm font-semibold text-foreground">
-            {siteConfig.name} 管理画面
-          </span>
+          <div className="flex items-center gap-2">
+            <LinkraLogo size="md" tone="dark" href="/dashboard" />
+            <span className="text-sm font-semibold text-foreground">管理画面</span>
+          </div>
           <Suspense fallback={<AdminNavSkeleton />}>
             <AdminNav />
           </Suspense>

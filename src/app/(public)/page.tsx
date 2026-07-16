@@ -10,6 +10,7 @@ import { listEvents } from "@/features/events/repository";
 import { listPublishedAnnouncements } from "@/features/announcements/repository";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { LinkraLogo } from "@/components/brand/linkra-logo";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
@@ -50,9 +51,8 @@ export default function TopPage() {
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-16">
             <div className="flex max-w-2xl flex-col gap-6">
               <div className="flex flex-col gap-3">
-                <h1 className="text-5xl font-bold tracking-tight text-white sm:text-6xl">
-                  Linkra <span className="font-light text-white/50">by</span>{" "}
-                  <span className="font-extrabold tracking-tight">GMO</span>
+                <h1>
+                  <LinkraLogo size="hero" tone="light" href={null} />
                 </h1>
                 <p className="text-sm text-white/45">
                   Link（つながり）＋ Era（時代）＝ Linkra（リンクラ）
