@@ -6,6 +6,9 @@ export type InvitationStatus = "pending" | "accepted" | "revoked";
 export type MemberStatus = "registered" | "approved" | "admin";
 export type AdPlacement = "top_hero" | "sidebar" | "inline";
 export type AdStatus = "pending" | "approved" | "rejected";
+export type EventAudience = "member_only" | "public";
+export type EventApplicationStatus = "pending" | "confirmed" | "cancelled";
+export type AnnouncementStatus = "draft" | "published";
 
 export type Database = {
   public: {
@@ -203,6 +206,141 @@ export type Database = {
           approved_by?: string | null;
           starts_at?: string | null;
           ends_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      events: {
+        Row: {
+          id: string;
+          title: string;
+          description: string | null;
+          cover_image_url: string | null;
+          audience: EventAudience;
+          location: string | null;
+          starts_at: string;
+          ends_at: string | null;
+          capacity: number | null;
+          created_by: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          description?: string | null;
+          cover_image_url?: string | null;
+          audience?: EventAudience;
+          location?: string | null;
+          starts_at: string;
+          ends_at?: string | null;
+          capacity?: number | null;
+          created_by: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          description?: string | null;
+          cover_image_url?: string | null;
+          audience?: EventAudience;
+          location?: string | null;
+          starts_at?: string;
+          ends_at?: string | null;
+          capacity?: number | null;
+          created_by?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      member_event_applications: {
+        Row: {
+          id: string;
+          event_id: string;
+          user_id: string;
+          status: EventApplicationStatus;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          event_id: string;
+          user_id: string;
+          status?: EventApplicationStatus;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          event_id?: string;
+          user_id?: string;
+          status?: EventApplicationStatus;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      guest_event_applications: {
+        Row: {
+          id: string;
+          event_id: string;
+          name: string;
+          email: string;
+          phone: string | null;
+          status: EventApplicationStatus;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          event_id: string;
+          name: string;
+          email: string;
+          phone?: string | null;
+          status?: EventApplicationStatus;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          event_id?: string;
+          name?: string;
+          email?: string;
+          phone?: string | null;
+          status?: EventApplicationStatus;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      announcements: {
+        Row: {
+          id: string;
+          title: string;
+          body: string;
+          cover_image_url: string | null;
+          status: AnnouncementStatus;
+          published_at: string | null;
+          created_by: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          body: string;
+          cover_image_url?: string | null;
+          status?: AnnouncementStatus;
+          published_at?: string | null;
+          created_by: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          body?: string;
+          cover_image_url?: string | null;
+          status?: AnnouncementStatus;
+          published_at?: string | null;
+          created_by?: string;
           created_at?: string;
           updated_at?: string;
         };

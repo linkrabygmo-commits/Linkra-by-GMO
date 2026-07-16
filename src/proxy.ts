@@ -8,10 +8,13 @@ const PUBLIC_PATHS = [
   "/forgot-password",
   "/auth/confirm",
   "/members",
+  "/advertise",
+  "/events",
+  "/announcements",
 ];
 
 // "/members/[memberId]" のような動的セグメント配下も公開パスとして扱うためのprefix
-const PUBLIC_PATH_PREFIXES = ["/members/"];
+const PUBLIC_PATH_PREFIXES = ["/members/", "/events/", "/announcements/"];
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });

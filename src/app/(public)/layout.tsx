@@ -25,6 +25,18 @@ export default function PublicLayout({
             >
               会員ディレクトリ
             </Link>
+            <Link
+              href="/events"
+              className="hidden text-sm whitespace-nowrap text-white/70 transition-colors hover:text-white sm:inline"
+            >
+              イベント
+            </Link>
+            <Link
+              href="/announcements"
+              className="hidden text-sm whitespace-nowrap text-white/70 transition-colors hover:text-white sm:inline"
+            >
+              お知らせ
+            </Link>
           </div>
           <Suspense fallback={null}>
             <AuthNav />

@@ -1,12 +1,15 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowRight, Building2, Handshake, Sparkles } from "lucide-react";
+import { ArrowRight, Building2, Handshake, Lock, Sparkles } from "lucide-react";
 import { listNewMembers } from "@/features/members/repository";
 import { MemberCard } from "@/features/members/components/member-card";
 import { listActiveAds } from "@/features/ads/repository";
 import { HeroBannerCarousel } from "@/features/ads/components/hero-banner-carousel";
+import { listEvents } from "@/features/events/repository";
+import { listPublishedAnnouncements } from "@/features/announcements/repository";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
@@ -116,6 +119,34 @@ export default function TopPage() {
       <section className="border-t border-border px-6 py-20">
         <div className="mx-auto flex max-w-4xl flex-col gap-6">
           <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-foreground">イベント</h2>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/events">イベント一覧を見る</Link>
+            </Button>
+          </div>
+          <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
+            <UpcomingEvents />
+          </Suspense>
+        </div>
+      </section>
+
+      <section className="border-t border-border px-6 py-20">
+        <div className="mx-auto flex max-w-4xl flex-col gap-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-foreground">お知らせ</h2>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/announcements">お知らせ一覧を見る</Link>
+            </Button>
+          </div>
+          <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
+            <LatestAnnouncements />
+          </Suspense>
+        </div>
+      </section>
+
+      <section className="border-t border-border px-6 py-20">
+        <div className="mx-auto flex max-w-4xl flex-col gap-6">
+          <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-foreground">
               新着メンバー
             </h2>
@@ -135,6 +166,72 @@ export default function TopPage() {
 async function HeroBanners() {
   const banners = await listActiveAds("top_hero");
   return <HeroBannerCarousel banners={banners} />;
+}
+
+async function UpcomingEvents() {
+  const events = (await listEvents()).slice(0, 3);
+
+  if (events.length === 0) {
+    return <p className="text-muted-foreground">現在開催予定のイベントはありません。</p>;
+  }
+
+  return (
+    <div className="grid gap-4 sm:grid-cols-3">
+      {events.map((event) => (
+        <Link
+          key={event.id}
+          href={`/events/${event.id}`}
+          className="flex flex-col gap-2 rounded-lg border border-border p-4 transition-colors hover:border-foreground/30"
+        >
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm font-medium text-foreground">{event.title}</h3>
+            {event.audience === "member_only" && (
+              <Badge variant="outline" className="gap-1">
+                <Lock className="size-3" />
+                会員限定
+              </Badge>
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {new Date(event.startsAt).toLocaleString("ja-JP", {
+              dateStyle: "medium",
+              timeStyle: "short",
+            })}
+          </p>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+async function LatestAnnouncements() {
+  const announcements = await listPublishedAnnouncements(3);
+
+  if (announcements.length === 0) {
+    return <p className="text-muted-foreground">まだお知らせはありません。</p>;
+  }
+
+  return (
+    <ul className="flex flex-col gap-3">
+      {announcements.map((announcement) => (
+        <li key={announcement.id}>
+          <Link
+            href={`/announcements/${announcement.id}`}
+            className="flex items-center justify-between gap-4 rounded-lg border border-border p-4 transition-colors hover:border-foreground/30"
+          >
+            <span className="text-sm font-medium text-foreground">{announcement.title}</span>
+            {announcement.publishedAt && (
+              <span className="shrink-0 text-xs text-muted-foreground">
+                {new Date(announcement.publishedAt).toLocaleDateString("ja-JP", {
+                  dateStyle: "medium",
+                })}
+              </span>
+            )}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 async function NewMembers() {

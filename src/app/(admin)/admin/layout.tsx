@@ -27,6 +27,18 @@ export default function AdminLayout({
           >
             広告承認
           </Link>
+          <Link
+            href="/admin/events"
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
+            イベント管理
+          </Link>
+          <Link
+            href="/admin/announcements"
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
+            お知らせ管理
+          </Link>
         </div>
         <Link
           href="/dashboard"
