@@ -4,6 +4,7 @@ import { listAllMembers } from "@/features/admin/repository";
 import { updateMemberStatusAction, deleteMemberAction } from "@/features/admin/actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ConfirmSubmitButton } from "@/components/ui/confirm-submit-button";
 
 export const metadata: Metadata = {
   title: "会員管理",
@@ -71,9 +72,13 @@ async function MembersList() {
                 </form>
               ))}
             <form action={deleteMemberAction.bind(null, member.id)}>
-              <Button type="submit" variant="outline" size="sm">
+              <ConfirmSubmitButton
+                variant="destructive"
+                size="sm"
+                confirmMessage={`${member.displayName} を削除します。この操作は取り消せません。よろしいですか？`}
+              >
                 削除
-              </Button>
+              </ConfirmSubmitButton>
             </form>
           </div>
         </li>
