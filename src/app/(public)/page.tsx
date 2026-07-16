@@ -116,7 +116,7 @@ export default function TopPage() {
         </div>
       </div>
 
-      <section className="border-t border-border px-6 py-20">
+      <section className="px-6 py-20">
         <div className="mx-auto flex max-w-4xl flex-col gap-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-foreground">
