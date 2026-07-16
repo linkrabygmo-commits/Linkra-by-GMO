@@ -8,7 +8,7 @@ interface SizeTokens {
   linkra: string;
   by: string;
   gmoImgHeight: string;
-  gap: string;
+  spacing: string;
 }
 
 const SIZES: Record<LinkraLogoSize, SizeTokens> = {
@@ -16,25 +16,25 @@ const SIZES: Record<LinkraLogoSize, SizeTokens> = {
     linkra: "text-sm",
     by: "text-[10px]",
     gmoImgHeight: "h-3.5",
-    gap: "gap-1",
+    spacing: "ml-1",
   },
   md: {
     linkra: "text-base",
     by: "text-[11px]",
     gmoImgHeight: "h-4",
-    gap: "gap-1.5",
+    spacing: "ml-1.5",
   },
   lg: {
     linkra: "text-xl",
     by: "text-xs",
     gmoImgHeight: "h-5",
-    gap: "gap-2",
+    spacing: "ml-2",
   },
   hero: {
     linkra: "text-5xl sm:text-6xl",
     by: "text-xl sm:text-2xl",
     gmoImgHeight: "h-10 sm:h-12",
-    gap: "gap-3",
+    spacing: "ml-3",
   },
 };
 
@@ -56,6 +56,11 @@ export function LinkraLogo({
 }: LinkraLogoProps) {
   const tokens = SIZES[size];
 
+  // flexのitems-baselineはテキストの「ベースライン」に揃うため、"by"の
+  // "y"のディセンダー(文字の下にはみ出る部分)より上に見えてしまう。
+  // GMOマークを"by"と同じ要素の子にして、vertical-align: text-bottomで
+  // "by"自身のフォントの下端(ディセンダーを含む実際の見た目の下端)に
+  //揃える。この揃え方はflexでは効かないため、コンテナはinline-blockにする。
   const inner = (
     <>
       <span
@@ -71,16 +76,17 @@ export function LinkraLogo({
         className={cn(
           "font-semibold",
           tokens.by,
+          tokens.spacing,
           tone === "light" ? "text-white/85" : "text-muted-foreground",
         )}
       >
         by
+        <GmoMark size={size} tone={tone} spacingClassName={tokens.spacing} />
       </span>
-      <GmoMark size={size} tone={tone} />
     </>
   );
 
-  const classes = cn("inline-flex items-baseline", tokens.gap, className);
+  const classes = cn("inline-block", className);
 
   if (!href) {
     return <span className={classes}>{inner}</span>;
@@ -95,12 +101,28 @@ export function LinkraLogo({
 
 // 公式ブランドアセット: 暗い背景(tone="light")には白抜き版、
 // 明るい背景(tone="dark")にはブランドブルー版を使用する。
-function GmoMark({ size, tone }: { size: LinkraLogoSize; tone: LinkraLogoTone }) {
+function GmoMark({
+  size,
+  tone,
+  spacingClassName,
+}: {
+  size: LinkraLogoSize;
+  tone: LinkraLogoTone;
+  spacingClassName: string;
+}) {
   const tokens = SIZES[size];
   const src = tone === "light" ? "/brand/gmo-logo-white.png" : "/brand/gmo-logo-blue.png";
 
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt="GMO" className={cn("w-auto", tokens.gmoImgHeight)} />
+    <img
+      src={src}
+      alt="GMO"
+      className={cn(
+        "inline-block w-auto align-text-bottom",
+        tokens.gmoImgHeight,
+        spacingClassName,
+      )}
+    />
   );
 }
