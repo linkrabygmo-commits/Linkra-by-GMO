@@ -89,7 +89,9 @@ export default function TopPage() {
               </div>
             </div>
 
-            <div className="flex justify-center lg:justify-end">
+            {/* モバイルではヘッダー直下、目立つ最上部に広告を配置する。
+                lg以上では従来通りテキストの右側(source順)に戻す。 */}
+            <div className="order-first flex justify-center lg:order-none lg:justify-end">
               <Suspense
                 fallback={
                   <div className="aspect-[4/3] w-[min(92vw,24rem)] animate-pulse rounded-2xl bg-white/5 sm:w-[26rem] lg:w-[29rem]" />
