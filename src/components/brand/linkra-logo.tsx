@@ -101,6 +101,6 @@ function GmoMark({ size, tone }: { size: LinkraLogoSize; tone: LinkraLogoTone })
 
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt="GMO" className={cn("w-auto self-center", tokens.gmoImgHeight)} />
+    <img src={src} alt="GMO" className={cn("w-auto self-end", tokens.gmoImgHeight)} />
   );
 }
