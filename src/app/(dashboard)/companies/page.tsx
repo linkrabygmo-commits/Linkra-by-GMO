@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { listCompanies } from "@/features/companies/repository";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
@@ -13,12 +12,7 @@ export const metadata: Metadata = {
 export default function CompaniesPage() {
   return (
     <div className="flex flex-1 flex-col gap-6 px-6 py-10">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-foreground">企業一覧</h1>
-        <Button asChild>
-          <Link href="/companies/new">会社情報を設定</Link>
-        </Button>
-      </div>
+      <h1 className="text-2xl font-semibold text-foreground">企業一覧</h1>
       <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
         <CompanyListContent />
       </Suspense>
@@ -32,7 +26,7 @@ async function CompanyListContent() {
   if (companies.length === 0) {
     return (
       <p className="text-muted-foreground">
-        まだ会社が登録されていません。最初の会社情報を設定しましょう。
+        まだ会社が登録されていません。
       </p>
     );
   }

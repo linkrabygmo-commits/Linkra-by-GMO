@@ -44,10 +44,6 @@ async function DashboardHomeContent() {
         {myCompanies.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             まだどの企業にも所属していません。
-            <Link href="/companies/new" className="ml-1 text-primary hover:underline">
-              会社情報を設定
-            </Link>
-            するか、招待をお待ちください。
           </p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

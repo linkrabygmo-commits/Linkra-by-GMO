@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { ImageUploadField } from "@/components/storage/image-upload-field";
 
 export function CreateCompanyForm() {
   const [state, action, pending] = useActionState(createCompanyAction, undefined);
@@ -30,6 +31,8 @@ export function CreateCompanyForm() {
         )}
       </div>
 
+      <ImageUploadField name="logoUrl" label="ロゴ画像(任意)" scope="companies" />
+
       {state?.status === "error" && state.message && (
         <p className="text-sm text-destructive" role="alert">
           {state.message}
@@ -37,7 +40,7 @@ export function CreateCompanyForm() {
       )}
 
       <Button type="submit" disabled={pending}>
-        {pending ? "保存中..." : "会社情報を設定"}
+        {pending ? "保存中..." : "プロフィールを設定"}
       </Button>
     </form>
   );

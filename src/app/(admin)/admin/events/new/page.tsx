@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
+import { requireAdmin } from "@/lib/auth/session";
 import { EventForm } from "@/features/events/components/event-form";
 
 export const metadata: Metadata = {
@@ -12,9 +13,14 @@ export default function NewEventPage() {
       <h1 className="text-2xl font-semibold text-foreground">イベントを作成</h1>
       <div className="max-w-md">
         <Suspense fallback={null}>
-          <EventForm />
+          <Gate />
         </Suspense>
       </div>
     </div>
   );
+}
+
+async function Gate() {
+  await requireAdmin();
+  return <EventForm />;
 }

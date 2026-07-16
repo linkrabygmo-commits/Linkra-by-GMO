@@ -6,7 +6,7 @@ import { UPLOAD_BUCKET } from "@/lib/storage/constants";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-type UploadScope = "avatars" | "ads" | "events" | "announcements";
+type UploadScope = "avatars" | "ads" | "events" | "announcements" | "companies";
 
 interface ImageUploadFieldProps {
   name: string;

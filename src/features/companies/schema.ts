@@ -1,7 +1,5 @@
 import * as z from "zod";
 
-export const CompanyRoleValues = ["owner", "admin", "member"] as const;
-
 export const CreateCompanySchema = z.object({
   name: z
     .string()
@@ -13,6 +11,9 @@ export const CreateCompanySchema = z.object({
     .max(500, { error: "説明は500文字以内で入力してください。" })
     .trim()
     .optional(),
+  logoUrl: z
+    .union([z.url({ error: "有効なURLを入力してください。" }), z.literal("")])
+    .optional(),
 });
 
 export type CreateCompanyFormState =
@@ -21,26 +22,8 @@ export type CreateCompanyFormState =
       errors?: {
         name?: string[];
         description?: string[];
+        logoUrl?: string[];
       };
       message?: string;
     }
-  | undefined;
-
-export const InviteMemberSchema = z.object({
-  email: z.email({ error: "有効なメールアドレスを入力してください。" }).trim(),
-  role: z.enum(["admin", "member"], {
-    error: "権限を選択してください。",
-  }),
-});
-
-export type InviteMemberFormState =
-  | {
-      status: "idle" | "error";
-      errors?: {
-        email?: string[];
-        role?: string[];
-      };
-      message?: string;
-    }
-  | { status: "success"; message: string }
   | undefined;

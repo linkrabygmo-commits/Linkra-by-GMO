@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { getCurrentUser } from "@/lib/auth/session";
+import { getCurrentUser, getMyMemberStatus } from "@/lib/auth/session";
 
 export async function AuthNav() {
   const user = await getCurrentUser();
@@ -25,12 +25,24 @@ export async function AuthNav() {
     );
   }
 
+  const memberStatus = await getMyMemberStatus();
+
   return (
-    <Link
-      href="/dashboard"
-      className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-4 py-2 text-sm text-white/90 transition-colors hover:border-white/40 hover:text-white"
-    >
-      ダッシュボードへ
-    </Link>
+    <div className="flex items-center gap-2 sm:gap-3">
+      {memberStatus === "admin" && (
+        <Link
+          href="/admin"
+          className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-4 py-2 text-sm text-white/90 transition-colors hover:border-white/40 hover:text-white"
+        >
+          管理者ページへ
+        </Link>
+      )}
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-4 py-2 text-sm text-white/90 transition-colors hover:border-white/40 hover:text-white"
+      >
+        ダッシュボードへ
+      </Link>
+    </div>
   );
 }

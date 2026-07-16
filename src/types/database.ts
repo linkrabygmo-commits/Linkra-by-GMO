@@ -377,16 +377,16 @@ export type Database = {
         };
         Returns: Database["public"]["Tables"]["companies"]["Row"];
       };
-      accept_invitation: {
-        Args: { invitation_token: string };
-        Returns: Database["public"]["Tables"]["company_members"]["Row"];
-      };
       current_member_status: {
         Args: Record<string, never>;
         Returns: MemberStatus;
       };
       approve_member: {
         Args: { target_id: string };
+        Returns: Database["public"]["Tables"]["profiles"]["Row"];
+      };
+      set_member_status: {
+        Args: { target_id: string; new_status: MemberStatus };
         Returns: Database["public"]["Tables"]["profiles"]["Row"];
       };
     };

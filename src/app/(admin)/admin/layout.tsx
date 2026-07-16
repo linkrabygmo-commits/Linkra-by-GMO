@@ -19,7 +19,7 @@ export default function AdminLayout({
             href="/admin/members"
             className="text-sm text-muted-foreground hover:text-foreground"
           >
-            会員承認
+            会員管理
           </Link>
           <Link
             href="/admin/ads"
@@ -38,6 +38,12 @@ export default function AdminLayout({
             className="text-sm text-muted-foreground hover:text-foreground"
           >
             お知らせ管理
+          </Link>
+          <Link
+            href="/admin/companies/new"
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
+            プロフィールを設定
           </Link>
         </div>
         <Link

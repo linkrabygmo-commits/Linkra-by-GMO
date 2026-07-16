@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentUser, getMyMemberStatus } from "@/lib/auth/session";
 import { createUploadUrl, getPublicUrl } from "@/lib/storage/supabase-storage";
 
-const ALLOWED_SCOPES = ["avatars", "ads", "events", "announcements"] as const;
+const ALLOWED_SCOPES = ["avatars", "ads", "events", "announcements", "companies"] as const;
 type UploadScope = (typeof ALLOWED_SCOPES)[number];
 
 const ALLOWED_CONTENT_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "リクエストが不正です。" }, { status: 400 });
   }
 
-  if (scope === "ads" || scope === "events" || scope === "announcements") {
+  if (scope === "ads" || scope === "events" || scope === "announcements" || scope === "companies") {
     const memberStatus = await getMyMemberStatus();
     const requiredStatuses = scope === "ads" ? ["approved", "admin"] : ["admin"];
 

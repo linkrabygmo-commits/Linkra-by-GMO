@@ -1,11 +1,6 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import {
-  getCompanyById,
-  listMembers,
-  listInvitations,
-} from "@/features/companies/repository";
-import { InviteMemberForm } from "@/features/companies/components/invite-member-form";
+import { getCompanyById, listMembers } from "@/features/companies/repository";
 import { leaveCompanyAction } from "@/features/companies/actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -36,20 +31,20 @@ async function CompanyDetailContent({
     notFound();
   }
 
-  const [members, invitations] = await Promise.all([
-    listMembers(companyId),
-    company.currentUserRole === "owner" || company.currentUserRole === "admin"
-      ? listInvitations(companyId)
-      : Promise.resolve([]),
-  ]);
-
-  const isAdmin =
-    company.currentUserRole === "owner" || company.currentUserRole === "admin";
+  const members = await listMembers(companyId);
 
   return (
     <>
       <div className="flex items-start justify-between">
-        <div>
+        <div className="flex items-center gap-4">
+          {company.logoUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={company.logoUrl}
+              alt=""
+              className="size-14 rounded-lg border border-border object-cover"
+            />
+          )}
           <h1 className="text-2xl font-semibold text-foreground">
             {company.name}
           </h1>
@@ -93,36 +88,6 @@ async function CompanyDetailContent({
           ))}
         </ul>
       </section>
-
-      {isAdmin && (
-        <section className="flex flex-col gap-3">
-          <h2 className="text-lg font-medium text-foreground">メンバーを招待</h2>
-          <div className="max-w-sm">
-            <InviteMemberForm companyId={companyId} />
-          </div>
-
-          {invitations.length > 0 && (
-            <div className="mt-2 flex flex-col gap-2">
-              <h3 className="text-sm font-medium text-muted-foreground">
-                招待中
-              </h3>
-              <ul className="flex flex-col gap-2">
-                {invitations.map((invitation) => (
-                  <li
-                    key={invitation.id}
-                    className="flex items-center justify-between rounded-lg border border-border px-4 py-2 text-sm"
-                  >
-                    <span className="text-foreground">{invitation.email}</span>
-                    <Badge variant="outline">
-                      {invitation.role === "admin" ? "管理者" : "メンバー"}
-                    </Badge>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </section>
-      )}
     </>
   );
 }
