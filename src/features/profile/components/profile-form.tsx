@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ImageUploadField } from "@/components/storage/image-upload-field";
 
 type FieldName = keyof z.infer<typeof UpdateProfileSchema>;
 
@@ -62,18 +63,15 @@ export function ProfileForm({ profile }: { profile: ProfileDto }) {
           <Input id="industry" name="industry" defaultValue={profile.industry ?? ""} />
         </div>
 
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="avatarUrl">アバター画像URL(任意)</Label>
-          <Input
-            id="avatarUrl"
-            name="avatarUrl"
-            defaultValue={profile.avatarUrl ?? ""}
-            placeholder="https://..."
-          />
-          {fieldError("avatarUrl") && (
-            <p className="text-sm text-destructive">{fieldError("avatarUrl")}</p>
-          )}
-        </div>
+        <ImageUploadField
+          name="avatarUrl"
+          label="アバター画像(任意)"
+          scope="avatars"
+          defaultValue={profile.avatarUrl}
+        />
+        {fieldError("avatarUrl") && (
+          <p className="text-sm text-destructive">{fieldError("avatarUrl")}</p>
+        )}
       </section>
 
       <section className="flex flex-col gap-4">

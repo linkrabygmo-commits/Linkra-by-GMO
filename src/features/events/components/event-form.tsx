@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ImageUploadField } from "@/components/storage/image-upload-field";
 
 const AUDIENCE_LABELS = {
   public: "一般公開(ゲストも参加可)",
@@ -66,15 +67,12 @@ export function EventForm({ eventId, defaultValues }: EventFormProps) {
         />
       </div>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="coverImageUrl">カバー画像URL(任意)</Label>
-        <Input
-          id="coverImageUrl"
-          name="coverImageUrl"
-          placeholder="https://..."
-          defaultValue={defaultValues?.coverImageUrl ?? undefined}
-        />
-      </div>
+      <ImageUploadField
+        name="coverImageUrl"
+        label="カバー画像(任意)"
+        scope="events"
+        defaultValue={defaultValues?.coverImageUrl}
+      />
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="audience">公開範囲</Label>

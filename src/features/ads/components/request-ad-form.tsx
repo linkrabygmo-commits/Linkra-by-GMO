@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ImageUploadField } from "@/components/storage/image-upload-field";
 
 const PLACEMENT_LABELS = {
   top_hero: "トップページ(目立つ位置)",
@@ -54,10 +55,7 @@ export function RequestAdForm() {
         )}
       </div>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="imageUrl">画像URL(任意)</Label>
-        <Input id="imageUrl" name="imageUrl" placeholder="https://..." />
-      </div>
+      <ImageUploadField name="imageUrl" label="広告画像(任意)" scope="ads" />
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="placement">掲載場所</Label>

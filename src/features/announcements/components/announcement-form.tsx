@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ImageUploadField } from "@/components/storage/image-upload-field";
 
 const STATUS_LABELS = {
   draft: "下書き",
@@ -55,15 +56,12 @@ export function AnnouncementForm({ announcementId, defaultValues }: Announcement
         )}
       </div>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="coverImageUrl">カバー画像URL(任意)</Label>
-        <Input
-          id="coverImageUrl"
-          name="coverImageUrl"
-          placeholder="https://..."
-          defaultValue={defaultValues?.coverImageUrl ?? undefined}
-        />
-      </div>
+      <ImageUploadField
+        name="coverImageUrl"
+        label="カバー画像(任意)"
+        scope="announcements"
+        defaultValue={defaultValues?.coverImageUrl}
+      />
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="status">公開状態</Label>
