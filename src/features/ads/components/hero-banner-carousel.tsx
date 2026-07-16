@@ -114,6 +114,9 @@ export function HeroBannerCarousel({ banners }: { banners: HeroBanner[] }) {
 
 function BannerSlide({ banner }: { banner: HeroBanner }) {
   if (banner.image) {
+    // 広告画像自体に訴求文言が焼き込まれている前提の、自己完結型バナーとして
+    // 扱う。タイトルの文字を重ねて表示すると画像内の文字と衝突するため、
+    // 画像がある場合はタイトル/説明文をオーバーレイ表示しない。
     return (
       <div className="relative size-full">
         {/* eslint-disable-next-line @next/next/no-img-element -- 外部/未確定ドメインの広告画像のため next/image の最適化対象外 */}
@@ -122,11 +125,6 @@ function BannerSlide({ banner }: { banner: HeroBanner }) {
           alt={banner.title ?? "広告"}
           className="size-full object-cover"
         />
-        {banner.title && (
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-5">
-            <p className="text-sm font-medium text-white">{banner.title}</p>
-          </div>
-        )}
       </div>
     );
   }
