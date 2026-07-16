@@ -119,19 +119,23 @@ function BannerSlide({ banner }: { banner: HeroBanner }) {
         {/* eslint-disable-next-line @next/next/no-img-element -- 外部/未確定ドメインの広告画像のため next/image の最適化対象外 */}
         <img
           src={banner.image}
-          alt={banner.title}
+          alt={banner.title ?? "広告"}
           className="size-full object-cover"
         />
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-5">
-          <p className="text-sm font-medium text-white">{banner.title}</p>
-        </div>
+        {banner.title && (
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-5">
+            <p className="text-sm font-medium text-white">{banner.title}</p>
+          </div>
+        )}
       </div>
     );
   }
 
   return (
     <div className="flex size-full flex-col justify-center gap-2 bg-gradient-to-br from-slate-50 to-blue-50 p-7">
-      <p className="text-base font-semibold text-blue-700">{banner.title}</p>
+      {banner.title && (
+        <p className="text-base font-semibold text-blue-700">{banner.title}</p>
+      )}
       {banner.description && (
         <p className="text-sm leading-relaxed text-slate-600">
           {banner.description}

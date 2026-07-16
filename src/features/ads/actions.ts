@@ -6,11 +6,8 @@ import { AdSchema, type AdFormState } from "@/features/ads/schema";
 
 function readAdFormData(formData: FormData) {
   return {
-    title: formData.get("title"),
-    description: formData.get("description") || undefined,
     linkUrl: formData.get("linkUrl"),
-    imageUrl: formData.get("imageUrl") || undefined,
-    placement: formData.get("placement"),
+    imageUrl: formData.get("imageUrl"),
     startsAt: formData.get("startsAt") || undefined,
     endsAt: formData.get("endsAt") || undefined,
   };

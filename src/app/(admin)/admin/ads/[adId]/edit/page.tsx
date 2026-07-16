@@ -37,11 +37,8 @@ async function EditAdForm({ paramsPromise }: { paramsPromise: EditAdPageProps["p
     <AdForm
       adId={ad.id}
       defaultValues={{
-        title: ad.title,
-        description: ad.description,
         linkUrl: ad.linkUrl,
         imageUrl: ad.imageUrl,
-        placement: ad.placement,
         startsAt: ad.startsAt,
         endsAt: ad.endsAt,
       }}

@@ -163,7 +163,7 @@ export type Database = {
       advertisements: {
         Row: {
           id: string;
-          title: string;
+          title: string | null;
           description: string | null;
           image_url: string | null;
           video_url: string | null;
@@ -179,7 +179,7 @@ export type Database = {
         };
         Insert: {
           id?: string;
-          title: string;
+          title?: string | null;
           description?: string | null;
           image_url?: string | null;
           video_url?: string | null;
@@ -195,7 +195,7 @@ export type Database = {
         };
         Update: {
           id?: string;
-          title?: string;
+          title?: string | null;
           description?: string | null;
           image_url?: string | null;
           video_url?: string | null;

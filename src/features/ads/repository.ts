@@ -19,7 +19,7 @@ export async function listActiveAds(
   if (error) throw new Error(error.message);
 
   return (data ?? []).map((row) => ({
-    title: row.title,
+    title: row.title ?? undefined,
     description: row.description ?? undefined,
     image: row.image_url ?? undefined,
     href: row.link_url,
@@ -28,7 +28,7 @@ export async function listActiveAds(
 
 export interface AdDto {
   id: string;
-  title: string;
+  title: string | null;
   description: string | null;
   linkUrl: string;
   imageUrl: string | null;
@@ -44,7 +44,7 @@ const AD_COLUMNS =
 
 interface AdRow {
   id: string;
-  title: string;
+  title: string | null;
   description: string | null;
   link_url: string;
   image_url: string | null;
@@ -100,12 +100,11 @@ export async function getAdByIdForAdmin(adId: string): Promise<AdDto | null> {
   return toAdDto(data);
 }
 
+// 広告はタイトル/説明文/掲載場所を持たず、画像とリンク先URLのみで完結する
+// バナー広告として作成する(掲載場所は常にトップページのみのためハードコード)。
 export interface AdInput {
-  title: string;
-  description?: string;
   linkUrl: string;
-  imageUrl?: string;
-  placement: AdPlacement;
+  imageUrl: string;
   startsAt?: string;
   endsAt?: string;
 }
@@ -115,11 +114,9 @@ export async function createAd(input: AdInput): Promise<void> {
   const supabase = await createClient();
 
   const { error } = await supabase.from("advertisements").insert({
-    title: input.title,
-    description: input.description || null,
     link_url: input.linkUrl,
-    image_url: input.imageUrl || null,
-    placement: input.placement,
+    image_url: input.imageUrl,
+    placement: "top_hero",
     status: "approved",
     requested_by: admin.id,
     approved_by: admin.id,
@@ -137,11 +134,8 @@ export async function updateAd(adId: string, input: AdInput): Promise<void> {
   const { error } = await supabase
     .from("advertisements")
     .update({
-      title: input.title,
-      description: input.description || null,
       link_url: input.linkUrl,
-      image_url: input.imageUrl || null,
-      placement: input.placement,
+      image_url: input.imageUrl,
       starts_at: input.startsAt || null,
       ends_at: input.endsAt || null,
     })
