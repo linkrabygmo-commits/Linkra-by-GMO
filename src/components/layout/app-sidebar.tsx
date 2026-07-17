@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Building2, Home } from "lucide-react";
+import { Building2, CalendarDays, Home, Megaphone, Users } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -18,7 +18,10 @@ import { LinkraLogo } from "@/components/brand/linkra-logo";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "ホーム", icon: Home },
-  { href: "/companies", label: "企業一覧", icon: Building2 },
+  { href: "/members", label: "会員ディレクトリ", icon: Users },
+  { href: "/companies", label: "企業ディレクトリ", icon: Building2 },
+  { href: "/events", label: "イベント", icon: CalendarDays },
+  { href: "/announcements", label: "お知らせ", icon: Megaphone },
 ];
 
 function SidebarBrand() {
