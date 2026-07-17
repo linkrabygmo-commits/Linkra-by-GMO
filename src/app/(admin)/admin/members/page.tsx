@@ -1,26 +1,15 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
+import { requireAdmin } from "@/lib/auth/session";
 import { listAllMembers } from "@/features/admin/repository";
-import { updateMemberStatusAction, deleteMemberAction } from "@/features/admin/actions";
+import { deleteMemberAction } from "@/features/admin/actions";
+import { MemberStatusSelect } from "@/components/admin/member-status-select";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { ConfirmSubmitButton } from "@/components/ui/confirm-submit-button";
 
 export const metadata: Metadata = {
   title: "会員管理",
 };
-
-const STATUS_LABELS = {
-  registered: "登録済み",
-  approved: "承認済み",
-  admin: "管理者",
-} as const;
-
-const STATUS_BADGE_VARIANTS = {
-  registered: "secondary",
-  approved: "default",
-  admin: "outline",
-} as const;
 
 export default function AdminMembersPage() {
   return (
@@ -34,7 +23,7 @@ export default function AdminMembersPage() {
 }
 
 async function MembersList() {
-  const members = await listAllMembers();
+  const [currentAdmin, members] = await Promise.all([requireAdmin(), listAllMembers()]);
 
   if (members.length === 0) {
     return <p className="text-muted-foreground">会員がいません。</p>;
@@ -42,47 +31,43 @@ async function MembersList() {
 
   return (
     <ul className="flex flex-col gap-2">
-      {members.map((member) => (
-        <li
-          key={member.id}
-          className="flex flex-col gap-3 rounded-xl border border-border bg-card px-4 py-3 ring-1 ring-foreground/10 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
-        >
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <p className="text-sm font-medium text-foreground">{member.displayName}</p>
-              <Badge variant={STATUS_BADGE_VARIANTS[member.memberStatus]}>
-                {STATUS_LABELS[member.memberStatus]}
-              </Badge>
+      {members.map((member) => {
+        const isSelf = member.id === currentAdmin.id;
+
+        return (
+          <li
+            key={member.id}
+            className="flex flex-col gap-3 rounded-xl border border-border bg-card px-4 py-3 ring-1 ring-foreground/10 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+          >
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-medium text-foreground">{member.displayName}</p>
+                {member.memberStatus === "admin" && <Badge variant="outline">管理者</Badge>}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {member.companyName ?? "会社名未設定"}
+              </p>
             </div>
-            <p className="text-xs text-muted-foreground">
-              {member.companyName ?? "会社名未設定"}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2 sm:shrink-0">
-            {(Object.keys(STATUS_LABELS) as (keyof typeof STATUS_LABELS)[])
-              .filter((status) => status !== member.memberStatus)
-              .map((status) => (
-                <form
-                  key={status}
-                  action={updateMemberStatusAction.bind(null, member.id, status)}
+            <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
+              <MemberStatusSelect
+                memberId={member.id}
+                currentStatus={member.memberStatus}
+                disabled={isSelf}
+              />
+              <form action={deleteMemberAction.bind(null, member.id)}>
+                <ConfirmSubmitButton
+                  variant="destructive"
+                  size="sm"
+                  disabled={isSelf}
+                  confirmMessage={`${member.displayName} を削除します。この操作は取り消せません。よろしいですか？`}
                 >
-                  <Button type="submit" variant="outline" size="sm">
-                    {STATUS_LABELS[status]}にする
-                  </Button>
-                </form>
-              ))}
-            <form action={deleteMemberAction.bind(null, member.id)}>
-              <ConfirmSubmitButton
-                variant="destructive"
-                size="sm"
-                confirmMessage={`${member.displayName} を削除します。この操作は取り消せません。よろしいですか？`}
-              >
-                削除
-              </ConfirmSubmitButton>
-            </form>
-          </div>
-        </li>
-      ))}
+                  削除
+                </ConfirmSubmitButton>
+              </form>
+            </div>
+          </li>
+        );
+      })}
     </ul>
   );
 }

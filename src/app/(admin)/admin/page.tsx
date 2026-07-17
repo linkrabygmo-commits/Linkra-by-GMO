@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { Users } from "lucide-react";
-import { listPendingMembers } from "@/features/admin/repository";
+import { listAllMembers } from "@/features/admin/repository";
 import { Button } from "@/components/ui/button";
 
 export default function AdminOverviewPage() {
@@ -24,7 +24,7 @@ export default function AdminOverviewPage() {
 }
 
 async function OverviewContent() {
-  const pending = await listPendingMembers();
+  const members = await listAllMembers();
 
   return (
     <div className="flex items-center justify-between rounded-xl border border-border bg-card px-6 py-5 ring-1 ring-foreground/10">
@@ -33,12 +33,12 @@ async function OverviewContent() {
           <Users className="size-5" />
         </span>
         <div>
-          <p className="text-sm text-muted-foreground">承認待ちの会員</p>
-          <p className="text-2xl font-semibold text-foreground">{pending.length}人</p>
+          <p className="text-sm text-muted-foreground">会員数</p>
+          <p className="text-2xl font-semibold text-foreground">{members.length}人</p>
         </div>
       </div>
       <Button asChild>
-        <Link href="/admin/members">確認する</Link>
+        <Link href="/admin/members">会員管理へ</Link>
       </Button>
     </div>
   );
