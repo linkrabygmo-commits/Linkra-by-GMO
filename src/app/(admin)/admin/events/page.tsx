@@ -14,9 +14,9 @@ export const metadata: Metadata = {
 export default function AdminEventsPage() {
   return (
     <div className="flex flex-1 flex-col gap-6 px-6 py-8 sm:px-10 sm:py-10">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-semibold text-foreground">イベント管理</h1>
-        <Button asChild size="sm">
+        <Button asChild size="sm" className="w-fit">
           <Link href="/admin/events/new">新しいイベントを作成</Link>
         </Button>
       </div>
@@ -39,7 +39,7 @@ async function EventList() {
       {events.map((event) => (
         <li
           key={event.id}
-          className="flex items-start justify-between gap-4 rounded-xl border border-border bg-card px-4 py-3 ring-1 ring-foreground/10"
+          className="flex flex-col gap-3 rounded-xl border border-border bg-card px-4 py-3 ring-1 ring-foreground/10 sm:flex-row sm:items-start sm:justify-between sm:gap-4"
         >
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
@@ -59,7 +59,7 @@ async function EventList() {
               {event.location && ` ・ ${event.location}`}
             </p>
           </div>
-          <div className="flex shrink-0 gap-2">
+          <div className="flex flex-wrap gap-2 sm:shrink-0">
             <Button asChild variant="outline" size="sm">
               <Link href={`/admin/events/${event.id}`}>申込確認</Link>
             </Button>

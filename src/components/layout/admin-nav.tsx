@@ -17,7 +17,7 @@ export function AdminNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex items-center gap-1">
+    <nav className="flex w-full min-w-0 items-center gap-1 overflow-x-auto sm:w-auto">
       {ADMIN_NAV_ITEMS.map((item) => {
         const isActive =
           item.href === "/admin" ? pathname === item.href : pathname.startsWith(item.href);
@@ -27,7 +27,7 @@ export function AdminNav() {
             key={item.href}
             href={item.href}
             className={cn(
-              "rounded-full px-3 py-1.5 text-sm transition-colors",
+              "shrink-0 rounded-full px-3 py-1.5 text-sm whitespace-nowrap transition-colors",
               isActive
                 ? "bg-accent font-medium text-accent-foreground"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -45,12 +45,12 @@ export function AdminNav() {
 // そのフォールバック(アクティブ状態のハイライトなしの見た目)。
 export function AdminNavSkeleton() {
   return (
-    <nav className="flex items-center gap-1">
+    <nav className="flex w-full min-w-0 items-center gap-1 overflow-x-auto sm:w-auto">
       {ADMIN_NAV_ITEMS.map((item) => (
         <Link
           key={item.href}
           href={item.href}
-          className="rounded-full px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          className="shrink-0 rounded-full px-3 py-1.5 text-sm whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
           {item.label}
         </Link>

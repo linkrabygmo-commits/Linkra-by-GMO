@@ -60,7 +60,7 @@ async function ApplicationsList({ paramsPromise }: { paramsPromise: AdminEventPa
           {applications.map((application) => (
             <li
               key={`${application.type}-${application.id}`}
-              className="flex items-start justify-between gap-4 rounded-xl border border-border bg-card px-4 py-3 ring-1 ring-foreground/10"
+              className="flex flex-col gap-3 rounded-xl border border-border bg-card px-4 py-3 ring-1 ring-foreground/10 sm:flex-row sm:items-start sm:justify-between sm:gap-4"
             >
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
@@ -80,7 +80,7 @@ async function ApplicationsList({ paramsPromise }: { paramsPromise: AdminEventPa
                 )}
               </div>
               {application.status !== "cancelled" && (
-                <div className="flex shrink-0 gap-2">
+                <div className="flex flex-wrap gap-2 sm:shrink-0">
                   {application.status !== "confirmed" && (
                     <form
                       action={updateApplicationStatusAction.bind(

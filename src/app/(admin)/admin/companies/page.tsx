@@ -16,9 +16,9 @@ export const metadata: Metadata = {
 export default function AdminCompaniesPage() {
   return (
     <div className="flex flex-1 flex-col gap-6 px-6 py-8 sm:px-10 sm:py-10">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-semibold text-foreground">企業管理</h1>
-        <Button asChild size="sm">
+        <Button asChild size="sm" className="w-fit">
           <Link href="/admin/companies/new">新しく作成</Link>
         </Button>
       </div>
@@ -42,32 +42,34 @@ async function CompanyList() {
       {companies.map((company) => (
         <li
           key={company.id}
-          className="flex items-center gap-4 rounded-xl border border-border bg-card px-4 py-3 ring-1 ring-foreground/10"
+          className="flex flex-col gap-3 rounded-xl border border-border bg-card px-4 py-3 ring-1 ring-foreground/10 sm:flex-row sm:items-center"
         >
-          {company.logoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={company.logoUrl}
-              alt=""
-              className="size-10 shrink-0 rounded-full border border-border object-cover"
-            />
-          ) : (
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
-              <Building2 className="size-4" />
-            </span>
-          )}
-          <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <p className="text-sm font-medium text-foreground">{company.name}</p>
-              <Badge variant="secondary">{company.memberCount}人</Badge>
-            </div>
-            {company.description && (
-              <p className="line-clamp-1 text-sm text-muted-foreground">
-                {company.description}
-              </p>
+          <div className="flex min-w-0 flex-1 items-center gap-4">
+            {company.logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={company.logoUrl}
+                alt=""
+                className="size-10 shrink-0 rounded-full border border-border object-cover"
+              />
+            ) : (
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
+                <Building2 className="size-4" />
+              </span>
             )}
+            <div className="flex min-w-0 flex-1 flex-col gap-1">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-medium text-foreground">{company.name}</p>
+                <Badge variant="secondary">{company.memberCount}人</Badge>
+              </div>
+              {company.description && (
+                <p className="line-clamp-1 text-sm text-muted-foreground">
+                  {company.description}
+                </p>
+              )}
+            </div>
           </div>
-          <div className="flex shrink-0 gap-2">
+          <div className="flex flex-wrap gap-2 sm:shrink-0">
             <Button asChild variant="outline" size="sm">
               <Link href={`/companies/${company.id}`}>詳細</Link>
             </Button>

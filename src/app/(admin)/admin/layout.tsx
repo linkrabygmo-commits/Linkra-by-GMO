@@ -15,8 +15,8 @@ export default function AdminLayout({
 }) {
   return (
     <div className="app-shell flex min-h-full flex-1 flex-col bg-background text-foreground">
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-border bg-card/60 px-6 py-3 backdrop-blur-sm">
-        <div className="flex flex-wrap items-center gap-4">
+      <header className="flex flex-col gap-3 border-b border-border bg-card/60 px-6 py-3 backdrop-blur-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
           <div className="flex items-center gap-2">
             <LinkraLogo size="md" tone="dark" href="/dashboard" />
             <span className="text-sm font-semibold text-foreground">管理画面</span>

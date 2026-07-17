@@ -28,20 +28,22 @@ export async function AuthNav() {
   const memberStatus = await getMyMemberStatus();
 
   return (
-    <div className="flex items-center gap-2 sm:gap-3">
+    <div className="flex items-center gap-1.5 sm:gap-3">
       {memberStatus === "admin" && (
         <Link
           href="/admin"
-          className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-4 py-2 text-sm text-white/90 transition-colors hover:border-white/40 hover:text-white"
+          className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-2.5 py-1.5 text-xs whitespace-nowrap text-white/90 transition-colors hover:border-white/40 hover:text-white sm:px-4 sm:py-2 sm:text-sm"
         >
-          管理者ページへ
+          <span className="sm:hidden">管理者</span>
+          <span className="hidden sm:inline">管理者ページへ</span>
         </Link>
       )}
       <Link
         href="/dashboard"
-        className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-4 py-2 text-sm text-white/90 transition-colors hover:border-white/40 hover:text-white"
+        className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-2.5 py-1.5 text-xs whitespace-nowrap text-white/90 transition-colors hover:border-white/40 hover:text-white sm:px-4 sm:py-2 sm:text-sm"
       >
-        ダッシュボードへ
+        <span className="sm:hidden">ダッシュボード</span>
+        <span className="hidden sm:inline">ダッシュボードへ</span>
       </Link>
     </div>
   );

@@ -45,7 +45,7 @@ async function MembersList() {
       {members.map((member) => (
         <li
           key={member.id}
-          className="flex items-center justify-between gap-4 rounded-xl border border-border bg-card px-4 py-3 ring-1 ring-foreground/10"
+          className="flex flex-col gap-3 rounded-xl border border-border bg-card px-4 py-3 ring-1 ring-foreground/10 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
         >
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
@@ -58,7 +58,7 @@ async function MembersList() {
               {member.companyName ?? "会社名未設定"}
             </p>
           </div>
-          <div className="flex shrink-0 flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 sm:shrink-0">
             {(Object.keys(STATUS_LABELS) as (keyof typeof STATUS_LABELS)[])
               .filter((status) => status !== member.memberStatus)
               .map((status) => (
