@@ -95,7 +95,7 @@ export default function TopPage() {
             <div className="order-first flex justify-center lg:order-none lg:justify-end">
               <Suspense
                 fallback={
-                  <div className="aspect-[4/3] w-full max-w-96 animate-pulse rounded-2xl bg-white/5 sm:w-[26rem] lg:w-[29rem]" />
+                  <div className="aspect-[4/3] w-full max-w-[26rem] animate-pulse rounded-2xl bg-white/5 sm:max-w-none sm:w-[32rem] lg:w-[36rem]" />
                 }
               >
                 <HeroBanners />

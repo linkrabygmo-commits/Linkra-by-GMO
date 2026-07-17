@@ -36,7 +36,7 @@ export function HeroBannerCarousel({ banners }: { banners: HeroBanner[] }) {
 
   return (
     <div
-      className="w-full max-w-96 sm:w-[26rem] lg:w-[29rem]"
+      className="w-full max-w-[26rem] sm:max-w-none sm:w-[32rem] lg:w-[36rem]"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       role="region"
