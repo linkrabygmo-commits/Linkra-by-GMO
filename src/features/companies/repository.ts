@@ -28,18 +28,37 @@ export interface MemberDto {
 export async function listCompanies(): Promise<CompanyDto[]> {
   const supabase = await createClient();
 
-  const [{ data: companies, error: companiesError }, { data: members, error: membersError }] =
-    await Promise.all([
-      supabase.from("companies").select("*").order("created_at", { ascending: false }),
-      supabase.from("company_members").select("company_id"),
-    ]);
+  // 会社の「メンバー」は、company_members(会社作成時のオーナー登録等)と、
+  // プロフィール画面で会社名を選択しただけのプロフィール(member_directory.
+  // company_id)の両方から成る。人数カウントは両方を合算(ユーザーIDで重複排除)
+  // する必要がある。
+  const [
+    { data: companies, error: companiesError },
+    { data: members, error: membersError },
+    { data: linkedProfiles, error: profilesError },
+  ] = await Promise.all([
+    supabase.from("companies").select("*").order("created_at", { ascending: false }),
+    supabase.from("company_members").select("company_id, user_id"),
+    supabase.from("member_directory").select("id, company_id").not("company_id", "is", null),
+  ]);
 
   if (companiesError) throw new Error(companiesError.message);
   if (membersError) throw new Error(membersError.message);
+  if (profilesError) throw new Error(profilesError.message);
 
-  const memberCounts = new Map<string, number>();
+  const memberIdsByCompany = new Map<string, Set<string>>();
   for (const row of members ?? []) {
-    memberCounts.set(row.company_id, (memberCounts.get(row.company_id) ?? 0) + 1);
+    if (!memberIdsByCompany.has(row.company_id)) {
+      memberIdsByCompany.set(row.company_id, new Set());
+    }
+    memberIdsByCompany.get(row.company_id)!.add(row.user_id);
+  }
+  for (const row of linkedProfiles ?? []) {
+    if (!row.company_id) continue;
+    if (!memberIdsByCompany.has(row.company_id)) {
+      memberIdsByCompany.set(row.company_id, new Set());
+    }
+    memberIdsByCompany.get(row.company_id)!.add(row.id);
   }
 
   return (companies ?? []).map((row) => ({
@@ -47,7 +66,7 @@ export async function listCompanies(): Promise<CompanyDto[]> {
     name: row.name,
     description: row.description,
     logoUrl: row.logo_url,
-    memberCount: memberCounts.get(row.id) ?? 0,
+    memberCount: memberIdsByCompany.get(row.id)?.size ?? 0,
     createdAt: row.created_at,
   }));
 }
@@ -134,39 +153,54 @@ export async function getCompanyById(
 export async function listMembers(companyId: string): Promise<MemberDto[]> {
   const supabase = await createClient();
 
-  const { data: members, error: membersError } = await supabase
-    .from("company_members")
-    .select("user_id, role, created_at")
-    .eq("company_id", companyId)
-    .order("created_at", { ascending: true });
+  // company_members(会社作成時のオーナー登録等)と、プロフィール画面で
+  // この会社を選択しただけのプロフィール(company_id一致)の両方を合わせて
+  // 「この会社のメンバー」として扱う。役職はcompany_membersにあればそれを
+  // 使い、無ければ一般の「メンバー」として扱う。
+  const [
+    { data: companyMembers, error: membersError },
+    { data: linkedProfiles, error: linkedProfilesError },
+  ] = await Promise.all([
+    supabase
+      .from("company_members")
+      .select("user_id, role, created_at")
+      .eq("company_id", companyId),
+    supabase.from("member_directory").select("id, created_at").eq("company_id", companyId),
+  ]);
 
   if (membersError) throw new Error(membersError.message);
-  if (!members || members.length === 0) return [];
+  if (linkedProfilesError) throw new Error(linkedProfilesError.message);
+
+  const roleByUserId = new Map((companyMembers ?? []).map((m) => [m.user_id, m.role]));
+  const joinedAtByUserId = new Map(
+    (companyMembers ?? []).map((m) => [m.user_id, m.created_at]),
+  );
+
+  const userIds = new Set<string>([
+    ...(companyMembers ?? []).map((m) => m.user_id),
+    ...(linkedProfiles ?? []).map((p) => p.id),
+  ]);
+
+  if (userIds.size === 0) return [];
 
   // profilesを直接SELECTすると"Authenticated users can view profiles"の全カラム公開
   // ポリシーに依存してしまうため、マスキング済みのmember_directoryビュー経由で取得する。
   const { data: profiles, error: profilesError } = await supabase
     .from("member_directory")
-    .select("id, display_name, avatar_url")
-    .in(
-      "id",
-      members.map((m) => m.user_id),
-    );
+    .select("id, display_name, avatar_url, created_at")
+    .in("id", Array.from(userIds));
 
   if (profilesError) throw new Error(profilesError.message);
 
-  const profileById = new Map((profiles ?? []).map((p) => [p.id, p]));
-
-  return members.map((m) => {
-    const profile = profileById.get(m.user_id);
-    return {
-      userId: m.user_id,
-      displayName: profile?.display_name ?? "(不明なユーザー)",
-      avatarUrl: profile?.avatar_url ?? null,
-      role: m.role,
-      joinedAt: m.created_at,
-    };
-  });
+  return (profiles ?? [])
+    .map((profile) => ({
+      userId: profile.id,
+      displayName: profile.display_name,
+      avatarUrl: profile.avatar_url,
+      role: roleByUserId.get(profile.id) ?? "member",
+      joinedAt: joinedAtByUserId.get(profile.id) ?? profile.created_at,
+    }))
+    .sort((a, b) => a.joinedAt.localeCompare(b.joinedAt));
 }
 
 interface CreateCompanyInput {
