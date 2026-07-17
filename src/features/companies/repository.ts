@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
-import { verifySession, requireAdmin } from "@/lib/auth/session";
+import { verifySession, requireAdmin, getCurrentUser } from "@/lib/auth/session";
 import type { CompanyRole } from "@/types/database";
 
 export interface CompanyDto {
@@ -52,6 +52,10 @@ export async function listCompanies(): Promise<CompanyDto[]> {
   }));
 }
 
+export async function listNewCompanies(limit: number): Promise<CompanyDto[]> {
+  return (await listCompanies()).slice(0, limit);
+}
+
 export interface MyCompanyDto {
   id: string;
   name: string;
@@ -94,7 +98,7 @@ export async function listMyCompanies(): Promise<MyCompanyDto[]> {
 export async function getCompanyById(
   companyId: string,
 ): Promise<CompanyDetailDto | null> {
-  const user = await verifySession();
+  const user = await getCurrentUser();
   const supabase = await createClient();
 
   const { data: company, error: companyError } = await supabase
@@ -114,7 +118,7 @@ export async function getCompanyById(
   if (membersError) throw new Error(membersError.message);
 
   const currentUserRole =
-    (members ?? []).find((m) => m.user_id === user.id)?.role ?? null;
+    (members ?? []).find((m) => m.user_id === user?.id)?.role ?? null;
 
   return {
     id: company.id,

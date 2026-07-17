@@ -22,6 +22,12 @@ export default function PublicLayout({
               会員ディレクトリ
             </Link>
             <Link
+              href="/companies"
+              className="hidden text-sm whitespace-nowrap text-white/70 transition-colors hover:text-white sm:inline"
+            >
+              企業ディレクトリ
+            </Link>
+            <Link
               href="/events"
               className="hidden text-sm whitespace-nowrap text-white/70 transition-colors hover:text-white sm:inline"
             >

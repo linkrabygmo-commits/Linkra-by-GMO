@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { ArrowRight, Building2, Handshake, Lock, Sparkles } from "lucide-react";
 import { listNewMembers } from "@/features/members/repository";
 import { MemberCard } from "@/features/members/components/member-card";
+import { listNewCompanies } from "@/features/companies/repository";
 import { listActiveAds } from "@/features/ads/repository";
 import { HeroBannerCarousel } from "@/features/ads/components/hero-banner-carousel";
 import { listEvents } from "@/features/events/repository";
@@ -137,6 +138,20 @@ export default function TopPage() {
       <section className="border-t border-border px-6 py-20">
         <div className="mx-auto flex max-w-4xl flex-col gap-6">
           <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-foreground">新着企業</h2>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/companies">企業ディレクトリを見る</Link>
+            </Button>
+          </div>
+          <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
+            <NewCompanies />
+          </Suspense>
+        </div>
+      </section>
+
+      <section className="border-t border-border px-6 py-20">
+        <div className="mx-auto flex max-w-4xl flex-col gap-6">
+          <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-foreground">イベント</h2>
             <Button asChild variant="outline" size="sm">
               <Link href="/events">イベント一覧を見る</Link>
@@ -233,6 +248,43 @@ async function LatestAnnouncements() {
         </li>
       ))}
     </ul>
+  );
+}
+
+async function NewCompanies() {
+  const companies = await listNewCompanies(6);
+
+  if (companies.length === 0) {
+    return <p className="text-muted-foreground">まだ会社が登録されていません。</p>;
+  }
+
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {companies.map((company) => (
+        <Link
+          key={company.id}
+          href={`/companies/${company.id}`}
+          className="flex items-center gap-3 rounded-lg border border-border p-4 transition-colors hover:border-foreground/30"
+        >
+          {company.logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={company.logoUrl}
+              alt=""
+              className="size-10 shrink-0 rounded-full border border-border object-cover"
+            />
+          ) : (
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
+              <Building2 className="size-4" />
+            </span>
+          )}
+          <div className="flex min-w-0 flex-col gap-0.5">
+            <p className="truncate text-sm font-medium text-foreground">{company.name}</p>
+            <p className="text-xs text-muted-foreground">{company.memberCount}人</p>
+          </div>
+        </Link>
+      ))}
+    </div>
   );
 }
 
