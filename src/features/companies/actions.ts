@@ -36,6 +36,24 @@ export async function createCompanyAction(
   redirect(`/companies/${company.id}`);
 }
 
+export async function createCompanyForProfileAction(
+  name: string,
+): Promise<
+  | { status: "success"; company: repository.CompanyOptionDto }
+  | { status: "error"; message: string }
+> {
+  try {
+    const company = await repository.createCompanyForMember(name);
+    revalidatePath("/profile");
+    return { status: "success", company };
+  } catch (error) {
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "会社の登録に失敗しました。",
+    };
+  }
+}
+
 export async function leaveCompanyAction(companyId: string) {
   await repository.leaveCompany(companyId);
   revalidatePath(`/companies/${companyId}`);

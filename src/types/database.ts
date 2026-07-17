@@ -28,6 +28,7 @@ export type Database = {
           looking_for: string | null;
           industry: string | null;
           company_name: string | null;
+          company_id: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -45,6 +46,7 @@ export type Database = {
           looking_for?: string | null;
           industry?: string | null;
           company_name?: string | null;
+          company_id?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -62,6 +64,7 @@ export type Database = {
           looking_for?: string | null;
           industry?: string | null;
           company_name?: string | null;
+          company_id?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -354,6 +357,7 @@ export type Database = {
           display_name: string;
           avatar_url: string | null;
           company_name: string | null;
+          company_id: string | null;
           title: string | null;
           industry: string | null;
           member_status: MemberStatus;

@@ -19,7 +19,7 @@ export const UpdateProfileSchema = z.object({
     .trim(),
   title: optionalText(100, "肩書き"),
   avatarUrl: optionalUrl,
-  companyName: optionalText(100, "会社名"),
+  companyId: z.union([z.uuid(), z.literal("")]).optional(),
   industry: optionalText(50, "業種"),
   phone: optionalText(30, "電話番号"),
   address: optionalText(200, "住所"),

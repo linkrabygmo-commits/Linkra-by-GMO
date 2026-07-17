@@ -5,6 +5,8 @@ import * as z from "zod";
 import { updateProfileAction } from "@/features/profile/actions";
 import type { ProfileDto } from "@/features/profile/repository";
 import type { UpdateProfileSchema } from "@/features/profile/schema";
+import { CompanySelectField } from "@/features/profile/components/company-select-field";
+import type { CompanyOptionDto } from "@/features/companies/repository";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,7 +16,12 @@ import { ImageUploadField } from "@/components/storage/image-upload-field";
 
 type FieldName = keyof z.infer<typeof UpdateProfileSchema>;
 
-export function ProfileForm({ profile }: { profile: ProfileDto }) {
+interface ProfileFormProps {
+  profile: ProfileDto;
+  companies: CompanyOptionDto[];
+}
+
+export function ProfileForm({ profile, companies }: ProfileFormProps) {
   const [state, action, pending] = useActionState(updateProfileAction, undefined);
 
   const fieldError = (name: FieldName) =>
@@ -48,10 +55,10 @@ export function ProfileForm({ profile }: { profile: ProfileDto }) {
           )}
         </div>
 
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="companyName">会社名(任意)</Label>
-          <Input id="companyName" name="companyName" defaultValue={profile.companyName ?? ""} />
-        </div>
+        <CompanySelectField
+          initialCompanies={companies}
+          defaultCompanyId={profile.companyId}
+        />
 
         <div className="flex flex-col gap-2">
           <Label htmlFor="title">肩書き(任意)</Label>

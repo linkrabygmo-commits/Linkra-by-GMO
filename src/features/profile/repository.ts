@@ -11,6 +11,7 @@ export interface ProfileDto {
   title: string | null;
   email: string;
   memberStatus: MemberStatus;
+  companyId: string | null;
   companyName: string | null;
   industry: string | null;
   phone: string | null;
@@ -30,12 +31,24 @@ export async function getMyProfile(): Promise<ProfileDto> {
   const { data, error } = await supabase
     .from("profiles")
     .select(
-      "id, display_name, avatar_url, title, member_status, company_name, industry, phone, address, bio, can_offer, looking_for, sns_links",
+      "id, display_name, avatar_url, title, member_status, company_name, company_id, industry, phone, address, bio, can_offer, looking_for, sns_links",
     )
     .eq("id", user.id)
     .single();
 
   if (error) throw new Error(error.message);
+
+  let linkedCompanyName: string | null = null;
+  if (data.company_id) {
+    const { data: company, error: companyError } = await supabase
+      .from("companies")
+      .select("name")
+      .eq("id", data.company_id)
+      .maybeSingle();
+
+    if (companyError) throw new Error(companyError.message);
+    linkedCompanyName = company?.name ?? null;
+  }
 
   const snsLinks = data.sns_links ?? {};
 
@@ -46,7 +59,8 @@ export async function getMyProfile(): Promise<ProfileDto> {
     title: data.title,
     email: user.email ?? "",
     memberStatus: data.member_status,
-    companyName: data.company_name,
+    companyId: data.company_id,
+    companyName: linkedCompanyName ?? data.company_name,
     industry: data.industry,
     phone: data.phone,
     address: data.address,
@@ -63,7 +77,7 @@ interface UpdateProfileInput {
   displayName: string;
   title?: string;
   avatarUrl?: string;
-  companyName?: string;
+  companyId?: string;
   industry?: string;
   phone?: string;
   address?: string;
@@ -90,7 +104,7 @@ export async function updateMyProfile(input: UpdateProfileInput) {
       display_name: input.displayName,
       title: input.title || null,
       avatar_url: input.avatarUrl || null,
-      company_name: input.companyName || null,
+      company_id: input.companyId || null,
       industry: input.industry || null,
       phone: input.phone || null,
       address: input.address || null,

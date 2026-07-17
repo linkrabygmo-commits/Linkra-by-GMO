@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { getMyProfile } from "@/features/profile/repository";
+import { listCompanyOptions } from "@/features/companies/repository";
 import { ProfileForm } from "@/features/profile/components/profile-form";
 
 export const metadata: Metadata = {
@@ -21,6 +22,6 @@ export default function ProfilePage() {
 }
 
 async function ProfileFormContent() {
-  const profile = await getMyProfile();
-  return <ProfileForm profile={profile} />;
+  const [profile, companies] = await Promise.all([getMyProfile(), listCompanyOptions()]);
+  return <ProfileForm profile={profile} companies={companies} />;
 }

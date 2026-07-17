@@ -212,6 +212,60 @@ export async function deleteCompany(companyId: string): Promise<void> {
   if (error) throw new Error(error.message);
 }
 
+export interface CompanyOptionDto {
+  id: string;
+  name: string;
+}
+
+export async function listCompanyOptions(): Promise<CompanyOptionDto[]> {
+  await verifySession();
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("companies")
+    .select("id, name")
+    .order("name", { ascending: true });
+
+  if (error) throw new Error(error.message);
+
+  return data ?? [];
+}
+
+// プロフィール画面から、承認待ちの会員も含め誰でも会社を新規登録できるように
+// する(会社作成自体は即時反映。重複防止のため事前に既存の会社名と大文字小文字
+// を無視して突き合わせる。会社作成のRPC自体はcreateCompany()と同じものを使うが、
+// 管理者専用の入口とは別に、requireAdmin()を課さないこちらの入口を用意する)。
+export async function createCompanyForMember(name: string): Promise<CompanyOptionDto> {
+  await verifySession();
+
+  const trimmedName = name.trim();
+  if (!trimmedName) throw new Error("会社名を入力してください。");
+
+  const supabase = await createClient();
+
+  const { data: existingCompanies, error: existingError } = await supabase
+    .from("companies")
+    .select("id, name");
+
+  if (existingError) throw new Error(existingError.message);
+
+  const duplicate = (existingCompanies ?? []).find(
+    (company) => company.name.trim().toLowerCase() === trimmedName.toLowerCase(),
+  );
+
+  if (duplicate) {
+    throw new Error(`「${duplicate.name}」は既に登録されています。一覧から選択してください。`);
+  }
+
+  const { data, error } = await supabase.rpc("create_company", {
+    company_name: trimmedName,
+  });
+
+  if (error) throw new Error(error.message);
+
+  return { id: data.id, name: data.name };
+}
+
 export async function leaveCompany(companyId: string): Promise<void> {
   const user = await verifySession();
   const supabase = await createClient();
