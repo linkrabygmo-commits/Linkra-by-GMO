@@ -29,6 +29,7 @@ export type Database = {
           industry: string | null;
           company_name: string | null;
           company_id: string | null;
+          onboarded: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -47,6 +48,7 @@ export type Database = {
           industry?: string | null;
           company_name?: string | null;
           company_id?: string | null;
+          onboarded?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -65,6 +67,7 @@ export type Database = {
           industry?: string | null;
           company_name?: string | null;
           company_id?: string | null;
+          onboarded?: boolean;
           created_at?: string;
           updated_at?: string;
         };

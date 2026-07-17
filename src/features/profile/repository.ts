@@ -11,6 +11,7 @@ export interface ProfileDto {
   title: string | null;
   email: string;
   memberStatus: MemberStatus;
+  onboarded: boolean;
   companyId: string | null;
   companyName: string | null;
   industry: string | null;
@@ -31,7 +32,7 @@ export async function getMyProfile(): Promise<ProfileDto> {
   const { data, error } = await supabase
     .from("profiles")
     .select(
-      "id, display_name, avatar_url, title, member_status, company_name, company_id, industry, phone, address, bio, can_offer, looking_for, sns_links",
+      "id, display_name, avatar_url, title, member_status, onboarded, company_name, company_id, industry, phone, address, bio, can_offer, looking_for, sns_links",
     )
     .eq("id", user.id)
     .single();
@@ -59,6 +60,7 @@ export async function getMyProfile(): Promise<ProfileDto> {
     title: data.title,
     email: user.email ?? "",
     memberStatus: data.member_status,
+    onboarded: data.onboarded,
     companyId: data.company_id,
     companyName: linkedCompanyName ?? data.company_name,
     industry: data.industry,
@@ -89,7 +91,9 @@ interface UpdateProfileInput {
   linkedinUrl?: string;
 }
 
-export async function updateMyProfile(input: UpdateProfileInput) {
+export async function updateMyProfile(
+  input: UpdateProfileInput,
+): Promise<{ wasFirstSave: boolean }> {
   const user = await verifySession();
   const supabase = await createClient();
 
@@ -97,6 +101,16 @@ export async function updateMyProfile(input: UpdateProfileInput) {
   if (input.twitterUrl) snsLinks.twitter = input.twitterUrl;
   if (input.facebookUrl) snsLinks.facebook = input.facebookUrl;
   if (input.linkedinUrl) snsLinks.linkedin = input.linkedinUrl;
+
+  // 会員登録後、初めてプロフィールを保存したタイミングを検知するため、
+  // 更新前のonboarded状態を先に見ておく。
+  const { data: before, error: beforeError } = await supabase
+    .from("profiles")
+    .select("onboarded")
+    .eq("id", user.id)
+    .single();
+
+  if (beforeError) throw new Error(beforeError.message);
 
   const { error } = await supabase
     .from("profiles")
@@ -112,8 +126,26 @@ export async function updateMyProfile(input: UpdateProfileInput) {
       can_offer: input.canOffer || null,
       looking_for: input.lookingFor || null,
       sns_links: Object.keys(snsLinks).length > 0 ? snsLinks : null,
+      onboarded: true,
     })
     .eq("id", user.id);
 
   if (error) throw new Error(error.message);
+
+  return { wasFirstSave: !before.onboarded };
+}
+
+export async function getMyOnboardedStatus(): Promise<boolean> {
+  const user = await verifySession();
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("onboarded")
+    .eq("id", user.id)
+    .single();
+
+  if (error) throw new Error(error.message);
+
+  return data.onboarded;
 }

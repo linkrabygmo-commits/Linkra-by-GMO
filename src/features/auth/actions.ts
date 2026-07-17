@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import * as repository from "@/features/auth/repository";
+import { getMyOnboardedStatus } from "@/features/profile/repository";
 import {
   LoginSchema,
   SignUpSchema,
@@ -35,12 +36,11 @@ export async function signUpAction(
       validatedFields.data,
     );
 
-    if (needsEmailConfirmation) {
-      return {
-        status: "success",
-        message:
-          "確認メールを送信しました。メール内のリンクからアカウントを有効化してください。",
-      };
+    // メール確認が無効な場合はsignUp直後にセッションが張られるが、登録後は
+    // 必ずログイン画面から会員自身にログインしてもらう導線に統一するため、
+    // 一旦サインアウトしておく。
+    if (!needsEmailConfirmation) {
+      await repository.signOut();
     }
   } catch (error) {
     return {
@@ -50,7 +50,7 @@ export async function signUpAction(
     };
   }
 
-  redirect("/dashboard");
+  redirect("/login?registered=1");
 }
 
 export async function loginAction(
@@ -78,7 +78,10 @@ export async function loginAction(
     };
   }
 
-  redirect("/dashboard");
+  // 初回ログイン(まだプロフィール未設定)ならプロフィール設定画面へ、
+  // 設定済みならそのままダッシュボードへ。
+  const onboarded = await getMyOnboardedStatus();
+  redirect(onboarded ? "/dashboard" : "/profile");
 }
 
 export async function logoutAction() {

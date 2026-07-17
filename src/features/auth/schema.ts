@@ -24,7 +24,6 @@ export type SignUpFormState =
       };
       message?: string;
     }
-  | { status: "success"; message: string }
   | undefined;
 
 export const LoginSchema = z.object({

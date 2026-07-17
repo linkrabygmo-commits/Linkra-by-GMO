@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import * as repository from "@/features/profile/repository";
 import {
@@ -39,8 +40,11 @@ export async function updateProfileAction(
     };
   }
 
+  let wasFirstSave = false;
+
   try {
-    await repository.updateMyProfile(validatedFields.data);
+    const result = await repository.updateMyProfile(validatedFields.data);
+    wasFirstSave = result.wasFirstSave;
   } catch (error) {
     return {
       status: "error",
@@ -50,6 +54,12 @@ export async function updateProfileAction(
 
   revalidatePath("/profile");
   revalidatePath("/dashboard");
+
+  // 会員登録後、初めてのプロフィール保存はダッシュボードに進む。
+  // 2回目以降の編集はこのままこの画面に留まり、保存メッセージだけ出す。
+  if (wasFirstSave) {
+    redirect("/dashboard");
+  }
 
   return { status: "success", message: "プロフィールを更新しました。" };
 }

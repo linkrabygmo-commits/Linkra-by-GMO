@@ -9,14 +9,6 @@ import { Label } from "@/components/ui/label";
 export function SignUpForm() {
   const [state, action, pending] = useActionState(signUpAction, undefined);
 
-  if (state?.status === "success") {
-    return (
-      <p className="text-sm text-foreground" role="status">
-        {state.message}
-      </p>
-    );
-  }
-
   return (
     <form action={action} className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">

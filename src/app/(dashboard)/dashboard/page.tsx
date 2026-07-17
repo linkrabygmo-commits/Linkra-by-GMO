@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Building2 } from "lucide-react";
 import { getMyProfile } from "@/features/profile/repository";
 import { listMyCompanies } from "@/features/companies/repository";
@@ -22,6 +23,12 @@ async function DashboardHomeContent() {
     getMyProfile(),
     listMyCompanies(),
   ]);
+
+  // ログイン経路以外(既存セッションでの直接アクセス等)でも、プロフィール
+  // 未設定のまま来た場合は必ず設定画面に誘導する。
+  if (!profile.onboarded) {
+    redirect("/profile");
+  }
 
   return (
     <>
