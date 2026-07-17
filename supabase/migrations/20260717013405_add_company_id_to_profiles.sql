@@ -2,15 +2,17 @@
 -- 従来の自由入力company_nameは既存データ保持のため残し、company_id未設定の
 -- プロフィールに対するフォールバック表示として使う(coalesce)。
 alter table public.profiles
-  add column company_id uuid references public.companies (id) on delete set null;
+  add column if not exists company_id uuid references public.companies (id) on delete set null;
 
+-- CREATE OR REPLACE VIEWは既存の列の並び順・名前を変更できず、新しい列は
+-- 必ず末尾に追加する必要があるため、company_idは最後に置く
+-- (既存列の間に挿入すると、以降の列名がずれたとみなされエラーになる)。
 create or replace view public.member_directory as
 select
   p.id,
   p.display_name,
   p.avatar_url,
   coalesce(c.name, p.company_name) as company_name,
-  p.company_id,
   p.title,
   p.industry,
   p.member_status,
@@ -26,7 +28,8 @@ select
     then p.can_offer else null end as can_offer,
   case when p.id = auth.uid() or public.current_member_status() in ('approved', 'admin')
     then p.looking_for else null end as looking_for,
-  p.created_at
+  p.created_at,
+  p.company_id
 from public.profiles p
 left join public.companies c on c.id = p.company_id;
 
