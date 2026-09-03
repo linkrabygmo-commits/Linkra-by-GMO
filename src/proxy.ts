@@ -11,6 +11,7 @@ const PUBLIC_PATHS = [
   "/companies",
   "/events",
   "/announcements",
+  "/api/cron/keep-alive",
 ];
 
 // "/members/[memberId]" のような動的セグメント配下も公開パスとして扱うためのprefix
