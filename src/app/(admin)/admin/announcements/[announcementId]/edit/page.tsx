@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getAnnouncementByIdForAdmin } from "@/features/announcements/repository";
 import { AnnouncementForm } from "@/features/announcements/components/announcement-form";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { FormSkeleton } from "@/components/layout/detail-skeletons";
 
 export const metadata: Metadata = {
   title: "お知らせを編集",
@@ -16,7 +17,7 @@ interface EditAnnouncementPageProps {
 export default function EditAnnouncementPage({ params }: EditAnnouncementPageProps) {
   return (
     <div className="flex flex-1 flex-col gap-6 px-6 py-8 sm:px-10 sm:py-10">
-      <Suspense fallback={null}>
+      <Suspense fallback={<FormSkeleton breadcrumbSegments={4} fields={4} />}>
         <EditAnnouncementForm paramsPromise={params} />
       </Suspense>
     </div>

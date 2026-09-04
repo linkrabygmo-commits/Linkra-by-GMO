@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getMyProfile } from "@/features/profile/repository";
 import { listCompanyOptions } from "@/features/companies/repository";
 import { ProfileForm } from "@/features/profile/components/profile-form";
+import { FormSkeleton } from "@/components/layout/detail-skeletons";
 
 export const metadata: Metadata = {
   title: "プロフィール",
@@ -13,7 +14,7 @@ export default function ProfilePage() {
     <div className="flex flex-1 flex-col gap-6 px-6 py-8 sm:px-10 sm:py-10">
       <h1 className="text-2xl font-semibold text-foreground">プロフィール</h1>
       <div className="max-w-md">
-        <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
+        <Suspense fallback={<FormSkeleton fields={6} />}>
           <ProfileFormContent />
         </Suspense>
       </div>

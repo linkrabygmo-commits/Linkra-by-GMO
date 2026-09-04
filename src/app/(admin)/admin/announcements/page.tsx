@@ -6,6 +6,7 @@ import { deleteAnnouncementAction } from "@/features/announcements/actions";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ConfirmSubmitButton } from "@/components/ui/confirm-submit-button";
 
 export const metadata: Metadata = {
   title: "お知らせ管理",
@@ -60,9 +61,13 @@ async function AnnouncementList() {
               <Link href={`/admin/announcements/${announcement.id}/edit`}>編集</Link>
             </Button>
             <form action={deleteAnnouncementAction.bind(null, announcement.id)}>
-              <Button type="submit" variant="outline" size="sm">
+              <ConfirmSubmitButton
+                variant="destructive"
+                size="sm"
+                confirmMessage={`「${announcement.title}」を削除します。この操作は取り消せません。よろしいですか？`}
+              >
                 削除
-              </Button>
+              </ConfirmSubmitButton>
             </form>
           </div>
         </li>

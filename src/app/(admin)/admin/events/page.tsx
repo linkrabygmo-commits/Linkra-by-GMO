@@ -7,6 +7,7 @@ import { deleteEventAction } from "@/features/events/actions";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ConfirmSubmitButton } from "@/components/ui/confirm-submit-button";
 
 export const metadata: Metadata = {
   title: "イベント管理",
@@ -69,9 +70,13 @@ async function EventList() {
               <Link href={`/admin/events/${event.id}/edit`}>編集</Link>
             </Button>
             <form action={deleteEventAction.bind(null, event.id)}>
-              <Button type="submit" variant="outline" size="sm">
+              <ConfirmSubmitButton
+                variant="destructive"
+                size="sm"
+                confirmMessage={`「${event.title}」を削除します。この操作は取り消せません。よろしいですか？`}
+              >
                 削除
-              </Button>
+              </ConfirmSubmitButton>
             </form>
           </div>
         </li>

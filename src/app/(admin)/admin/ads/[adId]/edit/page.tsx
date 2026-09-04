@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getAdByIdForAdmin } from "@/features/ads/repository";
 import { AdForm } from "@/features/ads/components/ad-form";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { FormSkeleton } from "@/components/layout/detail-skeletons";
 
 export const metadata: Metadata = {
   title: "広告を編集",
@@ -25,7 +26,7 @@ export default function EditAdPage({ params }: EditAdPageProps) {
       />
       <h1 className="text-2xl font-semibold text-foreground">広告を編集</h1>
       <div className="max-w-md">
-        <Suspense fallback={null}>
+        <Suspense fallback={<FormSkeleton fields={3} />}>
           <EditAdForm paramsPromise={params} />
         </Suspense>
       </div>

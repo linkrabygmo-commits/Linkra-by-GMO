@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getMemberById } from "@/features/members/repository";
 import { MaskedField } from "@/features/members/components/masked-field";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { MemberDetailSkeleton } from "@/components/layout/detail-skeletons";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function MemberDetailPage({
@@ -13,7 +14,7 @@ export default function MemberDetailPage({
 }) {
   return (
     <div className="flex flex-1 flex-col px-6 py-10">
-      <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
+      <Suspense fallback={<MemberDetailSkeleton />}>
         <MemberDetailContent paramsPromise={params} />
       </Suspense>
     </div>

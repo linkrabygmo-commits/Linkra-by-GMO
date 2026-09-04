@@ -6,13 +6,13 @@ import { listCompanies } from "@/features/companies/repository";
 import { Badge } from "@/components/ui/badge";
 
 export const metadata: Metadata = {
-  title: "企業一覧",
+  title: "企業ディレクトリ",
 };
 
 export default function CompaniesPage() {
   return (
     <div className="flex flex-1 flex-col gap-6 px-6 py-8 sm:px-10 sm:py-10">
-      <h1 className="text-2xl font-semibold text-foreground">企業一覧</h1>
+      <h1 className="text-2xl font-semibold text-foreground">企業ディレクトリ</h1>
       <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
         <CompanyListContent />
       </Suspense>

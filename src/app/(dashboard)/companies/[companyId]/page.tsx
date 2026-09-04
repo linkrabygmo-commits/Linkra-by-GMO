@@ -3,8 +3,9 @@ import { notFound } from "next/navigation";
 import { getCompanyById, listMembers } from "@/features/companies/repository";
 import { leaveCompanyAction } from "@/features/companies/actions";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { CompanyDetailSkeleton } from "@/components/layout/detail-skeletons";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { ConfirmSubmitButton } from "@/components/ui/confirm-submit-button";
 
 export default function CompanyDetailPage({
   params,
@@ -13,7 +14,7 @@ export default function CompanyDetailPage({
 }) {
   return (
     <div className="flex flex-1 flex-col gap-8 px-6 py-8 sm:px-10 sm:py-10">
-      <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
+      <Suspense fallback={<CompanyDetailSkeleton />}>
         <CompanyDetailContent paramsPromise={params} />
       </Suspense>
     </div>
@@ -55,9 +56,13 @@ async function CompanyDetailContent({
         </div>
         {company.currentUserRole && (
           <form action={leaveCompanyAction.bind(null, companyId)}>
-            <Button type="submit" variant="outline" size="sm">
+            <ConfirmSubmitButton
+              variant="destructive"
+              size="sm"
+              confirmMessage={`「${company.name}」を退会します。この操作は取り消せません。よろしいですか？`}
+            >
               退会する
-            </Button>
+            </ConfirmSubmitButton>
           </form>
         )}
       </div>

@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getEventById, listEventApplications } from "@/features/events/repository";
 import { updateApplicationStatusAction } from "@/features/events/actions";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { ApplicationsListSkeleton } from "@/components/layout/detail-skeletons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -30,7 +31,7 @@ interface AdminEventPageProps {
 export default function AdminEventApplicationsPage({ params }: AdminEventPageProps) {
   return (
     <div className="flex flex-1 flex-col gap-6 px-6 py-8 sm:px-10 sm:py-10">
-      <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
+      <Suspense fallback={<ApplicationsListSkeleton />}>
         <ApplicationsList paramsPromise={params} />
       </Suspense>
     </div>

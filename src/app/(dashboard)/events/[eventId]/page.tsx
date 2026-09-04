@@ -7,6 +7,7 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { applyAsMemberAction, cancelMyApplicationAction } from "@/features/events/actions";
 import { GuestApplicationForm } from "@/features/events/components/guest-application-form";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { EventDetailSkeleton } from "@/components/layout/detail-skeletons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -23,7 +24,7 @@ interface EventDetailPageProps {
 export default function EventDetailPage({ params }: EventDetailPageProps) {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 px-6 py-12">
-      <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
+      <Suspense fallback={<EventDetailSkeleton />}>
         <EventDetail paramsPromise={params} />
       </Suspense>
     </div>

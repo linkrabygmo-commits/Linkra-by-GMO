@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { getPublishedAnnouncementById } from "@/features/announcements/repository";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { AnnouncementDetailSkeleton } from "@/components/layout/detail-skeletons";
 
 interface AnnouncementDetailPageProps {
   params: Promise<{ announcementId: string }>;
@@ -10,7 +11,7 @@ interface AnnouncementDetailPageProps {
 export default function AnnouncementDetailPage({ params }: AnnouncementDetailPageProps) {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-6 py-12">
-      <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
+      <Suspense fallback={<AnnouncementDetailSkeleton />}>
         <AnnouncementDetail paramsPromise={params} />
       </Suspense>
     </div>

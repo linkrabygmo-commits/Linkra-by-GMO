@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getEventById } from "@/features/events/repository";
 import { EventForm } from "@/features/events/components/event-form";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { FormSkeleton } from "@/components/layout/detail-skeletons";
 
 export const metadata: Metadata = {
   title: "イベントを編集",
@@ -16,7 +17,7 @@ interface EditEventPageProps {
 export default function EditEventPage({ params }: EditEventPageProps) {
   return (
     <div className="flex flex-1 flex-col gap-6 px-6 py-8 sm:px-10 sm:py-10">
-      <Suspense fallback={null}>
+      <Suspense fallback={<FormSkeleton breadcrumbSegments={4} fields={5} />}>
         <EditEventForm paramsPromise={params} />
       </Suspense>
     </div>

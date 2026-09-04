@@ -77,7 +77,7 @@ async function CompanyList() {
             </Button>
             <form action={deleteCompanyAction.bind(null, company.id)}>
               <ConfirmSubmitButton
-                variant="outline"
+                variant="destructive"
                 size="sm"
                 confirmMessage={`「${company.name}」を削除します。所属する全メンバーの紐付けも失われます。本当に削除しますか？`}
               >

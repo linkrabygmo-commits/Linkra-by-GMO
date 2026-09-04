@@ -6,6 +6,7 @@ import { listAllAdsForAdmin } from "@/features/ads/repository";
 import { deleteAdAction } from "@/features/ads/actions";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Button } from "@/components/ui/button";
+import { ConfirmSubmitButton } from "@/components/ui/confirm-submit-button";
 
 export const metadata: Metadata = {
   title: "広告設定",
@@ -69,9 +70,13 @@ async function AdList() {
               <Link href={`/admin/ads/${ad.id}/edit`}>編集</Link>
             </Button>
             <form action={deleteAdAction.bind(null, ad.id)}>
-              <Button type="submit" variant="outline" size="sm">
+              <ConfirmSubmitButton
+                variant="destructive"
+                size="sm"
+                confirmMessage="この広告を削除します。この操作は取り消せません。よろしいですか？"
+              >
                 削除
-              </Button>
+              </ConfirmSubmitButton>
             </form>
           </div>
         </li>
