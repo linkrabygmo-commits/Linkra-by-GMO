@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowRight, Building2, Handshake, Lock, Sparkles } from "lucide-react";
+import { ArrowRight, Building2, CalendarDays, Handshake, Lock, Sparkles } from "lucide-react";
 import { listNewMembers } from "@/features/members/repository";
 import { MemberCard } from "@/features/members/components/member-card";
 import { listNewCompanies } from "@/features/companies/repository";
@@ -198,23 +198,39 @@ async function UpcomingEvents() {
         <Link
           key={event.id}
           href={`/events/${event.id}`}
-          className="flex flex-col gap-2 rounded-lg border border-border p-4 transition-colors hover:border-foreground/30"
+          className="group flex flex-col overflow-hidden rounded-lg border border-border transition-colors hover:border-foreground/30"
         >
-          <div className="flex items-center gap-2">
-            <h3 className="text-sm font-medium text-foreground">{event.title}</h3>
-            {event.audience === "member_only" && (
-              <Badge variant="outline" className="gap-1">
-                <Lock className="size-3" />
-                会員限定
-              </Badge>
+          <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-muted">
+            {event.coverImageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={event.coverImageUrl}
+                alt=""
+                className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            ) : (
+              <div className="flex size-full items-center justify-center text-muted-foreground/40">
+                <CalendarDays className="size-8" />
+              </div>
             )}
           </div>
-          <p className="text-xs text-muted-foreground">
-            {new Date(event.startsAt).toLocaleString("ja-JP", {
-              dateStyle: "medium",
-              timeStyle: "short",
-            })}
-          </p>
+          <div className="flex flex-col gap-2 p-4">
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-medium text-foreground">{event.title}</h3>
+              {event.audience === "member_only" && (
+                <Badge variant="outline" className="gap-1">
+                  <Lock className="size-3" />
+                  会員限定
+                </Badge>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {new Date(event.startsAt).toLocaleString("ja-JP", {
+                dateStyle: "medium",
+                timeStyle: "short",
+              })}
+            </p>
+          </div>
         </Link>
       ))}
     </div>

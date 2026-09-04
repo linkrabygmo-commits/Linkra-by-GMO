@@ -42,6 +42,15 @@ async function EventDetail({ paramsPromise }: { paramsPromise: EventDetailPagePr
 
   return (
     <>
+      {event.coverImageUrl && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={event.coverImageUrl}
+          alt=""
+          className="aspect-video w-full rounded-xl border border-border object-cover"
+        />
+      )}
+
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-2">
           <h1 className="text-2xl font-semibold text-foreground">{event.title}</h1>

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Lock } from "lucide-react";
+import { CalendarDays, Lock } from "lucide-react";
 import { listEvents } from "@/features/events/repository";
 import { Badge } from "@/components/ui/badge";
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function EventsPage() {
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-6 py-12">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-12">
       <h1 className="text-2xl font-semibold text-foreground">イベント</h1>
       <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
         <EventList />
@@ -29,23 +29,41 @@ async function EventList() {
   }
 
   return (
-    <ul className="flex flex-col gap-4">
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {events.map((event) => (
-        <li key={event.id}>
-          <Link
-            href={`/events/${event.id}`}
-            className="flex flex-col gap-2 rounded-lg border border-border p-4 transition-colors hover:border-foreground/30"
-          >
-            <div className="flex items-center gap-2">
-              <h2 className="text-base font-medium text-foreground">{event.title}</h2>
-              {event.audience === "member_only" && (
-                <Badge variant="outline" className="gap-1">
-                  <Lock className="size-3" />
-                  会員限定
-                </Badge>
-              )}
-            </div>
-            <p className="text-sm text-muted-foreground">
+        <Link
+          key={event.id}
+          href={`/events/${event.id}`}
+          className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card ring-1 ring-foreground/10 transition-all hover:-translate-y-0.5 hover:shadow-md"
+        >
+          <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-muted">
+            {event.coverImageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={event.coverImageUrl}
+                alt=""
+                className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            ) : (
+              <div className="flex size-full items-center justify-center text-muted-foreground/40">
+                <CalendarDays className="size-10" />
+              </div>
+            )}
+            {event.audience === "member_only" && (
+              <Badge
+                variant="outline"
+                className="absolute top-3 left-3 gap-1 border-white/40 bg-background/90 backdrop-blur-sm"
+              >
+                <Lock className="size-3" />
+                会員限定
+              </Badge>
+            )}
+          </div>
+          <div className="flex flex-1 flex-col gap-1.5 px-4 py-4">
+            <h2 className="line-clamp-2 text-sm font-semibold text-foreground">
+              {event.title}
+            </h2>
+            <p className="text-xs text-muted-foreground">
               {new Date(event.startsAt).toLocaleString("ja-JP", {
                 dateStyle: "medium",
                 timeStyle: "short",
@@ -53,11 +71,13 @@ async function EventList() {
               {event.location && ` ・ ${event.location}`}
             </p>
             {event.description && (
-              <p className="line-clamp-2 text-sm text-muted-foreground">{event.description}</p>
+              <p className="line-clamp-2 text-xs text-muted-foreground">
+                {event.description}
+              </p>
             )}
-          </Link>
-        </li>
+          </div>
+        </Link>
       ))}
-    </ul>
+    </div>
   );
 }
