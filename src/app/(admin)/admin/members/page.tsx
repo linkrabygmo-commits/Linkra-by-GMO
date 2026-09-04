@@ -7,6 +7,7 @@ import { MemberStatusSelect } from "@/components/admin/member-status-select";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Badge } from "@/components/ui/badge";
 import { ConfirmSubmitButton } from "@/components/ui/confirm-submit-button";
+import { CopyLinkButton } from "@/components/ui/copy-link-button";
 
 export const metadata: Metadata = {
   title: "会員管理",
@@ -16,7 +17,10 @@ export default function AdminMembersPage() {
   return (
     <div className="flex flex-1 flex-col gap-6 px-6 py-8 sm:px-10 sm:py-10">
       <Breadcrumb items={[{ label: "管理画面", href: "/admin" }, { label: "会員管理" }]} />
-      <h1 className="text-2xl font-semibold text-foreground">会員管理</h1>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-2xl font-semibold text-foreground">会員管理</h1>
+        <CopyLinkButton path="/signup" label="招待リンクをコピー" />
+      </div>
       <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
         <MembersList />
       </Suspense>

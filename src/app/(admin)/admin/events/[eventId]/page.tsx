@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getEventById, listEventApplications } from "@/features/events/repository";
 import { updateApplicationStatusAction } from "@/features/events/actions";
+import { requireAdmin } from "@/lib/auth/session";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { ApplicationsListSkeleton } from "@/components/layout/detail-skeletons";
 import { Badge } from "@/components/ui/badge";
@@ -39,6 +40,11 @@ export default function AdminEventApplicationsPage({ params }: AdminEventPagePro
 }
 
 async function ApplicationsList({ paramsPromise }: { paramsPromise: AdminEventPageProps["params"] }) {
+  // getEventById()は/events/[eventId](ダッシュボード側の公開詳細ページ)とも共有しているため
+  // 管理者チェックを内包しない。listEventApplications()側にも管理者チェックはあるが、
+  // イベントが存在しない場合はnotFound()がそれより先に走ってしまうため、ここでも明示的に確認する。
+  await requireAdmin();
+
   const { eventId } = await paramsPromise;
   const event = await getEventById(eventId);
 

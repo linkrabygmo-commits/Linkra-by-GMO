@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getEventById } from "@/features/events/repository";
 import { EventForm } from "@/features/events/components/event-form";
+import { requireAdmin } from "@/lib/auth/session";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { FormSkeleton } from "@/components/layout/detail-skeletons";
 
@@ -25,6 +26,10 @@ export default function EditEventPage({ params }: EditEventPageProps) {
 }
 
 async function EditEventForm({ paramsPromise }: { paramsPromise: EditEventPageProps["params"] }) {
+  // getEventById()は/events/[eventId](ダッシュボード側の公開詳細ページ)とも共有しているため
+  // 管理者チェックを内包しない。この編集ページ自体は管理者専用なので、ここで明示的に確認する。
+  await requireAdmin();
+
   const { eventId } = await paramsPromise;
   const event = await getEventById(eventId);
 
