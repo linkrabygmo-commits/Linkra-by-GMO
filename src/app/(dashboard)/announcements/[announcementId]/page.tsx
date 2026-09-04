@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getPublishedAnnouncementById } from "@/features/announcements/repository";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { AnnouncementDetailSkeleton } from "@/components/layout/detail-skeletons";
+import { formatJstDate } from "@/lib/datetime";
 
 interface AnnouncementDetailPageProps {
   params: Promise<{ announcementId: string }>;
@@ -39,9 +40,7 @@ async function AnnouncementDetail({
         <h1 className="text-2xl font-semibold text-foreground">{announcement.title}</h1>
         {announcement.publishedAt && (
           <p className="text-sm text-muted-foreground">
-            {new Date(announcement.publishedAt).toLocaleDateString("ja-JP", {
-              dateStyle: "medium",
-            })}
+            {formatJstDate(announcement.publishedAt, { dateStyle: "medium" })}
           </p>
         )}
       </div>

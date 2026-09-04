@@ -8,6 +8,7 @@ import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ConfirmSubmitButton } from "@/components/ui/confirm-submit-button";
+import { formatJstDateTime } from "@/lib/datetime";
 
 export const metadata: Metadata = {
   title: "イベント管理",
@@ -55,10 +56,7 @@ async function EventList() {
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              {new Date(event.startsAt).toLocaleString("ja-JP", {
-                dateStyle: "medium",
-                timeStyle: "short",
-              })}
+              {formatJstDateTime(event.startsAt, { dateStyle: "medium", timeStyle: "short" })}
               {event.location && ` ・ ${event.location}`}
             </p>
           </div>

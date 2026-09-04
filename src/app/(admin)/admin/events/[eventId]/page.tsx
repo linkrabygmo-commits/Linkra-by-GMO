@@ -1,6 +1,8 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { Download } from "lucide-react";
 import { getEventById, listEventApplications } from "@/features/events/repository";
 import { updateApplicationStatusAction } from "@/features/events/actions";
 import { requireAdmin } from "@/lib/auth/session";
@@ -8,6 +10,7 @@ import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { ApplicationsListSkeleton } from "@/components/layout/detail-skeletons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { formatJstDateTime } from "@/lib/datetime";
 
 export const metadata: Metadata = {
   title: "イベント申込確認",
@@ -63,9 +66,19 @@ async function ApplicationsList({ paramsPromise }: { paramsPromise: AdminEventPa
           { label: event.title },
         ]}
       />
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold text-foreground">{event.title}</h1>
-        <p className="text-sm text-muted-foreground">申込者一覧({applications.length}件)</p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-semibold text-foreground">{event.title}</h1>
+          <p className="text-sm text-muted-foreground">申込者一覧({applications.length}件)</p>
+        </div>
+        {applications.length > 0 && (
+          <Button asChild variant="outline" size="sm" className="w-fit">
+            <Link href={`/api/admin/events/${eventId}/csv`}>
+              <Download className="size-3.5" />
+              CSV出力
+            </Link>
+          </Button>
+        )}
       </div>
 
       {applications.length === 0 ? (
@@ -87,12 +100,21 @@ async function ApplicationsList({ paramsPromise }: { paramsPromise: AdminEventPa
                     {STATUS_LABELS[application.status]}
                   </Badge>
                 </div>
+                {(application.companyName || application.title) && (
+                  <p className="text-xs text-muted-foreground">
+                    {application.companyName ?? "会社名未入力"}
+                    {application.title && ` / ${application.title}`}
+                  </p>
+                )}
                 {application.email && (
                   <p className="text-xs text-muted-foreground">
                     {application.email}
                     {application.phone && ` / ${application.phone}`}
                   </p>
                 )}
+                <p className="text-xs text-muted-foreground">
+                  申込日時: {formatJstDateTime(application.createdAt)}
+                </p>
               </div>
               {application.status !== "cancelled" && (
                 <div className="flex flex-wrap gap-2 sm:shrink-0">

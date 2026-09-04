@@ -36,6 +36,12 @@ export const EventSchema = z.object({
     .int()
     .positive({ error: "定員は1以上で入力してください。" })
     .optional(),
+  applicationDeadline: z
+    .union([
+      z.string().refine(isValidDate, { error: "有効な回答期限を入力してください。" }),
+      z.literal(""),
+    ])
+    .optional(),
 });
 
 export type EventFormState =
@@ -50,6 +56,7 @@ export type EventFormState =
         startsAt?: string[];
         endsAt?: string[];
         capacity?: string[];
+        applicationDeadline?: string[];
       };
       message?: string;
     }
@@ -68,6 +75,16 @@ export const GuestEventApplicationSchema = z.object({
     .max(30, { error: "電話番号は30文字以内で入力してください。" })
     .trim()
     .optional(),
+  companyName: z
+    .string()
+    .min(1, { error: "会社名を入力してください。" })
+    .max(100, { error: "会社名は100文字以内で入力してください。" })
+    .trim(),
+  title: z
+    .string()
+    .min(1, { error: "役職を入力してください。" })
+    .max(100, { error: "役職は100文字以内で入力してください。" })
+    .trim(),
 });
 
 export type GuestEventApplicationFormState =
@@ -77,6 +94,8 @@ export type GuestEventApplicationFormState =
         name?: string[];
         email?: string[];
         phone?: string[];
+        companyName?: string[];
+        title?: string[];
       };
       message?: string;
     }

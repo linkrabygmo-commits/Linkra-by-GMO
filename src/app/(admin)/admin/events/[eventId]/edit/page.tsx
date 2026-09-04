@@ -60,6 +60,7 @@ async function EditEventForm({ paramsPromise }: { paramsPromise: EditEventPagePr
             startsAt: event.startsAt,
             endsAt: event.endsAt,
             capacity: event.capacity,
+            applicationDeadline: event.applicationDeadline,
           }}
         />
       </div>

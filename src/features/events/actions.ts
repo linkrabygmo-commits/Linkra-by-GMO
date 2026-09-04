@@ -8,6 +8,7 @@ import {
   type EventFormState,
   type GuestEventApplicationFormState,
 } from "@/features/events/schema";
+import { jstDatetimeLocalToIso } from "@/lib/datetime";
 import type { EventApplicationStatus } from "@/types/database";
 
 function readEventFormData(formData: FormData) {
@@ -20,6 +21,7 @@ function readEventFormData(formData: FormData) {
     startsAt: formData.get("startsAt"),
     endsAt: formData.get("endsAt") || undefined,
     capacity: formData.get("capacity") || undefined,
+    applicationDeadline: formData.get("applicationDeadline") || undefined,
   };
 }
 
@@ -33,13 +35,14 @@ export async function createEventAction(
     return { status: "error", errors: validatedFields.error.flatten().fieldErrors };
   }
 
-  const { startsAt, endsAt, ...rest } = validatedFields.data;
+  const { startsAt, endsAt, applicationDeadline, ...rest } = validatedFields.data;
 
   try {
     await repository.createEvent({
       ...rest,
-      startsAt: new Date(startsAt).toISOString(),
-      endsAt: endsAt ? new Date(endsAt).toISOString() : undefined,
+      startsAt: jstDatetimeLocalToIso(startsAt),
+      endsAt: endsAt ? jstDatetimeLocalToIso(endsAt) : undefined,
+      applicationDeadline: applicationDeadline ? jstDatetimeLocalToIso(applicationDeadline) : undefined,
     });
   } catch (error) {
     return {
@@ -66,13 +69,14 @@ export async function updateEventAction(
     return { status: "error", errors: validatedFields.error.flatten().fieldErrors };
   }
 
-  const { startsAt, endsAt, ...rest } = validatedFields.data;
+  const { startsAt, endsAt, applicationDeadline, ...rest } = validatedFields.data;
 
   try {
     await repository.updateEvent(eventId, {
       ...rest,
-      startsAt: new Date(startsAt).toISOString(),
-      endsAt: endsAt ? new Date(endsAt).toISOString() : undefined,
+      startsAt: jstDatetimeLocalToIso(startsAt),
+      endsAt: endsAt ? jstDatetimeLocalToIso(endsAt) : undefined,
+      applicationDeadline: applicationDeadline ? jstDatetimeLocalToIso(applicationDeadline) : undefined,
     });
   } catch (error) {
     return {
@@ -114,6 +118,8 @@ export async function applyAsGuestAction(
     name: formData.get("name"),
     email: formData.get("email"),
     phone: formData.get("phone") || undefined,
+    companyName: formData.get("companyName"),
+    title: formData.get("title"),
   });
 
   if (!validatedFields.success) {

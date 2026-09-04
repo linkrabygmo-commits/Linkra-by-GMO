@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import * as repository from "@/features/ads/repository";
 import { AdSchema, type AdFormState } from "@/features/ads/schema";
+import { jstDatetimeLocalToIso } from "@/lib/datetime";
 
 function readAdFormData(formData: FormData) {
   return {
@@ -31,8 +32,8 @@ export async function createAdAction(
   try {
     await repository.createAd({
       ...rest,
-      startsAt: startsAt ? new Date(startsAt).toISOString() : undefined,
-      endsAt: endsAt ? new Date(endsAt).toISOString() : undefined,
+      startsAt: startsAt ? jstDatetimeLocalToIso(startsAt) : undefined,
+      endsAt: endsAt ? jstDatetimeLocalToIso(endsAt) : undefined,
     });
   } catch (error) {
     return {
@@ -66,8 +67,8 @@ export async function updateAdAction(
   try {
     await repository.updateAd(adId, {
       ...rest,
-      startsAt: startsAt ? new Date(startsAt).toISOString() : undefined,
-      endsAt: endsAt ? new Date(endsAt).toISOString() : undefined,
+      startsAt: startsAt ? jstDatetimeLocalToIso(startsAt) : undefined,
+      endsAt: endsAt ? jstDatetimeLocalToIso(endsAt) : undefined,
     });
   } catch (error) {
     return {

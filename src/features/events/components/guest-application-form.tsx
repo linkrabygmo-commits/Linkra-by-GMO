@@ -37,6 +37,22 @@ export function GuestApplicationForm({ eventId }: { eventId: string }) {
       </div>
 
       <div className="flex flex-col gap-2">
+        <Label htmlFor="companyName">会社名</Label>
+        <Input id="companyName" name="companyName" required />
+        {state?.status === "error" && state.errors?.companyName && (
+          <p className="text-sm text-destructive">{state.errors.companyName[0]}</p>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="title">役職</Label>
+        <Input id="title" name="title" required />
+        {state?.status === "error" && state.errors?.title && (
+          <p className="text-sm text-destructive">{state.errors.title[0]}</p>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-2">
         <Label htmlFor="phone">電話番号(任意)</Label>
         <Input id="phone" name="phone" type="tel" />
       </div>

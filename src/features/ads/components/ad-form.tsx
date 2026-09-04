@@ -6,13 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ImageUploadField } from "@/components/storage/image-upload-field";
-
-function toDatetimeLocalValue(iso: string | null): string {
-  if (!iso) return "";
-  const date = new Date(iso);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-}
+import { isoToJstDatetimeLocal } from "@/lib/datetime";
 
 interface AdFormDefaultValues {
   linkUrl: string;
@@ -63,7 +57,7 @@ export function AdForm({ adId, defaultValues }: AdFormProps) {
             id="startsAt"
             name="startsAt"
             type="datetime-local"
-            defaultValue={toDatetimeLocalValue(defaultValues?.startsAt ?? null)}
+            defaultValue={isoToJstDatetimeLocal(defaultValues?.startsAt)}
           />
         </div>
 
@@ -73,7 +67,7 @@ export function AdForm({ adId, defaultValues }: AdFormProps) {
             id="endsAt"
             name="endsAt"
             type="datetime-local"
-            defaultValue={toDatetimeLocalValue(defaultValues?.endsAt ?? null)}
+            defaultValue={isoToJstDatetimeLocal(defaultValues?.endsAt)}
           />
         </div>
       </div>

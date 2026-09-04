@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { listPublishedAnnouncements } from "@/features/announcements/repository";
+import { formatJstDate } from "@/lib/datetime";
 
 export const metadata: Metadata = {
   title: "お知らせ",
@@ -37,9 +38,7 @@ async function AnnouncementList() {
             <h2 className="text-base font-medium text-foreground">{announcement.title}</h2>
             {announcement.publishedAt && (
               <p className="text-sm text-muted-foreground">
-                {new Date(announcement.publishedAt).toLocaleDateString("ja-JP", {
-                  dateStyle: "medium",
-                })}
+                {formatJstDate(announcement.publishedAt, { dateStyle: "medium" })}
               </p>
             )}
             <p className="line-clamp-2 text-sm text-muted-foreground">{announcement.body}</p>

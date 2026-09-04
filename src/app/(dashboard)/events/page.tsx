@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { CalendarDays, Lock } from "lucide-react";
 import { listEvents } from "@/features/events/repository";
 import { Badge } from "@/components/ui/badge";
+import { formatJstDateTime } from "@/lib/datetime";
 
 export const metadata: Metadata = {
   title: "イベント",
@@ -64,10 +65,7 @@ async function EventList() {
               {event.title}
             </h2>
             <p className="text-xs text-muted-foreground">
-              {new Date(event.startsAt).toLocaleString("ja-JP", {
-                dateStyle: "medium",
-                timeStyle: "short",
-              })}
+              {formatJstDateTime(event.startsAt, { dateStyle: "medium", timeStyle: "short" })}
               {event.location && ` ・ ${event.location}`}
             </p>
             {event.description && (

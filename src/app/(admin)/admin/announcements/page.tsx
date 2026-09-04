@@ -7,6 +7,7 @@ import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ConfirmSubmitButton } from "@/components/ui/confirm-submit-button";
+import { formatJstDate } from "@/lib/datetime";
 
 export const metadata: Metadata = {
   title: "お知らせ管理",
@@ -51,9 +52,7 @@ async function AnnouncementList() {
               </Badge>
             </div>
             <p className="text-xs text-muted-foreground">
-              {new Date(announcement.createdAt).toLocaleDateString("ja-JP", {
-                dateStyle: "medium",
-              })}
+              {formatJstDate(announcement.createdAt, { dateStyle: "medium" })}
             </p>
           </div>
           <div className="flex flex-wrap gap-2 sm:shrink-0">

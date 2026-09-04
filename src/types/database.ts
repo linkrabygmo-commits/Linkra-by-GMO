@@ -228,6 +228,7 @@ export type Database = {
           starts_at: string;
           ends_at: string | null;
           capacity: number | null;
+          application_deadline: string | null;
           created_by: string;
           created_at: string;
           updated_at: string;
@@ -242,6 +243,7 @@ export type Database = {
           starts_at: string;
           ends_at?: string | null;
           capacity?: number | null;
+          application_deadline?: string | null;
           created_by: string;
           created_at?: string;
           updated_at?: string;
@@ -256,6 +258,7 @@ export type Database = {
           starts_at?: string;
           ends_at?: string | null;
           capacity?: number | null;
+          application_deadline?: string | null;
           created_by?: string;
           created_at?: string;
           updated_at?: string;
@@ -293,6 +296,8 @@ export type Database = {
           name: string;
           email: string;
           phone: string | null;
+          company_name: string | null;
+          title: string | null;
           status: EventApplicationStatus;
           created_at: string;
         };
@@ -302,6 +307,8 @@ export type Database = {
           name: string;
           email: string;
           phone?: string | null;
+          company_name?: string | null;
+          title?: string | null;
           status?: EventApplicationStatus;
           created_at?: string;
         };
@@ -311,6 +318,8 @@ export type Database = {
           name?: string;
           email?: string;
           phone?: string | null;
+          company_name?: string | null;
+          title?: string | null;
           status?: EventApplicationStatus;
           created_at?: string;
         };

@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { LinkraLogo } from "@/components/brand/linkra-logo";
 import { siteConfig } from "@/config/site";
+import { formatJstDate, formatJstDateTime } from "@/lib/datetime";
 
 export const metadata: Metadata = {
   title: siteConfig.name,
@@ -225,10 +226,7 @@ async function UpcomingEvents() {
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              {new Date(event.startsAt).toLocaleString("ja-JP", {
-                dateStyle: "medium",
-                timeStyle: "short",
-              })}
+              {formatJstDateTime(event.startsAt, { dateStyle: "medium", timeStyle: "short" })}
             </p>
           </div>
         </Link>
@@ -255,9 +253,7 @@ async function LatestAnnouncements() {
             <span className="text-sm font-medium text-foreground">{announcement.title}</span>
             {announcement.publishedAt && (
               <span className="shrink-0 text-xs text-muted-foreground">
-                {new Date(announcement.publishedAt).toLocaleDateString("ja-JP", {
-                  dateStyle: "medium",
-                })}
+                {formatJstDate(announcement.publishedAt, { dateStyle: "medium" })}
               </span>
             )}
           </Link>

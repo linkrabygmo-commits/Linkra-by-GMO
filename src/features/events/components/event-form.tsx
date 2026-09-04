@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ImageUploadField } from "@/components/storage/image-upload-field";
+import { isoToJstDatetimeLocal } from "@/lib/datetime";
 
 const AUDIENCE_LABELS = {
   public: "一般公開(ゲストも参加可)",
@@ -29,13 +30,7 @@ interface EventFormDefaultValues {
   startsAt: string;
   endsAt: string | null;
   capacity: number | null;
-}
-
-function toDatetimeLocalValue(iso: string | null): string {
-  if (!iso) return "";
-  const date = new Date(iso);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  applicationDeadline: string | null;
 }
 
 interface EventFormProps {
@@ -102,7 +97,7 @@ export function EventForm({ eventId, defaultValues }: EventFormProps) {
             id="startsAt"
             name="startsAt"
             type="datetime-local"
-            defaultValue={toDatetimeLocalValue(defaultValues?.startsAt ?? null)}
+            defaultValue={isoToJstDatetimeLocal(defaultValues?.startsAt)}
             required
           />
           {state?.status === "error" && state.errors?.startsAt && (
@@ -116,9 +111,25 @@ export function EventForm({ eventId, defaultValues }: EventFormProps) {
             id="endsAt"
             name="endsAt"
             type="datetime-local"
-            defaultValue={toDatetimeLocalValue(defaultValues?.endsAt ?? null)}
+            defaultValue={isoToJstDatetimeLocal(defaultValues?.endsAt)}
           />
         </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="applicationDeadline">回答期限(任意)</Label>
+        <Input
+          id="applicationDeadline"
+          name="applicationDeadline"
+          type="datetime-local"
+          defaultValue={isoToJstDatetimeLocal(defaultValues?.applicationDeadline)}
+        />
+        <p className="text-xs text-muted-foreground">
+          設定すると、この日時を過ぎた後は参加申込を受け付けなくなります。
+        </p>
+        {state?.status === "error" && state.errors?.applicationDeadline && (
+          <p className="text-sm text-destructive">{state.errors.applicationDeadline[0]}</p>
+        )}
       </div>
 
       <div className="flex flex-col gap-2">
