@@ -10,6 +10,7 @@ import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { EventDetailSkeleton } from "@/components/layout/detail-skeletons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { CopyLinkButton } from "@/components/ui/copy-link-button";
 import { formatJstDateTime } from "@/lib/datetime";
 
 const APPLICATION_STATUS_LABELS = {
@@ -58,14 +59,17 @@ async function EventDetail({ paramsPromise }: { paramsPromise: EventDetailPagePr
       )}
 
       <div className="flex flex-col gap-3">
-        <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-semibold text-foreground">{event.title}</h1>
-          {event.audience === "member_only" && (
-            <Badge variant="outline" className="gap-1">
-              <Lock className="size-3" />
-              会員限定
-            </Badge>
-          )}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-semibold text-foreground">{event.title}</h1>
+            {event.audience === "member_only" && (
+              <Badge variant="outline" className="gap-1">
+                <Lock className="size-3" />
+                会員限定
+              </Badge>
+            )}
+          </div>
+          <CopyLinkButton path={`/events/${event.id}`} label="招待リンクをコピー" />
         </div>
         <p className="text-sm text-muted-foreground">
           {formatJstDateTime(event.startsAt, { dateStyle: "full", timeStyle: "short" })}

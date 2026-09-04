@@ -21,22 +21,6 @@ export function GuestApplicationForm({ eventId }: { eventId: string }) {
   return (
     <form action={formAction} className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <Label htmlFor="name">お名前</Label>
-        <Input id="name" name="name" required />
-        {state?.status === "error" && state.errors?.name && (
-          <p className="text-sm text-destructive">{state.errors.name[0]}</p>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="email">メールアドレス</Label>
-        <Input id="email" name="email" type="email" required />
-        {state?.status === "error" && state.errors?.email && (
-          <p className="text-sm text-destructive">{state.errors.email[0]}</p>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-2">
         <Label htmlFor="companyName">会社名</Label>
         <Input id="companyName" name="companyName" required />
         {state?.status === "error" && state.errors?.companyName && (
@@ -49,6 +33,22 @@ export function GuestApplicationForm({ eventId }: { eventId: string }) {
         <Input id="title" name="title" required />
         {state?.status === "error" && state.errors?.title && (
           <p className="text-sm text-destructive">{state.errors.title[0]}</p>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="name">お名前</Label>
+        <Input id="name" name="name" required />
+        {state?.status === "error" && state.errors?.name && (
+          <p className="text-sm text-destructive">{state.errors.name[0]}</p>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="email">メールアドレス</Label>
+        <Input id="email" name="email" type="email" required />
+        {state?.status === "error" && state.errors?.email && (
+          <p className="text-sm text-destructive">{state.errors.email[0]}</p>
         )}
       </div>
 
