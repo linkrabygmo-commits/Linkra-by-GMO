@@ -13,12 +13,6 @@ import { Button } from "@/components/ui/button";
 import { CopyLinkButton } from "@/components/ui/copy-link-button";
 import { formatJstDateTime } from "@/lib/datetime";
 
-const APPLICATION_STATUS_LABELS = {
-  pending: "審査中",
-  confirmed: "確定",
-  cancelled: "キャンセル済み",
-} as const;
-
 interface EventDetailPageProps {
   params: Promise<{ eventId: string }>;
 }
@@ -44,6 +38,9 @@ async function EventDetail({ paramsPromise }: { paramsPromise: EventDetailPagePr
   const user = await getCurrentUser();
   const isFull = event.capacity != null && event.appliedCount >= event.capacity;
   const isPastDeadline = event.isPastDeadline;
+  // 管理者の確定作業は不要にしたため、申込者側には審査中/確定を区別せず
+  // 「済(申込あり)」「未(申込なし/キャンセル済み)」の2状態だけを見せる。
+  const hasActiveApplication = event.myApplicationStatus != null && event.myApplicationStatus !== "cancelled";
 
   return (
     <>
@@ -96,11 +93,9 @@ async function EventDetail({ paramsPromise }: { paramsPromise: EventDetailPagePr
       <div className="flex flex-col gap-4 rounded-lg border border-border p-5">
         <h2 className="text-base font-medium text-foreground">参加申込</h2>
 
-        {event.myApplicationStatus && event.myApplicationStatus !== "cancelled" ? (
+        {hasActiveApplication ? (
           <div className="flex flex-col gap-3">
-            <p className="text-sm text-foreground">
-              お申し込み状況: {APPLICATION_STATUS_LABELS[event.myApplicationStatus]}
-            </p>
+            <p className="text-sm text-foreground">お申し込み状況: 済</p>
             <form action={cancelMyApplicationAction.bind(null, event.id)}>
               <Button type="submit" variant="outline" size="sm">
                 キャンセルする
@@ -108,9 +103,12 @@ async function EventDetail({ paramsPromise }: { paramsPromise: EventDetailPagePr
             </form>
           </div>
         ) : isPastDeadline ? (
-          <p className="text-sm text-muted-foreground">
-            回答期限を過ぎたため、参加申込を締め切りました。
-          </p>
+          <div className="flex flex-col gap-3">
+            {user && <p className="text-sm text-foreground">お申し込み状況: 未</p>}
+            <p className="text-sm text-muted-foreground">
+              回答期限を過ぎたため、参加申込を締め切りました。
+            </p>
+          </div>
         ) : !user && event.audience === "member_only" ? (
           <p className="text-sm text-muted-foreground">
             このイベントは会員限定です。参加するには
@@ -124,14 +122,13 @@ async function EventDetail({ paramsPromise }: { paramsPromise: EventDetailPagePr
             してください。
           </p>
         ) : isFull ? (
-          <p className="text-sm text-muted-foreground">満席となりました。</p>
+          <div className="flex flex-col gap-3">
+            {user && <p className="text-sm text-foreground">お申し込み状況: 未</p>}
+            <p className="text-sm text-muted-foreground">満席となりました。</p>
+          </div>
         ) : user ? (
           <div className="flex flex-col gap-3">
-            {event.myApplicationStatus === "cancelled" && (
-              <p className="text-sm text-muted-foreground">
-                以前の申込はキャンセル済みです。再度お申し込みいただけます。
-              </p>
-            )}
+            <p className="text-sm text-foreground">お申し込み状況: 未</p>
             <form action={applyAsMemberAction.bind(null, event.id)}>
               <Button type="submit">参加を申し込む</Button>
             </form>

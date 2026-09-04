@@ -3,9 +3,11 @@ import { requireAdmin } from "@/lib/auth/session";
 import { getEventById, listEventApplications } from "@/features/events/repository";
 import { formatJstDateTime } from "@/lib/datetime";
 
+// 管理者による確定作業は不要にしたため、pending/confirmedは区別せず「済」として出力する
+// (pendingは過去データにのみ残り得る)。
 const STATUS_LABELS = {
-  pending: "審査中",
-  confirmed: "確定",
+  pending: "済",
+  confirmed: "済",
   cancelled: "キャンセル済み",
 } as const;
 

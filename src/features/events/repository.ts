@@ -141,9 +141,11 @@ export async function applyAsMember(eventId: string): Promise<void> {
   // 過去にキャンセルした申込の履歴は残したまま、新規の行として再申込を作成する。
   // 同時にアクティブ(未キャンセル)な申込は1人1件までというルールはDB側の
   // partial unique index (member_event_applications_active_unique) でも担保している。
+  // 管理者による「確定」作業は不要にしたため、申込時点でconfirmed扱いにする。
   const { error } = await supabase.from("member_event_applications").insert({
     event_id: eventId,
     user_id: user.id,
+    status: "confirmed",
   });
 
   if (error) {
@@ -199,6 +201,7 @@ export async function applyAsGuest(input: GuestApplicationInput): Promise<void> 
     throw new ForbiddenError("回答期限を過ぎたため、参加申込を締め切りました。");
   }
 
+  // 管理者による「確定」作業は不要にしたため、申込時点でconfirmed扱いにする。
   const { error } = await supabase.from("guest_event_applications").insert({
     event_id: input.eventId,
     name: input.name,
@@ -206,6 +209,7 @@ export async function applyAsGuest(input: GuestApplicationInput): Promise<void> 
     phone: input.phone || null,
     company_name: input.companyName,
     title: input.title,
+    status: "confirmed",
   });
 
   if (error) throw new Error(error.message);

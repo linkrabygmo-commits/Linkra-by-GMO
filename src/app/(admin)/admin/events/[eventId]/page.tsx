@@ -16,18 +16,6 @@ export const metadata: Metadata = {
   title: "イベント申込確認",
 };
 
-const STATUS_LABELS = {
-  pending: "審査中",
-  confirmed: "確定",
-  cancelled: "キャンセル済み",
-} as const;
-
-const STATUS_BADGE_VARIANTS = {
-  pending: "secondary",
-  confirmed: "default",
-  cancelled: "destructive",
-} as const;
-
 interface AdminEventPageProps {
   params: Promise<{ eventId: string }>;
 }
@@ -56,6 +44,8 @@ async function ApplicationsList({ paramsPromise }: { paramsPromise: AdminEventPa
   }
 
   const applications = await listEventApplications(eventId);
+  // 申込者一覧にはキャンセル済みの情報は表示しない(履歴としてはCSV出力側にのみ残す)。
+  const visibleApplications = applications.filter((application) => application.status !== "cancelled");
 
   return (
     <>
@@ -69,7 +59,7 @@ async function ApplicationsList({ paramsPromise }: { paramsPromise: AdminEventPa
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-semibold text-foreground">{event.title}</h1>
-          <p className="text-sm text-muted-foreground">申込者一覧({applications.length}件)</p>
+          <p className="text-sm text-muted-foreground">申込者一覧({visibleApplications.length}件)</p>
         </div>
         {applications.length > 0 && (
           <Button asChild variant="outline" size="sm" className="w-fit">
@@ -81,11 +71,13 @@ async function ApplicationsList({ paramsPromise }: { paramsPromise: AdminEventPa
         )}
       </div>
 
-      {applications.length === 0 ? (
-        <p className="text-muted-foreground">まだ申込はありません。</p>
+      {visibleApplications.length === 0 ? (
+        <p className="text-muted-foreground">
+          {applications.length === 0 ? "まだ申込はありません。" : "現在有効な申込はありません。"}
+        </p>
       ) : (
         <ul className="flex flex-col gap-3">
-          {applications.map((application) => (
+          {visibleApplications.map((application) => (
             <li
               key={`${application.type}-${application.id}`}
               className="flex flex-col gap-3 rounded-xl border border-border bg-card px-4 py-3 ring-1 ring-foreground/10 sm:flex-row sm:items-start sm:justify-between sm:gap-4"
@@ -96,9 +88,7 @@ async function ApplicationsList({ paramsPromise }: { paramsPromise: AdminEventPa
                   <Badge variant="outline">
                     {application.type === "member" ? "会員" : "ゲスト"}
                   </Badge>
-                  <Badge variant={STATUS_BADGE_VARIANTS[application.status]}>
-                    {STATUS_LABELS[application.status]}
-                  </Badge>
+                  <Badge>済</Badge>
                 </div>
                 {(application.companyName || application.title) && (
                   <p className="text-xs text-muted-foreground">
@@ -116,38 +106,21 @@ async function ApplicationsList({ paramsPromise }: { paramsPromise: AdminEventPa
                   申込日時: {formatJstDateTime(application.createdAt)}
                 </p>
               </div>
-              {application.status !== "cancelled" && (
-                <div className="flex flex-wrap gap-2 sm:shrink-0">
-                  {application.status !== "confirmed" && (
-                    <form
-                      action={updateApplicationStatusAction.bind(
-                        null,
-                        eventId,
-                        application.type,
-                        application.id,
-                        "confirmed",
-                      )}
-                    >
-                      <Button type="submit" size="sm">
-                        確定にする
-                      </Button>
-                    </form>
+              <div className="flex flex-wrap gap-2 sm:shrink-0">
+                <form
+                  action={updateApplicationStatusAction.bind(
+                    null,
+                    eventId,
+                    application.type,
+                    application.id,
+                    "cancelled",
                   )}
-                  <form
-                    action={updateApplicationStatusAction.bind(
-                      null,
-                      eventId,
-                      application.type,
-                      application.id,
-                      "cancelled",
-                    )}
-                  >
-                    <Button type="submit" variant="outline" size="sm">
-                      キャンセルにする
-                    </Button>
-                  </form>
-                </div>
-              )}
+                >
+                  <Button type="submit" variant="outline" size="sm">
+                    キャンセルにする
+                  </Button>
+                </form>
+              </div>
             </li>
           ))}
         </ul>
