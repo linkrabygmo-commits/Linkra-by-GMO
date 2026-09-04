@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getMemberById } from "@/features/members/repository";
 import { MaskedField } from "@/features/members/components/masked-field";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function MemberDetailPage({
@@ -33,6 +34,9 @@ async function MemberDetailContent({
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-8">
+      <Breadcrumb
+        items={[{ label: "会員ディレクトリ", href: "/members" }, { label: member.displayName }]}
+      />
       <div className="flex items-center gap-4">
         <Avatar size="lg" className="size-16">
           <AvatarImage src={member.avatarUrl ?? undefined} alt="" />

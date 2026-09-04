@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Building2, CalendarDays, Home, Megaphone, Users } from "lucide-react";
+import { Building2, CalendarDays, Home, Megaphone, Shield, Users } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -24,6 +24,8 @@ const NAV_ITEMS = [
   { href: "/announcements", label: "お知らせ", icon: Megaphone },
 ];
 
+const ADMIN_NAV_ITEM = { href: "/admin", label: "管理画面", icon: Shield };
+
 function SidebarBrand() {
   return (
     <Link
@@ -43,8 +45,15 @@ function SidebarBrand() {
   );
 }
 
-export function AppSidebar({ footer }: { footer: React.ReactNode }) {
+export function AppSidebar({
+  footer,
+  isAdmin,
+}: {
+  footer: React.ReactNode;
+  isAdmin?: boolean;
+}) {
   const pathname = usePathname();
+  const items = isAdmin ? [...NAV_ITEMS, ADMIN_NAV_ITEM] : NAV_ITEMS;
 
   return (
     <Sidebar collapsible="icon">
@@ -55,7 +64,7 @@ export function AppSidebar({ footer }: { footer: React.ReactNode }) {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {NAV_ITEMS.map((item) => {
+              {items.map((item) => {
                 const isActive =
                   item.href === "/dashboard"
                     ? pathname === item.href

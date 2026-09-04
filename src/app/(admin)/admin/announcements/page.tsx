@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { listAllAnnouncementsForAdmin } from "@/features/announcements/repository";
 import { deleteAnnouncementAction } from "@/features/announcements/actions";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 export default function AdminAnnouncementsPage() {
   return (
     <div className="flex flex-1 flex-col gap-6 px-6 py-8 sm:px-10 sm:py-10">
+      <Breadcrumb items={[{ label: "管理画面", href: "/admin" }, { label: "お知らせ管理" }]} />
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-semibold text-foreground">お知らせ管理</h1>
         <Button asChild size="sm" className="w-fit">

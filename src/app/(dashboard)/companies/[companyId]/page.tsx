@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { getCompanyById, listMembers } from "@/features/companies/repository";
 import { leaveCompanyAction } from "@/features/companies/actions";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -35,6 +36,9 @@ async function CompanyDetailContent({
 
   return (
     <>
+      <Breadcrumb
+        items={[{ label: "企業ディレクトリ", href: "/companies" }, { label: company.name }]}
+      />
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">
           {company.logoUrl && (

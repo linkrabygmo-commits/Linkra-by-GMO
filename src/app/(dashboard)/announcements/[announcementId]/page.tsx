@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { getPublishedAnnouncementById } from "@/features/announcements/repository";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 
 interface AnnouncementDetailPageProps {
   params: Promise<{ announcementId: string }>;
@@ -30,6 +31,9 @@ async function AnnouncementDetail({
 
   return (
     <>
+      <Breadcrumb
+        items={[{ label: "お知らせ", href: "/announcements" }, { label: announcement.title }]}
+      />
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-semibold text-foreground">{announcement.title}</h1>
         {announcement.publishedAt && (

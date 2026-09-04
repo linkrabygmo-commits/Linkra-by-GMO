@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { ImageOff } from "lucide-react";
 import { listAllAdsForAdmin } from "@/features/ads/repository";
 import { deleteAdAction } from "@/features/ads/actions";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 export default function AdminAdsPage() {
   return (
     <div className="flex flex-1 flex-col gap-6 px-6 py-8 sm:px-10 sm:py-10">
+      <Breadcrumb items={[{ label: "管理画面", href: "/admin" }, { label: "広告設定" }]} />
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-semibold text-foreground">広告設定</h1>
         <Button asChild size="sm" className="w-fit">

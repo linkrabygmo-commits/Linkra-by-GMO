@@ -6,6 +6,7 @@ import { getEventById } from "@/features/events/repository";
 import { getCurrentUser } from "@/lib/auth/session";
 import { applyAsMemberAction, cancelMyApplicationAction } from "@/features/events/actions";
 import { GuestApplicationForm } from "@/features/events/components/guest-application-form";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -42,6 +43,8 @@ async function EventDetail({ paramsPromise }: { paramsPromise: EventDetailPagePr
 
   return (
     <>
+      <Breadcrumb items={[{ label: "イベント", href: "/events" }, { label: event.title }]} />
+
       {event.coverImageUrl && (
         // eslint-disable-next-line @next/next/no-img-element
         <img

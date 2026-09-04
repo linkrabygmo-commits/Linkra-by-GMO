@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getEventById, listEventApplications } from "@/features/events/repository";
 import { updateApplicationStatusAction } from "@/features/events/actions";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -48,6 +49,13 @@ async function ApplicationsList({ paramsPromise }: { paramsPromise: AdminEventPa
 
   return (
     <>
+      <Breadcrumb
+        items={[
+          { label: "管理画面", href: "/admin" },
+          { label: "イベント管理", href: "/admin/events" },
+          { label: event.title },
+        ]}
+      />
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-semibold text-foreground">{event.title}</h1>
         <p className="text-sm text-muted-foreground">申込者一覧({applications.length}件)</p>

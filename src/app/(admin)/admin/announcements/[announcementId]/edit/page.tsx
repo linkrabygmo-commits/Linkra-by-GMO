@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getAnnouncementByIdForAdmin } from "@/features/announcements/repository";
 import { AnnouncementForm } from "@/features/announcements/components/announcement-form";
+import { Breadcrumb } from "@/components/layout/breadcrumb";
 
 export const metadata: Metadata = {
   title: "お知らせを編集",
@@ -15,12 +16,9 @@ interface EditAnnouncementPageProps {
 export default function EditAnnouncementPage({ params }: EditAnnouncementPageProps) {
   return (
     <div className="flex flex-1 flex-col gap-6 px-6 py-8 sm:px-10 sm:py-10">
-      <h1 className="text-2xl font-semibold text-foreground">お知らせを編集</h1>
-      <div className="max-w-md">
-        <Suspense fallback={null}>
-          <EditAnnouncementForm paramsPromise={params} />
-        </Suspense>
-      </div>
+      <Suspense fallback={null}>
+        <EditAnnouncementForm paramsPromise={params} />
+      </Suspense>
     </div>
   );
 }
@@ -38,14 +36,27 @@ async function EditAnnouncementForm({
   }
 
   return (
-    <AnnouncementForm
-      announcementId={announcement.id}
-      defaultValues={{
-        title: announcement.title,
-        body: announcement.body,
-        coverImageUrl: announcement.coverImageUrl,
-        status: announcement.status,
-      }}
-    />
+    <>
+      <Breadcrumb
+        items={[
+          { label: "管理画面", href: "/admin" },
+          { label: "お知らせ管理", href: "/admin/announcements" },
+          { label: announcement.title },
+          { label: "編集" },
+        ]}
+      />
+      <h1 className="text-2xl font-semibold text-foreground">お知らせを編集</h1>
+      <div className="max-w-md">
+        <AnnouncementForm
+          announcementId={announcement.id}
+          defaultValues={{
+            title: announcement.title,
+            body: announcement.body,
+            coverImageUrl: announcement.coverImageUrl,
+            status: announcement.status,
+          }}
+        />
+      </div>
+    </>
   );
 }

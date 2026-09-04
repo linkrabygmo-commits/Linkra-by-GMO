@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { AdminNav, AdminNavSkeleton } from "@/components/layout/admin-nav";
-import { BackButton, BackButtonSkeleton } from "@/components/layout/back-button";
 import { LinkraLogo } from "@/components/brand/linkra-logo";
 
 // requireAdmin()はcookieを読むため、各ページ側(Suspense配下)で呼び出す。
@@ -41,12 +40,7 @@ export default function AdminLayout({
           </Link>
         </div>
       </header>
-      <main className="flex flex-1 flex-col">
-        <Suspense fallback={<BackButtonSkeleton className="mx-6 mt-4 sm:mx-10 sm:mt-6" />}>
-          <BackButton className="mx-6 mt-4 sm:mx-10 sm:mt-6" />
-        </Suspense>
-        {children}
-      </main>
+      <main className="flex flex-1 flex-col">{children}</main>
     </div>
   );
 }

@@ -2,8 +2,8 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { AppSidebar, AppSidebarSkeleton } from "@/components/layout/app-sidebar";
-import { BackButton, BackButtonSkeleton } from "@/components/layout/back-button";
 import { UserMenu } from "@/components/layout/user-menu";
+import { getMyMemberStatus } from "@/lib/auth/session";
 import {
   SidebarInset,
   SidebarMenu,
@@ -26,7 +26,7 @@ export default function DashboardLayout({
     <div className="app-shell flex min-h-svh w-full bg-background text-foreground">
       <SidebarProvider>
         <Suspense fallback={<AppSidebarSkeleton />}>
-          <AppSidebar
+          <AppSidebarGate
             footer={
               <Suspense
                 fallback={
@@ -53,14 +53,16 @@ export default function DashboardLayout({
               <ArrowUpRight className="size-3.5" />
             </Link>
           </header>
-          <main className="flex flex-1 flex-col">
-            <Suspense fallback={<BackButtonSkeleton className="mx-6 mt-4 sm:mx-10 sm:mt-6" />}>
-              <BackButton className="mx-6 mt-4 sm:mx-10 sm:mt-6" />
-            </Suspense>
-            {children}
-          </main>
+          <main className="flex flex-1 flex-col">{children}</main>
         </SidebarInset>
       </SidebarProvider>
     </div>
   );
+}
+
+// getMyMemberStatus()を読んでからクライアント側のAppSidebarへ渡す、Suspense配下の
+// 薄いラッパー。管理者/オーナーには「管理画面」への導線をサイドバーに常設する。
+async function AppSidebarGate({ footer }: { footer: React.ReactNode }) {
+  const memberStatus = await getMyMemberStatus();
+  return <AppSidebar footer={footer} isAdmin={memberStatus === "admin"} />;
 }
