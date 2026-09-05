@@ -90,15 +90,14 @@ async function AdList() {
               <Button asChild variant="outline" size="sm">
                 <Link href={`/admin/ads/${ad.id}/edit`}>編集</Link>
               </Button>
-              <form action={deleteAdAction.bind(null, ad.id)}>
-                <ConfirmSubmitButton
-                  variant="destructive"
-                  size="sm"
-                  confirmMessage="この広告を削除します。この操作は取り消せません。よろしいですか？"
-                >
-                  削除
-                </ConfirmSubmitButton>
-              </form>
+              <ConfirmSubmitButton
+                variant="destructive"
+                size="sm"
+                action={deleteAdAction.bind(null, ad.id)}
+                confirmMessage="この広告を削除します。この操作は取り消せません。よろしいですか？"
+              >
+                削除
+              </ConfirmSubmitButton>
             </div>
           </Card>
         </li>

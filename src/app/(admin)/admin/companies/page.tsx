@@ -99,15 +99,14 @@ async function CompanyList() {
               <Button asChild variant="outline" size="sm">
                 <Link href={`/companies/${company.id}`}>詳細</Link>
               </Button>
-              <form action={deleteCompanyAction.bind(null, company.id)}>
-                <ConfirmSubmitButton
-                  variant="destructive"
-                  size="sm"
-                  confirmMessage={`「${company.name}」を削除します。所属する全メンバーの紐付けも失われます。本当に削除しますか？`}
-                >
-                  削除
-                </ConfirmSubmitButton>
-              </form>
+              <ConfirmSubmitButton
+                variant="destructive"
+                size="sm"
+                action={deleteCompanyAction.bind(null, company.id)}
+                confirmMessage={`「${company.name}」を削除します。所属する全メンバーの紐付けも失われます。本当に削除しますか？`}
+              >
+                削除
+              </ConfirmSubmitButton>
             </div>
           </Card>
         </li>

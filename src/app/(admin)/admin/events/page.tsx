@@ -123,15 +123,14 @@ async function EventList() {
                   複製
                 </Button>
               </form>
-              <form action={deleteEventAction.bind(null, event.id)}>
-                <ConfirmSubmitButton
-                  variant="destructive"
-                  size="sm"
-                  confirmMessage={`「${event.title}」を削除します。この操作は取り消せません。よろしいですか？`}
-                >
-                  削除
-                </ConfirmSubmitButton>
-              </form>
+              <ConfirmSubmitButton
+                variant="destructive"
+                size="sm"
+                action={deleteEventAction.bind(null, event.id)}
+                confirmMessage={`「${event.title}」を削除します。この操作は取り消せません。よろしいですか？`}
+              >
+                削除
+              </ConfirmSubmitButton>
             </div>
           </Card>
         </li>

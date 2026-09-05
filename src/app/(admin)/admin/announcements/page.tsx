@@ -92,17 +92,14 @@ async function AnnouncementList() {
                   編集
                 </Link>
               </Button>
-              <form
+              <ConfirmSubmitButton
+                variant="destructive"
+                size="sm"
                 action={deleteAnnouncementAction.bind(null, announcement.id)}
+                confirmMessage={`「${announcement.title}」を削除します。この操作は取り消せません。よろしいですか？`}
               >
-                <ConfirmSubmitButton
-                  variant="destructive"
-                  size="sm"
-                  confirmMessage={`「${announcement.title}」を削除します。この操作は取り消せません。よろしいですか？`}
-                >
-                  削除
-                </ConfirmSubmitButton>
-              </form>
+                削除
+              </ConfirmSubmitButton>
             </div>
           </Card>
         </li>

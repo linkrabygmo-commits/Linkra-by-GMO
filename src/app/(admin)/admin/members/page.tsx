@@ -121,16 +121,15 @@ async function MembersList() {
                   currentStatus={member.memberStatus}
                   disabled={isSelf}
                 />
-                <form action={deleteMemberAction.bind(null, member.id)}>
-                  <ConfirmSubmitButton
-                    variant="destructive"
-                    size="sm"
-                    disabled={isSelf}
-                    confirmMessage={`${member.displayName} を削除します。この操作は取り消せません。よろしいですか？`}
-                  >
-                    削除
-                  </ConfirmSubmitButton>
-                </form>
+                <ConfirmSubmitButton
+                  variant="destructive"
+                  size="sm"
+                  disabled={isSelf}
+                  action={deleteMemberAction.bind(null, member.id)}
+                  confirmMessage={`${member.displayName} を削除します。この操作は取り消せません。よろしいですか？`}
+                >
+                  削除
+                </ConfirmSubmitButton>
               </div>
             </Card>
           </li>

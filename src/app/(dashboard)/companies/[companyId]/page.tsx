@@ -38,7 +38,10 @@ async function CompanyDetailContent({
   return (
     <>
       <Breadcrumb
-        items={[{ label: "企業ディレクトリ", href: "/companies" }, { label: company.name }]}
+        items={[
+          { label: "企業ディレクトリ", href: "/companies" },
+          { label: company.name },
+        ]}
       />
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">
@@ -55,15 +58,14 @@ async function CompanyDetailContent({
           </h1>
         </div>
         {company.currentUserRole && (
-          <form action={leaveCompanyAction.bind(null, companyId)}>
-            <ConfirmSubmitButton
-              variant="destructive"
-              size="sm"
-              confirmMessage={`「${company.name}」を退会します。この操作は取り消せません。よろしいですか？`}
-            >
-              退会する
-            </ConfirmSubmitButton>
-          </form>
+          <ConfirmSubmitButton
+            variant="destructive"
+            size="sm"
+            action={leaveCompanyAction.bind(null, companyId)}
+            confirmMessage={`「${company.name}」を退会します。この操作は取り消せません。よろしいですか？`}
+          >
+            退会する
+          </ConfirmSubmitButton>
         )}
       </div>
 
@@ -86,7 +88,9 @@ async function CompanyDetailContent({
               <span className="text-sm text-foreground">
                 {member.displayName}
               </span>
-              <Badge variant={member.role === "owner" ? "default" : "secondary"}>
+              <Badge
+                variant={member.role === "owner" ? "default" : "secondary"}
+              >
                 {member.role === "owner"
                   ? "オーナー"
                   : member.role === "admin"
