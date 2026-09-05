@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Bell, ChevronDown, LogOut, Shield, User } from "lucide-react";
+import { ChevronDown, LogOut, Megaphone, Shield, User } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getMyProfile } from "@/features/profile/repository";
 import { logoutAction } from "@/features/auth/actions";
@@ -15,8 +15,11 @@ import {
 
 // ヘッダー右上のユーザー情報表示。サイドバー下部のUserMenu(折りたたみ時にも
 // アクセスできるようアイコンのみになる導線)とは別に、常に見える場所にも
-// アバター・氏名・肩書きを出す。通知ベルは既読管理の仕組みがまだ存在しないため、
-// 件数バッジは付けずお知らせ一覧へのリンクとしてのみ機能する。
+// アバター・氏名・肩書きを出す。既読管理の仕組みが無いため「通知」機能は
+// 持たせず、お知らせ一覧への単なるショートカットとして、それと分かる
+// Megaphoneアイコン(サイドバーの「お知らせ」と同じもの)を使う。
+// 以前はBellアイコンだったが、通知ドロップダウン/未読バッジを期待させて
+// しまう見た目だったため変更した。
 export async function HeaderUserMenu() {
   const user = await getCurrentUser();
 
@@ -39,7 +42,7 @@ export async function HeaderUserMenu() {
     <div className="flex items-center gap-1 sm:gap-3">
       <Button asChild variant="ghost" size="icon" aria-label="お知らせ">
         <Link href="/announcements">
-          <Bell className="size-5" />
+          <Megaphone className="size-5" />
         </Link>
       </Button>
 

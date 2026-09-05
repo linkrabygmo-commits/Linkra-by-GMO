@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getPublishedAnnouncementById } from "@/features/announcements/repository";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { AnnouncementDetailSkeleton } from "@/components/layout/detail-skeletons";
+import { Linkify } from "@/components/ui/linkify";
 import { formatJstDate } from "@/lib/datetime";
 
 interface AnnouncementDetailPageProps {
@@ -52,7 +53,7 @@ async function AnnouncementDetail({
           className="w-full rounded-lg border border-border object-cover"
         />
       )}
-      <p className="whitespace-pre-line text-sm text-foreground">{announcement.body}</p>
+      <Linkify text={announcement.body} className="text-sm text-foreground" />
     </>
   );
 }

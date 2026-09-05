@@ -11,6 +11,7 @@ import { EventDetailSkeleton } from "@/components/layout/detail-skeletons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CopyLinkButton } from "@/components/ui/copy-link-button";
+import { Linkify } from "@/components/ui/linkify";
 import { formatJstDateTime } from "@/lib/datetime";
 
 interface EventDetailPageProps {
@@ -86,7 +87,7 @@ async function EventDetail({ paramsPromise }: { paramsPromise: EventDetailPagePr
           </p>
         )}
         {event.description && (
-          <p className="whitespace-pre-line text-sm text-foreground">{event.description}</p>
+          <Linkify text={event.description} className="text-sm text-foreground" />
         )}
       </div>
 

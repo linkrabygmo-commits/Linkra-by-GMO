@@ -587,10 +587,11 @@ function SidebarMenuSkeleton({
 }: React.ComponentProps<"div"> & {
   showIcon?: boolean
 }) {
-  // Random width between 50 to 90%.
-  const [width] = React.useState(() => {
-    return `${Math.floor(Math.random() * 40) + 50}%`
-  })
+  // 元々はMath.random()で50〜90%のランダム幅にしていたが、サーバー側で
+  // 計算した値とブラウザ側での再計算が一致せず、Reactのハイドレーション
+  // エラー(#418)の原因になっていた。見た目のためだけの装飾なので、
+  // 固定値にしてサーバー/クライアントで常に同じ結果になるようにする。
+  const width = "70%"
 
   return (
     <div

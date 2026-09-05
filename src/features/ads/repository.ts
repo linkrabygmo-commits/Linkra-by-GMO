@@ -5,6 +5,19 @@ import { requireAdmin } from "@/lib/auth/session";
 import type { AdPlacement, AdStatus } from "@/types/database";
 import type { HeroBanner } from "@/features/ads/types";
 
+// 管理画面「概要」タブ用。登録済みの広告の総件数のみを取得する軽量クエリ。
+export async function getAdCount(): Promise<number> {
+  await requireAdmin();
+  const supabase = await createClient();
+  const { count, error } = await supabase
+    .from("advertisements")
+    .select("id", { count: "exact", head: true });
+
+  if (error) throw new Error(error.message);
+
+  return count ?? 0;
+}
+
 export async function listActiveAds(
   placement: AdPlacement,
 ): Promise<HeroBanner[]> {

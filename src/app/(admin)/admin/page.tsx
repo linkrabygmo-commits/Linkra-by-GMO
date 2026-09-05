@@ -1,8 +1,11 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { Users } from "lucide-react";
+import { CalendarDays, Image as ImageIcon, Megaphone, Users } from "lucide-react";
 import { listAllMembers } from "@/features/admin/repository";
-import { Button } from "@/components/ui/button";
+import { getAdCount } from "@/features/ads/repository";
+import { getUpcomingEventCount } from "@/features/events/repository";
+import { getPublishedAnnouncementCount } from "@/features/announcements/repository";
+import { Card } from "@/components/ui/card";
 
 export default function AdminOverviewPage() {
   return (
@@ -16,7 +19,7 @@ export default function AdminOverviewPage() {
           会員・広告・イベント・お知らせの運営状況をここから確認できます。
         </p>
       </div>
-      <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
+      <Suspense fallback={<OverviewSkeleton />}>
         <OverviewContent />
       </Suspense>
     </div>
@@ -24,22 +27,62 @@ export default function AdminOverviewPage() {
 }
 
 async function OverviewContent() {
-  const members = await listAllMembers();
+  const [members, adCount, upcomingEventCount, announcementCount] = await Promise.all([
+    listAllMembers(),
+    getAdCount(),
+    getUpcomingEventCount(),
+    getPublishedAnnouncementCount(),
+  ]);
+
+  const cards = [
+    { label: "会員数", value: members.length, unit: "人", icon: Users, href: "/admin/members" },
+    { label: "広告", value: adCount, unit: "件", icon: ImageIcon, href: "/admin/ads" },
+    {
+      label: "今後のイベント",
+      value: upcomingEventCount,
+      unit: "件",
+      icon: CalendarDays,
+      href: "/admin/events",
+    },
+    {
+      label: "お知らせ",
+      value: announcementCount,
+      unit: "件",
+      icon: Megaphone,
+      href: "/admin/announcements",
+    },
+  ];
 
   return (
-    <div className="flex items-center justify-between rounded-xl border border-border bg-card px-6 py-5 ring-1 ring-foreground/10">
-      <div className="flex items-center gap-4">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
-          <Users className="size-5" />
-        </span>
-        <div>
-          <p className="text-sm text-muted-foreground">会員数</p>
-          <p className="text-2xl font-semibold text-foreground">{members.length}人</p>
-        </div>
-      </div>
-      <Button asChild>
-        <Link href="/admin/members">会員管理へ</Link>
-      </Button>
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {cards.map((card) => (
+        <Link key={card.label} href={card.href}>
+          <Card className="gap-3 px-5 py-5 transition-all hover:-translate-y-0.5 hover:shadow-md">
+            <div className="flex items-center gap-3">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
+                <card.icon className="size-5" />
+              </span>
+              <span className="text-sm text-muted-foreground">{card.label}</span>
+            </div>
+            <p className="text-3xl font-semibold text-foreground">
+              {card.value}
+              <span className="ml-1 text-base font-normal text-muted-foreground">
+                {card.unit}
+              </span>
+            </p>
+          </Card>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+function OverviewSkeleton() {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="h-28 animate-pulse rounded-xl bg-muted" />
+      ))}
     </div>
   );
 }
