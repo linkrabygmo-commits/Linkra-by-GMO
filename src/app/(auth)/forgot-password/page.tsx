@@ -13,7 +13,7 @@ export default function ForgotPasswordPage() {
         パスワード再設定
       </h1>
       <p className="text-center text-sm text-muted-foreground">
-        登録済みのメールアドレスを入力してください。再設定用のリンクをお送りします。
+        登録済みのメールアドレスを入力してください。管理者の承認後、このページで新しいパスワードを設定できます。
       </p>
       <ForgotPasswordForm />
       <p className="text-center text-sm text-muted-foreground">

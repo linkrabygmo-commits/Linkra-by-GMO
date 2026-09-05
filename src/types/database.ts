@@ -9,6 +9,7 @@ export type AdStatus = "pending" | "approved" | "rejected";
 export type EventAudience = "member_only" | "public";
 export type EventApplicationStatus = "pending" | "confirmed" | "cancelled";
 export type AnnouncementStatus = "draft" | "published";
+export type PasswordResetStatus = "pending" | "approved" | "completed";
 
 export type Database = {
   public: {
@@ -367,6 +368,36 @@ export type Database = {
         };
         Relationships: [];
       };
+      password_reset_requests: {
+        Row: {
+          id: string;
+          user_id: string;
+          status: PasswordResetStatus;
+          requested_at: string;
+          approved_at: string | null;
+          approved_by: string | null;
+          completed_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          status?: PasswordResetStatus;
+          requested_at?: string;
+          approved_at?: string | null;
+          approved_by?: string | null;
+          completed_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          status?: PasswordResetStatus;
+          requested_at?: string;
+          approved_at?: string | null;
+          approved_by?: string | null;
+          completed_at?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       member_directory: {
@@ -414,6 +445,10 @@ export type Database = {
       delete_company: {
         Args: { target_id: string };
         Returns: undefined;
+      };
+      find_user_id_by_email: {
+        Args: { lookup_email: string };
+        Returns: string | null;
       };
     };
   };

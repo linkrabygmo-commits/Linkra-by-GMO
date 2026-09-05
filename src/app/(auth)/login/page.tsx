@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 interface LoginPageProps {
-  searchParams: Promise<{ registered?: string }>;
+  searchParams: Promise<{ registered?: string; reset?: string }>;
 }
 
 export default function LoginPage({ searchParams }: LoginPageProps) {
@@ -44,13 +44,15 @@ async function RegisteredBanner({
 }: {
   searchParamsPromise: LoginPageProps["searchParams"];
 }) {
-  const { registered } = await searchParamsPromise;
+  const { registered, reset } = await searchParamsPromise;
 
-  if (!registered) return null;
+  if (!registered && !reset) return null;
 
   return (
     <p className="rounded-lg bg-accent px-4 py-3 text-center text-sm text-accent-foreground">
-      登録が完了しました。ログインしてください。
+      {reset
+        ? "パスワードを更新しました。新しいパスワードでログインしてください。"
+        : "登録が完了しました。ログインしてください。"}
     </p>
   );
 }
