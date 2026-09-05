@@ -57,6 +57,18 @@ const ACTIVITY_TONES: Record<keyof typeof ACTIVITY_ICONS, StatCardTone> = {
   announcement: "amber",
 };
 
+// クイックアクションの枠線・背景も、対応するカテゴリの淡いアクセントカラーで
+// 縁取る(会員=blue、企業=purple)。
+const QUICK_ACTION_TONE_CLASSES: Record<StatCardTone, string> = {
+  blue: "border-blue-200 bg-blue-50/60 text-blue-600 hover:border-blue-300 hover:bg-blue-50 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-400",
+  purple:
+    "border-purple-200 bg-purple-50/60 text-purple-600 hover:border-purple-300 hover:bg-purple-50 dark:border-purple-500/30 dark:bg-purple-500/10 dark:text-purple-400",
+  green:
+    "border-green-200 bg-green-50/60 text-green-600 hover:border-green-300 hover:bg-green-50 dark:border-green-500/30 dark:bg-green-500/10 dark:text-green-400",
+  amber:
+    "border-amber-200 bg-amber-50/60 text-amber-600 hover:border-amber-300 hover:bg-amber-50 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-400",
+};
+
 async function DashboardHomeContent() {
   const [profile, myCompanies] = await Promise.all([
     getMyProfile(),
@@ -129,9 +141,14 @@ async function DashboardHomeContent() {
     },
   ];
 
-  const quickActions = [
-    { label: "会員を検索", href: "/members", icon: Search },
-    { label: "企業を検索", href: "/companies", icon: Search },
+  const quickActions: {
+    label: string;
+    href: string;
+    icon: typeof Search;
+    tone: StatCardTone;
+  }[] = [
+    { label: "会員を検索", href: "/members", icon: Search, tone: "blue" },
+    { label: "企業を検索", href: "/companies", icon: Search, tone: "purple" },
   ];
 
   return (
@@ -260,9 +277,9 @@ async function DashboardHomeContent() {
                 <Link
                   key={action.label}
                   href={action.href}
-                  className="flex flex-col items-center justify-center gap-2 rounded-lg border border-border px-3 py-4 text-center transition-colors hover:border-primary/40 hover:bg-accent"
+                  className={`flex flex-col items-center justify-center gap-2 rounded-lg border px-3 py-4 text-center transition-colors ${QUICK_ACTION_TONE_CLASSES[action.tone]}`}
                 >
-                  <action.icon className="size-5 text-primary" />
+                  <action.icon className="size-5" />
                   <span className="text-xs font-medium text-foreground">
                     {action.label}
                   </span>

@@ -20,7 +20,9 @@ export function AdminNav() {
     <nav className="flex w-full min-w-0 items-center gap-1 overflow-x-auto sm:w-auto">
       {ADMIN_NAV_ITEMS.map((item) => {
         const isActive =
-          item.href === "/admin" ? pathname === item.href : pathname.startsWith(item.href);
+          item.href === "/admin"
+            ? pathname === item.href
+            : pathname.startsWith(item.href);
 
         return (
           <Link
@@ -29,7 +31,7 @@ export function AdminNav() {
             className={cn(
               "shrink-0 rounded-full px-3 py-1.5 text-sm whitespace-nowrap transition-colors",
               isActive
-                ? "bg-accent font-medium text-accent-foreground"
+                ? "bg-primary font-medium text-primary-foreground"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground",
             )}
           >
