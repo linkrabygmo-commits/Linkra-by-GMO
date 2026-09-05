@@ -1,7 +1,14 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowRight, Building2, CalendarDays, Handshake, Lock, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  Building2,
+  CalendarDays,
+  Handshake,
+  Lock,
+  Sparkles,
+} from "lucide-react";
 import { listNewMembers } from "@/features/members/repository";
 import { MemberCard } from "@/features/members/components/member-card";
 import { listNewCompanies } from "@/features/companies/repository";
@@ -41,7 +48,8 @@ const FEATURES = [
   {
     icon: Sparkles,
     title: "新しいビジネスの時代へ",
-    description: "紹介・相談・共創を通じて、\n未来のビジネスチャンスが広がります。",
+    description:
+      "紹介・相談・共創を通じて、\n未来のビジネスチャンスが広がります。",
   },
 ];
 
@@ -106,7 +114,10 @@ export default function TopPage() {
 
           <div className="grid gap-10 sm:grid-cols-3 sm:divide-x sm:divide-white/10">
             {FEATURES.map((feature) => (
-              <div key={feature.title} className="flex flex-col gap-3 sm:px-8 sm:first:pl-0">
+              <div
+                key={feature.title}
+                className="flex flex-col gap-3 sm:px-8 sm:first:pl-0"
+              >
                 <feature.icon className="size-6 text-blue-400 drop-shadow-[0_0_10px_rgba(96,165,250,0.7)]" />
                 <h3 className="text-base font-medium text-white">
                   {feature.title}
@@ -130,7 +141,9 @@ export default function TopPage() {
               <Link href="/members">会員ディレクトリを見る</Link>
             </Button>
           </div>
-          <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
+          <Suspense
+            fallback={<p className="text-muted-foreground">読み込み中...</p>}
+          >
             <NewMembers />
           </Suspense>
         </div>
@@ -144,7 +157,9 @@ export default function TopPage() {
               <Link href="/companies">企業ディレクトリを見る</Link>
             </Button>
           </div>
-          <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
+          <Suspense
+            fallback={<p className="text-muted-foreground">読み込み中...</p>}
+          >
             <NewCompanies />
           </Suspense>
         </div>
@@ -158,7 +173,9 @@ export default function TopPage() {
               <Link href="/events">イベント一覧を見る</Link>
             </Button>
           </div>
-          <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
+          <Suspense
+            fallback={<p className="text-muted-foreground">読み込み中...</p>}
+          >
             <UpcomingEvents />
           </Suspense>
         </div>
@@ -172,7 +189,9 @@ export default function TopPage() {
               <Link href="/announcements">お知らせ一覧を見る</Link>
             </Button>
           </div>
-          <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
+          <Suspense
+            fallback={<p className="text-muted-foreground">読み込み中...</p>}
+          >
             <LatestAnnouncements />
           </Suspense>
         </div>
@@ -187,10 +206,16 @@ async function HeroBanners() {
 }
 
 async function UpcomingEvents() {
-  const events = (await listEvents()).slice(0, 3);
+  const events = (await listEvents())
+    .filter((event) => !event.hasEnded)
+    .slice(0, 3);
 
   if (events.length === 0) {
-    return <p className="text-muted-foreground">現在開催予定のイベントはありません。</p>;
+    return (
+      <p className="text-muted-foreground">
+        現在開催予定のイベントはありません。
+      </p>
+    );
   }
 
   return (
@@ -217,7 +242,9 @@ async function UpcomingEvents() {
           </div>
           <div className="flex flex-col gap-2 p-4">
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-medium text-foreground">{event.title}</h3>
+              <h3 className="text-sm font-medium text-foreground">
+                {event.title}
+              </h3>
               {event.audience === "member_only" && (
                 <Badge variant="outline" className="gap-1">
                   <Lock className="size-3" />
@@ -226,7 +253,10 @@ async function UpcomingEvents() {
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              {formatJstDateTime(event.startsAt, { dateStyle: "medium", timeStyle: "short" })}
+              {formatJstDateTime(event.startsAt, {
+                dateStyle: "medium",
+                timeStyle: "short",
+              })}
             </p>
           </div>
         </Link>
@@ -250,10 +280,14 @@ async function LatestAnnouncements() {
             href={`/announcements/${announcement.id}`}
             className="flex items-center justify-between gap-4 rounded-lg border border-border p-4 transition-colors hover:border-foreground/30"
           >
-            <span className="text-sm font-medium text-foreground">{announcement.title}</span>
+            <span className="text-sm font-medium text-foreground">
+              {announcement.title}
+            </span>
             {announcement.publishedAt && (
               <span className="shrink-0 text-xs text-muted-foreground">
-                {formatJstDate(announcement.publishedAt, { dateStyle: "medium" })}
+                {formatJstDate(announcement.publishedAt, {
+                  dateStyle: "medium",
+                })}
               </span>
             )}
           </Link>
@@ -267,7 +301,9 @@ async function NewCompanies() {
   const companies = await listNewCompanies(6);
 
   if (companies.length === 0) {
-    return <p className="text-muted-foreground">まだ会社が登録されていません。</p>;
+    return (
+      <p className="text-muted-foreground">まだ会社が登録されていません。</p>
+    );
   }
 
   return (
@@ -291,8 +327,12 @@ async function NewCompanies() {
             </span>
           )}
           <div className="flex min-w-0 flex-col gap-0.5">
-            <p className="truncate text-sm font-medium text-foreground">{company.name}</p>
-            <p className="text-xs text-muted-foreground">{company.memberCount}人</p>
+            <p className="truncate text-sm font-medium text-foreground">
+              {company.name}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {company.memberCount}人
+            </p>
           </div>
         </Link>
       ))}

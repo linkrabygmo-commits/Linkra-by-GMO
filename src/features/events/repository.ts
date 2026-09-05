@@ -75,16 +75,22 @@ function isPastDeadline(applicationDeadline: string | null): boolean {
   );
 }
 
+// 開催中/開催予定のイベントを開始が近い順に並べ、終了済みのイベントは最後にまとめて
+// (直近に終了したものから)並べる。DBの並び順(starts_at昇順)だけでは終了済みイベントが
+// 開催予定のものと混在してしまうため、取得後にJS側で並べ替える。
+function compareEventsForList(a: EventDto, b: EventDto): number {
+  if (a.hasEnded !== b.hasEnded) return a.hasEnded ? 1 : -1;
+  const diff = new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime();
+  return a.hasEnded ? -diff : diff;
+}
+
 export async function listEvents(): Promise<EventDto[]> {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("events")
-    .select(EVENT_COLUMNS)
-    .order("starts_at", { ascending: true });
+  const { data, error } = await supabase.from("events").select(EVENT_COLUMNS);
 
   if (error) throw new Error(error.message);
 
-  return (data ?? []).map(toEventDto);
+  return (data ?? []).map(toEventDto).sort(compareEventsForList);
 }
 
 // ダッシュボードの「今後の予定」用。開催日時が未来のイベントのみを対象に、
