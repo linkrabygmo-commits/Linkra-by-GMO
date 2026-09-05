@@ -271,6 +271,7 @@ export type Database = {
           event_id: string;
           user_id: string;
           status: EventApplicationStatus;
+          attended: boolean;
           created_at: string;
         };
         Insert: {
@@ -278,6 +279,7 @@ export type Database = {
           event_id: string;
           user_id: string;
           status?: EventApplicationStatus;
+          attended?: boolean;
           created_at?: string;
         };
         Update: {
@@ -285,6 +287,7 @@ export type Database = {
           event_id?: string;
           user_id?: string;
           status?: EventApplicationStatus;
+          attended?: boolean;
           created_at?: string;
         };
         Relationships: [];
@@ -299,6 +302,7 @@ export type Database = {
           company_name: string | null;
           title: string | null;
           status: EventApplicationStatus;
+          attended: boolean;
           created_at: string;
         };
         Insert: {
@@ -310,6 +314,7 @@ export type Database = {
           company_name?: string | null;
           title?: string | null;
           status?: EventApplicationStatus;
+          attended?: boolean;
           created_at?: string;
         };
         Update: {
@@ -321,6 +326,7 @@ export type Database = {
           company_name?: string | null;
           title?: string | null;
           status?: EventApplicationStatus;
+          attended?: boolean;
           created_at?: string;
         };
         Relationships: [];

@@ -258,6 +258,7 @@ export interface EventApplicationDto {
   email: string | null;
   phone: string | null;
   status: EventApplicationStatus;
+  attended: boolean;
   createdAt: string;
 }
 
@@ -271,23 +272,29 @@ export async function listEventApplications(eventId: string): Promise<EventAppli
   ] = await Promise.all([
     supabase
       .from("member_event_applications")
-      .select("id, user_id, status, created_at")
+      .select("id, user_id, status, attended, created_at")
       .eq("event_id", eventId),
     supabase
       .from("guest_event_applications")
-      .select("id, name, email, phone, company_name, title, status, created_at")
+      .select("id, name, email, phone, company_name, title, status, attended, created_at")
       .eq("event_id", eventId),
   ]);
 
   if (memberError) throw new Error(memberError.message);
   if (guestError) throw new Error(guestError.message);
 
-  let memberById = new Map<string, { displayName: string; companyName: string | null; title: string | null }>();
+  // 会員の電話番号はmember_directoryの閲覧権限に従うため、requireAdmin()を通過した
+  // 管理者からの問い合わせであれば常にマスクされずに返る(current_member_status()が
+  // 'admin'の場合を許可するビュー側のcase式による)。
+  let memberById = new Map<
+    string,
+    { displayName: string; companyName: string | null; title: string | null; phone: string | null }
+  >();
 
   if (memberApps && memberApps.length > 0) {
     const { data: members, error } = await supabase
       .from("member_directory")
-      .select("id, display_name, company_name, title")
+      .select("id, display_name, company_name, title, phone")
       .in(
         "id",
         memberApps.map((application) => application.user_id),
@@ -297,7 +304,12 @@ export async function listEventApplications(eventId: string): Promise<EventAppli
     memberById = new Map(
       (members ?? []).map((member) => [
         member.id,
-        { displayName: member.display_name, companyName: member.company_name, title: member.title },
+        {
+          displayName: member.display_name,
+          companyName: member.company_name,
+          title: member.title,
+          phone: member.phone,
+        },
       ]),
     );
   }
@@ -311,8 +323,9 @@ export async function listEventApplications(eventId: string): Promise<EventAppli
       companyName: member?.companyName ?? null,
       title: member?.title ?? null,
       email: null,
-      phone: null,
+      phone: member?.phone ?? null,
       status: application.status,
+      attended: application.attended,
       createdAt: application.created_at,
     };
   });
@@ -326,6 +339,7 @@ export async function listEventApplications(eventId: string): Promise<EventAppli
     email: application.email,
     phone: application.phone,
     status: application.status,
+    attended: application.attended,
     createdAt: application.created_at,
   }));
 
@@ -343,6 +357,22 @@ export async function updateApplicationStatus(
     applicationType === "member" ? "member_event_applications" : "guest_event_applications";
 
   const { error } = await supabase.from(table).update({ status }).eq("id", applicationId);
+
+  if (error) throw new Error(error.message);
+}
+
+// 申込のキャンセル状態(status)とは独立して、実際に会場へ来たかどうかを記録する。
+export async function setApplicationAttendance(
+  applicationType: "member" | "guest",
+  applicationId: string,
+  attended: boolean,
+): Promise<void> {
+  await requireAdmin();
+  const supabase = await createClient();
+  const table =
+    applicationType === "member" ? "member_event_applications" : "guest_event_applications";
+
+  const { error } = await supabase.from(table).update({ attended }).eq("id", applicationId);
 
   if (error) throw new Error(error.message);
 }

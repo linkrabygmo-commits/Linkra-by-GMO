@@ -4,7 +4,10 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Download } from "lucide-react";
 import { getEventById, listEventApplications } from "@/features/events/repository";
-import { updateApplicationStatusAction } from "@/features/events/actions";
+import {
+  updateApplicationAttendanceAction,
+  updateApplicationStatusAction,
+} from "@/features/events/actions";
 import { requireAdmin } from "@/lib/auth/session";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { ApplicationsListSkeleton } from "@/components/layout/detail-skeletons";
@@ -46,6 +49,7 @@ async function ApplicationsList({ paramsPromise }: { paramsPromise: AdminEventPa
   const applications = await listEventApplications(eventId);
   // 申込者一覧にはキャンセル済みの情報は表示しない(履歴としてはCSV出力側にのみ残す)。
   const visibleApplications = applications.filter((application) => application.status !== "cancelled");
+  const attendedCount = visibleApplications.filter((application) => application.attended).length;
 
   return (
     <>
@@ -59,7 +63,21 @@ async function ApplicationsList({ paramsPromise }: { paramsPromise: AdminEventPa
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-semibold text-foreground">{event.title}</h1>
-          <p className="text-sm text-muted-foreground">申込者一覧({visibleApplications.length}件)</p>
+          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+            <span>
+              申込者
+              <span className="mx-1 text-base font-semibold text-foreground">
+                {visibleApplications.length}
+              </span>
+              人
+            </span>
+            <span className="text-border">|</span>
+            <span>
+              参加者
+              <span className="mx-1 text-base font-semibold text-foreground">{attendedCount}</span>
+              人
+            </span>
+          </div>
         </div>
         {applications.length > 0 && (
           <Button asChild variant="outline" size="sm" className="w-fit">
@@ -89,6 +107,7 @@ async function ApplicationsList({ paramsPromise }: { paramsPromise: AdminEventPa
                     {application.type === "member" ? "会員" : "ゲスト"}
                   </Badge>
                   <Badge>済</Badge>
+                  {application.attended && <Badge variant="secondary">参加済み</Badge>}
                 </div>
                 {(application.companyName || application.title) && (
                   <p className="text-xs text-muted-foreground">
@@ -96,10 +115,11 @@ async function ApplicationsList({ paramsPromise }: { paramsPromise: AdminEventPa
                     {application.title && ` / ${application.title}`}
                   </p>
                 )}
-                {application.email && (
+                {(application.email || application.phone) && (
                   <p className="text-xs text-muted-foreground">
                     {application.email}
-                    {application.phone && ` / ${application.phone}`}
+                    {application.email && application.phone && " / "}
+                    {application.phone}
                   </p>
                 )}
                 <p className="text-xs text-muted-foreground">
@@ -107,6 +127,19 @@ async function ApplicationsList({ paramsPromise }: { paramsPromise: AdminEventPa
                 </p>
               </div>
               <div className="flex flex-wrap gap-2 sm:shrink-0">
+                <form
+                  action={updateApplicationAttendanceAction.bind(
+                    null,
+                    eventId,
+                    application.type,
+                    application.id,
+                    !application.attended,
+                  )}
+                >
+                  <Button type="submit" variant={application.attended ? "outline" : "default"} size="sm">
+                    {application.attended ? "参加を取消" : "参加にする"}
+                  </Button>
+                </form>
                 <form
                   action={updateApplicationStatusAction.bind(
                     null,

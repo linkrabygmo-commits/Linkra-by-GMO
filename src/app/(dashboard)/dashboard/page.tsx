@@ -1,15 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import {
-  Bell,
-  Building2,
-  CalendarDays,
-  Megaphone,
-  PenSquare,
-  Search,
-  Users,
-} from "lucide-react";
+import { Building2, CalendarDays, Megaphone, Search, Users } from "lucide-react";
 import { getMyProfile } from "@/features/profile/repository";
 import { listMyCompanies } from "@/features/companies/repository";
 import { getMemberCount } from "@/features/members/repository";
@@ -22,7 +14,6 @@ import {
   listPublishedAnnouncements,
 } from "@/features/announcements/repository";
 import { listRecentActivity } from "@/features/dashboard/repository";
-import { getMyMemberStatus } from "@/lib/auth/session";
 import { formatJstDate, formatJstDateTime } from "@/lib/datetime";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -46,19 +37,13 @@ const ACTIVITY_ICONS = {
 } as const;
 
 async function DashboardHomeContent() {
-  const [profile, myCompanies, memberStatus] = await Promise.all([
-    getMyProfile(),
-    listMyCompanies(),
-    getMyMemberStatus(),
-  ]);
+  const [profile, myCompanies] = await Promise.all([getMyProfile(), listMyCompanies()]);
 
   // ログイン経路以外(既存セッションでの直接アクセス等)でも、プロフィール
   // 未設定のまま来た場合は必ず設定画面に誘導する。
   if (!profile.onboarded) {
     redirect("/profile");
   }
-
-  const isAdmin = memberStatus === "admin";
 
   const [
     memberCount,
@@ -100,12 +85,6 @@ async function DashboardHomeContent() {
   const quickActions = [
     { label: "会員を検索", href: "/members", icon: Search },
     { label: "企業を検索", href: "/companies", icon: Search },
-    isAdmin
-      ? { label: "イベントを作成", href: "/admin/events/new", icon: PenSquare }
-      : { label: "イベントを見る", href: "/events", icon: CalendarDays },
-    isAdmin
-      ? { label: "お知らせを作成", href: "/admin/announcements/new", icon: PenSquare }
-      : { label: "お知らせを見る", href: "/announcements", icon: Bell },
   ];
 
   return (

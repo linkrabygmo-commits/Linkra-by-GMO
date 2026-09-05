@@ -149,3 +149,13 @@ export async function updateApplicationStatusAction(
   await repository.updateApplicationStatus(applicationType, applicationId, status);
   revalidatePath(`/admin/events/${eventId}`);
 }
+
+export async function updateApplicationAttendanceAction(
+  eventId: string,
+  applicationType: "member" | "guest",
+  applicationId: string,
+  attended: boolean,
+) {
+  await repository.setApplicationAttendance(applicationType, applicationId, attended);
+  revalidatePath(`/admin/events/${eventId}`);
+}

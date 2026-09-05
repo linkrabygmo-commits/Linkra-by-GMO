@@ -53,6 +53,7 @@ export async function GET(
     "電話番号",
     "申込種別",
     "ステータス",
+    "参加",
     "申込日時",
   ];
 
@@ -65,6 +66,7 @@ export async function GET(
       application.phone ?? "",
       application.type === "member" ? "会員" : "ゲスト",
       STATUS_LABELS[application.status],
+      application.attended ? "参加済み" : "",
       formatJstDateTime(application.createdAt, { dateStyle: "short", timeStyle: "short" }),
     ]),
   );
