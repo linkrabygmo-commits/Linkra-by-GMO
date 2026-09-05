@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { createAdAction, updateAdAction } from "@/features/ads/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/ui/form-field";
 import { ImageUploadField } from "@/components/storage/image-upload-field";
 import { isoToJstDatetimeLocal } from "@/lib/datetime";
 
@@ -24,10 +24,17 @@ export function AdForm({ adId, defaultValues }: AdFormProps) {
   const action = adId ? updateAdAction.bind(null, adId) : createAdAction;
   const [state, formAction, pending] = useActionState(action, undefined);
 
+  const fieldError = (name: "linkUrl" | "imageUrl" | "startsAt" | "endsAt") =>
+    state?.status === "error" ? state.errors?.[name]?.[0] : undefined;
+
   return (
     <form action={formAction} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="linkUrl">リンク先URL</Label>
+      <FormField
+        htmlFor="linkUrl"
+        label="リンク先URL"
+        required
+        error={fieldError("linkUrl")}
+      >
         <Input
           id="linkUrl"
           name="linkUrl"
@@ -35,10 +42,7 @@ export function AdForm({ adId, defaultValues }: AdFormProps) {
           defaultValue={defaultValues?.linkUrl}
           required
         />
-        {state?.status === "error" && state.errors?.linkUrl && (
-          <p className="text-sm text-destructive">{state.errors.linkUrl[0]}</p>
-        )}
-      </div>
+      </FormField>
 
       <ImageUploadField
         name="imageUrl"
@@ -46,30 +50,28 @@ export function AdForm({ adId, defaultValues }: AdFormProps) {
         scope="ads"
         defaultValue={defaultValues?.imageUrl}
       />
-      {state?.status === "error" && state.errors?.imageUrl && (
-        <p className="text-sm text-destructive">{state.errors.imageUrl[0]}</p>
+      {fieldError("imageUrl") && (
+        <p className="text-sm text-destructive">{fieldError("imageUrl")}</p>
       )}
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="startsAt">掲載開始日時(任意)</Label>
+        <FormField htmlFor="startsAt" label="掲載開始日時">
           <Input
             id="startsAt"
             name="startsAt"
             type="datetime-local"
             defaultValue={isoToJstDatetimeLocal(defaultValues?.startsAt)}
           />
-        </div>
+        </FormField>
 
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="endsAt">掲載終了日時(任意)</Label>
+        <FormField htmlFor="endsAt" label="掲載終了日時">
           <Input
             id="endsAt"
             name="endsAt"
             type="datetime-local"
             defaultValue={isoToJstDatetimeLocal(defaultValues?.endsAt)}
           />
-        </div>
+        </FormField>
       </div>
 
       {state?.status === "error" && state.message && (

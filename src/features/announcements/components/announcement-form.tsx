@@ -1,10 +1,12 @@
 "use client";
 
 import { useActionState } from "react";
-import { createAnnouncementAction, updateAnnouncementAction } from "@/features/announcements/actions";
+import {
+  createAnnouncementAction,
+  updateAnnouncementAction,
+} from "@/features/announcements/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -13,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { FormField } from "@/components/ui/form-field";
 import { ImageUploadField } from "@/components/storage/image-upload-field";
 
 const STATUS_LABELS = {
@@ -32,29 +35,48 @@ interface AnnouncementFormProps {
   defaultValues?: AnnouncementFormDefaultValues;
 }
 
-export function AnnouncementForm({ announcementId, defaultValues }: AnnouncementFormProps) {
+export function AnnouncementForm({
+  announcementId,
+  defaultValues,
+}: AnnouncementFormProps) {
   const action = announcementId
     ? updateAnnouncementAction.bind(null, announcementId)
     : createAnnouncementAction;
   const [state, formAction, pending] = useActionState(action, undefined);
 
+  const fieldError = (name: "title" | "body" | "coverImageUrl" | "status") =>
+    state?.status === "error" ? state.errors?.[name]?.[0] : undefined;
+
   return (
     <form action={formAction} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="title">タイトル</Label>
-        <Input id="title" name="title" defaultValue={defaultValues?.title} required />
-        {state?.status === "error" && state.errors?.title && (
-          <p className="text-sm text-destructive">{state.errors.title[0]}</p>
-        )}
-      </div>
+      <FormField
+        htmlFor="title"
+        label="タイトル"
+        required
+        error={fieldError("title")}
+      >
+        <Input
+          id="title"
+          name="title"
+          defaultValue={defaultValues?.title}
+          required
+        />
+      </FormField>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="body">本文</Label>
-        <Textarea id="body" name="body" rows={8} defaultValue={defaultValues?.body} required />
-        {state?.status === "error" && state.errors?.body && (
-          <p className="text-sm text-destructive">{state.errors.body[0]}</p>
-        )}
-      </div>
+      <FormField
+        htmlFor="body"
+        label="本文"
+        required
+        error={fieldError("body")}
+      >
+        <Textarea
+          id="body"
+          name="body"
+          rows={8}
+          defaultValue={defaultValues?.body}
+          required
+        />
+      </FormField>
 
       <ImageUploadField
         name="coverImageUrl"
@@ -63,8 +85,7 @@ export function AnnouncementForm({ announcementId, defaultValues }: Announcement
         defaultValue={defaultValues?.coverImageUrl}
       />
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="status">公開状態</Label>
+      <FormField htmlFor="status" label="公開状態">
         <Select name="status" defaultValue={defaultValues?.status ?? "draft"}>
           <SelectTrigger id="status" className="w-full">
             <SelectValue />
@@ -77,7 +98,7 @@ export function AnnouncementForm({ announcementId, defaultValues }: Announcement
             ))}
           </SelectContent>
         </Select>
-      </div>
+      </FormField>
 
       {state?.status === "error" && state.message && (
         <p className="text-sm text-destructive" role="alert">

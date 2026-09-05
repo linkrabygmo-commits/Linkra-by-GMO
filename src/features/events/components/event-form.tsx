@@ -1,10 +1,12 @@
 "use client";
 
 import { useActionState } from "react";
-import { createEventAction, updateEventAction } from "@/features/events/actions";
+import {
+  createEventAction,
+  updateEventAction,
+} from "@/features/events/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -13,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { FormField } from "@/components/ui/form-field";
 import { ImageUploadField } from "@/components/storage/image-upload-field";
 import { isoToJstDatetimeLocal } from "@/lib/datetime";
 
@@ -39,28 +42,48 @@ interface EventFormProps {
 }
 
 export function EventForm({ eventId, defaultValues }: EventFormProps) {
-  const action = eventId ? updateEventAction.bind(null, eventId) : createEventAction;
+  const action = eventId
+    ? updateEventAction.bind(null, eventId)
+    : createEventAction;
   const [state, formAction, pending] = useActionState(action, undefined);
+
+  const fieldError = (
+    name:
+      | "title"
+      | "description"
+      | "coverImageUrl"
+      | "audience"
+      | "location"
+      | "startsAt"
+      | "endsAt"
+      | "capacity"
+      | "applicationDeadline",
+  ) => (state?.status === "error" ? state.errors?.[name]?.[0] : undefined);
 
   return (
     <form action={formAction} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="title">タイトル</Label>
-        <Input id="title" name="title" defaultValue={defaultValues?.title} required />
-        {state?.status === "error" && state.errors?.title && (
-          <p className="text-sm text-destructive">{state.errors.title[0]}</p>
-        )}
-      </div>
+      <FormField
+        htmlFor="title"
+        label="タイトル"
+        required
+        error={fieldError("title")}
+      >
+        <Input
+          id="title"
+          name="title"
+          defaultValue={defaultValues?.title}
+          required
+        />
+      </FormField>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="description">説明(任意)</Label>
+      <FormField htmlFor="description" label="説明">
         <Textarea
           id="description"
           name="description"
           rows={4}
           defaultValue={defaultValues?.description ?? undefined}
         />
-      </div>
+      </FormField>
 
       <ImageUploadField
         name="coverImageUrl"
@@ -69,9 +92,11 @@ export function EventForm({ eventId, defaultValues }: EventFormProps) {
         defaultValue={defaultValues?.coverImageUrl}
       />
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="audience">公開範囲</Label>
-        <Select name="audience" defaultValue={defaultValues?.audience ?? "public"}>
+      <FormField htmlFor="audience" label="公開範囲">
+        <Select
+          name="audience"
+          defaultValue={defaultValues?.audience ?? "public"}
+        >
           <SelectTrigger id="audience" className="w-full">
             <SelectValue />
           </SelectTrigger>
@@ -83,16 +108,23 @@ export function EventForm({ eventId, defaultValues }: EventFormProps) {
             ))}
           </SelectContent>
         </Select>
-      </div>
+      </FormField>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="location">開催場所(任意)</Label>
-        <Input id="location" name="location" defaultValue={defaultValues?.location ?? undefined} />
-      </div>
+      <FormField htmlFor="location" label="開催場所">
+        <Input
+          id="location"
+          name="location"
+          defaultValue={defaultValues?.location ?? undefined}
+        />
+      </FormField>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="startsAt">開始日時</Label>
+        <FormField
+          htmlFor="startsAt"
+          label="開始日時"
+          required
+          error={fieldError("startsAt")}
+        >
           <Input
             id="startsAt"
             name="startsAt"
@@ -100,40 +132,35 @@ export function EventForm({ eventId, defaultValues }: EventFormProps) {
             defaultValue={isoToJstDatetimeLocal(defaultValues?.startsAt)}
             required
           />
-          {state?.status === "error" && state.errors?.startsAt && (
-            <p className="text-sm text-destructive">{state.errors.startsAt[0]}</p>
-          )}
-        </div>
+        </FormField>
 
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="endsAt">終了日時(任意)</Label>
+        <FormField htmlFor="endsAt" label="終了日時">
           <Input
             id="endsAt"
             name="endsAt"
             type="datetime-local"
             defaultValue={isoToJstDatetimeLocal(defaultValues?.endsAt)}
           />
-        </div>
+        </FormField>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="applicationDeadline">回答期限(任意)</Label>
+      <FormField
+        htmlFor="applicationDeadline"
+        label="回答期限"
+        hint="設定すると、この日時を過ぎた後は参加申込を受け付けなくなります。"
+        error={fieldError("applicationDeadline")}
+      >
         <Input
           id="applicationDeadline"
           name="applicationDeadline"
           type="datetime-local"
-          defaultValue={isoToJstDatetimeLocal(defaultValues?.applicationDeadline)}
+          defaultValue={isoToJstDatetimeLocal(
+            defaultValues?.applicationDeadline,
+          )}
         />
-        <p className="text-xs text-muted-foreground">
-          設定すると、この日時を過ぎた後は参加申込を受け付けなくなります。
-        </p>
-        {state?.status === "error" && state.errors?.applicationDeadline && (
-          <p className="text-sm text-destructive">{state.errors.applicationDeadline[0]}</p>
-        )}
-      </div>
+      </FormField>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="capacity">定員(任意)</Label>
+      <FormField htmlFor="capacity" label="定員" error={fieldError("capacity")}>
         <Input
           id="capacity"
           name="capacity"
@@ -141,10 +168,7 @@ export function EventForm({ eventId, defaultValues }: EventFormProps) {
           min={1}
           defaultValue={defaultValues?.capacity ?? undefined}
         />
-        {state?.status === "error" && state.errors?.capacity && (
-          <p className="text-sm text-destructive">{state.errors.capacity[0]}</p>
-        )}
-      </div>
+      </FormField>
 
       {state?.status === "error" && state.message && (
         <p className="text-sm text-destructive" role="alert">
