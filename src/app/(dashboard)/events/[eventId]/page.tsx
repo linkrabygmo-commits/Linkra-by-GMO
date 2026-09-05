@@ -52,7 +52,7 @@ async function EventDetail({ paramsPromise }: { paramsPromise: EventDetailPagePr
         <img
           src={event.coverImageUrl}
           alt=""
-          className="aspect-video w-full rounded-xl border border-border object-cover"
+          className="aspect-[4/3] w-full rounded-xl border border-border object-cover"
         />
       )}
 
@@ -85,9 +85,6 @@ async function EventDetail({ paramsPromise }: { paramsPromise: EventDetailPagePr
           <p className="text-sm text-muted-foreground">
             回答期限: {formatJstDateTime(event.applicationDeadline, { dateStyle: "medium", timeStyle: "short" })}
           </p>
-        )}
-        {event.description && (
-          <Linkify text={event.description} className="text-sm text-foreground" />
         )}
       </div>
 
@@ -138,6 +135,10 @@ async function EventDetail({ paramsPromise }: { paramsPromise: EventDetailPagePr
           <GuestApplicationForm eventId={event.id} />
         )}
       </div>
+
+      {event.description && (
+        <Linkify text={event.description} className="text-sm text-foreground" />
+      )}
     </>
   );
 }
