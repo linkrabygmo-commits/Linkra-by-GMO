@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { CalendarDays, Lock } from "lucide-react";
 import { listEvents } from "@/features/events/repository";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/layout/page-header";
 import { formatJstDateTime } from "@/lib/datetime";
 
 export const metadata: Metadata = {
@@ -14,7 +16,10 @@ export const metadata: Metadata = {
 export default function EventsPage() {
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-12">
-      <h1 className="text-2xl font-semibold text-foreground">イベント</h1>
+      <PageHeader
+        title="イベント"
+        description="開催予定・過去のイベントを確認できます。"
+      />
       <Suspense
         fallback={<p className="text-muted-foreground">読み込み中...</p>}
       >
@@ -29,9 +34,11 @@ async function EventList() {
 
   if (events.length === 0) {
     return (
-      <p className="text-muted-foreground">
-        現在開催予定のイベントはありません。
-      </p>
+      <EmptyState
+        icon={CalendarDays}
+        title="現在開催予定のイベントはありません。"
+        description="新しいイベントが公開されるとここに表示されます。"
+      />
     );
   }
 

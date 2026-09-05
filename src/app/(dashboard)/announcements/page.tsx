@@ -1,7 +1,11 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Megaphone } from "lucide-react";
 import { listPublishedAnnouncements } from "@/features/announcements/repository";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/layout/page-header";
 import { formatJstDate } from "@/lib/datetime";
 
 export const metadata: Metadata = {
@@ -12,8 +16,13 @@ export const metadata: Metadata = {
 export default function AnnouncementsPage() {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-6 py-12">
-      <h1 className="text-2xl font-semibold text-foreground">お知らせ</h1>
-      <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
+      <PageHeader
+        title="お知らせ"
+        description="運営からのお知らせを確認できます。"
+      />
+      <Suspense
+        fallback={<p className="text-muted-foreground">読み込み中...</p>}
+      >
         <AnnouncementList />
       </Suspense>
     </div>
@@ -24,24 +33,35 @@ async function AnnouncementList() {
   const announcements = await listPublishedAnnouncements();
 
   if (announcements.length === 0) {
-    return <p className="text-muted-foreground">まだお知らせはありません。</p>;
+    return (
+      <EmptyState
+        icon={Megaphone}
+        title="まだお知らせはありません。"
+        description="新しいお知らせが公開されるとここに表示されます。"
+      />
+    );
   }
 
   return (
     <ul className="flex flex-col gap-4">
       {announcements.map((announcement) => (
         <li key={announcement.id}>
-          <Link
-            href={`/announcements/${announcement.id}`}
-            className="flex flex-col gap-2 rounded-lg border border-border p-4 transition-colors hover:border-foreground/30"
-          >
-            <h2 className="text-base font-medium text-foreground">{announcement.title}</h2>
-            {announcement.publishedAt && (
-              <p className="text-sm text-muted-foreground">
-                {formatJstDate(announcement.publishedAt, { dateStyle: "medium" })}
+          <Link href={`/announcements/${announcement.id}`}>
+            <Card className="gap-2 px-5 py-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
+              <h2 className="text-base font-medium text-foreground">
+                {announcement.title}
+              </h2>
+              {announcement.publishedAt && (
+                <p className="text-sm text-muted-foreground">
+                  {formatJstDate(announcement.publishedAt, {
+                    dateStyle: "medium",
+                  })}
+                </p>
+              )}
+              <p className="line-clamp-2 text-sm text-muted-foreground">
+                {announcement.body}
               </p>
-            )}
-            <p className="line-clamp-2 text-sm text-muted-foreground">{announcement.body}</p>
+            </Card>
           </Link>
         </li>
       ))}

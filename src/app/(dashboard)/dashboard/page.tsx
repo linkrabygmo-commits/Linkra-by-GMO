@@ -1,14 +1,21 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Building2, CalendarDays, Megaphone, Search, Users } from "lucide-react";
+import {
+  Building2,
+  CalendarDays,
+  Megaphone,
+  Search,
+  Users,
+} from "lucide-react";
 import { getMyProfile } from "@/features/profile/repository";
 import { listMyCompanies } from "@/features/companies/repository";
 import { getMemberCount } from "@/features/members/repository";
+import { getCompanyCount as getCompanyDirectoryCount } from "@/features/companies/repository";
 import {
-  getCompanyCount as getCompanyDirectoryCount,
-} from "@/features/companies/repository";
-import { getUpcomingEventCount, listUpcomingEvents } from "@/features/events/repository";
+  getUpcomingEventCount,
+  listUpcomingEvents,
+} from "@/features/events/repository";
 import {
   getPublishedAnnouncementCount,
   listPublishedAnnouncements,
@@ -18,6 +25,11 @@ import { formatJstDate, formatJstDateTime } from "@/lib/datetime";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  StatCard,
+  STAT_TONE_CLASSES,
+  type StatCardTone,
+} from "@/components/ui/stat-card";
 
 export default function DashboardHomePage() {
   return (
@@ -36,8 +48,20 @@ const ACTIVITY_ICONS = {
   announcement: Megaphone,
 } as const;
 
+// 会員=blue、企業=purple、イベント=green、お知らせ=amberという淡いアクセントカラーの
+// 対応を、サマリーカードと最近のアクティビティのアイコン色で揃える。
+const ACTIVITY_TONES: Record<keyof typeof ACTIVITY_ICONS, StatCardTone> = {
+  member: "blue",
+  company: "purple",
+  event: "green",
+  announcement: "amber",
+};
+
 async function DashboardHomeContent() {
-  const [profile, myCompanies] = await Promise.all([getMyProfile(), listMyCompanies()]);
+  const [profile, myCompanies] = await Promise.all([
+    getMyProfile(),
+    listMyCompanies(),
+  ]);
 
   // ログイン経路以外(既存セッションでの直接アクセス等)でも、プロフィール
   // 未設定のまま来た場合は必ず設定画面に誘導する。
@@ -63,15 +87,37 @@ async function DashboardHomeContent() {
     listRecentActivity(5),
   ]);
 
-  const summaryCards = [
-    { label: "会員数", value: memberCount, unit: "人", icon: Users, href: "/members" },
-    { label: "企業数", value: companyCount, unit: "社", icon: Building2, href: "/companies" },
+  const summaryCards: {
+    label: string;
+    value: number;
+    unit: string;
+    icon: typeof Users;
+    href: string;
+    tone: StatCardTone;
+  }[] = [
+    {
+      label: "会員数",
+      value: memberCount,
+      unit: "人",
+      icon: Users,
+      href: "/members",
+      tone: "blue",
+    },
+    {
+      label: "企業数",
+      value: companyCount,
+      unit: "社",
+      icon: Building2,
+      href: "/companies",
+      tone: "purple",
+    },
     {
       label: "今後のイベント",
       value: upcomingEventCount,
       unit: "件",
       icon: CalendarDays,
       href: "/events",
+      tone: "green",
     },
     {
       label: "お知らせ",
@@ -79,6 +125,7 @@ async function DashboardHomeContent() {
       unit: "件",
       icon: Megaphone,
       href: "/announcements",
+      tone: "amber",
     },
   ];
 
@@ -103,22 +150,15 @@ async function DashboardHomeContent() {
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {summaryCards.map((card) => (
-          <Link key={card.label} href={card.href}>
-            <Card className="gap-3 px-5 py-5 transition-all hover:-translate-y-0.5 hover:shadow-md">
-              <div className="flex items-center gap-3">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
-                  <card.icon className="size-5" />
-                </span>
-                <span className="text-sm text-muted-foreground">{card.label}</span>
-              </div>
-              <p className="text-3xl font-semibold text-foreground">
-                {card.value}
-                <span className="ml-1 text-base font-normal text-muted-foreground">
-                  {card.unit}
-                </span>
-              </p>
-            </Card>
-          </Link>
+          <StatCard
+            key={card.label}
+            label={card.label}
+            value={card.value}
+            unit={card.unit}
+            icon={card.icon}
+            href={card.href}
+            tone={card.tone}
+          />
         ))}
       </section>
 
@@ -129,19 +169,27 @@ async function DashboardHomeContent() {
           </CardHeader>
           <CardContent className="flex flex-col gap-4 px-0">
             {recentActivity.length === 0 ? (
-              <p className="text-sm text-muted-foreground">まだアクティビティはありません。</p>
+              <p className="text-sm text-muted-foreground">
+                まだアクティビティはありません。
+              </p>
             ) : (
               <ul className="flex flex-col gap-3">
                 {recentActivity.map((activity) => {
                   const Icon = ACTIVITY_ICONS[activity.type];
                   return (
                     <li key={activity.id} className="flex items-start gap-3">
-                      <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
+                      <span
+                        className={`flex size-8 shrink-0 items-center justify-center rounded-full ${STAT_TONE_CLASSES[ACTIVITY_TONES[activity.type]]}`}
+                      >
                         <Icon className="size-4" />
                       </span>
                       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                        <p className="text-sm text-foreground">{activity.message}</p>
-                        <p className="text-xs text-muted-foreground">{activity.relativeTime}</p>
+                        <p className="text-sm text-foreground">
+                          {activity.message}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {activity.relativeTime}
+                        </p>
                       </div>
                     </li>
                   );
@@ -172,7 +220,10 @@ async function DashboardHomeContent() {
                 >
                   <div className="flex w-12 shrink-0 flex-col items-center rounded-md bg-accent px-1 py-1.5 text-accent-foreground">
                     <span className="text-[0.65rem] leading-none">
-                      {formatJstDate(event.startsAt, { month: "numeric", day: "numeric" })}
+                      {formatJstDate(event.startsAt, {
+                        month: "numeric",
+                        day: "numeric",
+                      })}
                     </span>
                     <span className="text-[0.65rem] leading-none text-muted-foreground">
                       {formatJstDate(event.startsAt, { weekday: "short" })}
@@ -180,11 +231,17 @@ async function DashboardHomeContent() {
                   </div>
                   <div className="flex min-w-0 flex-col gap-0.5">
                     <p className="text-xs text-muted-foreground">
-                      {formatJstDateTime(event.startsAt, { timeStyle: "short" })}
+                      {formatJstDateTime(event.startsAt, {
+                        timeStyle: "short",
+                      })}
                     </p>
-                    <p className="truncate text-sm font-medium text-foreground">{event.title}</p>
+                    <p className="truncate text-sm font-medium text-foreground">
+                      {event.title}
+                    </p>
                     {event.location && (
-                      <p className="truncate text-xs text-muted-foreground">{event.location}</p>
+                      <p className="truncate text-xs text-muted-foreground">
+                        {event.location}
+                      </p>
                     )}
                   </div>
                 </Link>
@@ -206,7 +263,9 @@ async function DashboardHomeContent() {
                   className="flex flex-col items-center justify-center gap-2 rounded-lg border border-border px-3 py-4 text-center transition-colors hover:border-primary/40 hover:bg-accent"
                 >
                   <action.icon className="size-5 text-primary" />
-                  <span className="text-xs font-medium text-foreground">{action.label}</span>
+                  <span className="text-xs font-medium text-foreground">
+                    {action.label}
+                  </span>
                 </Link>
               ))}
             </CardContent>
@@ -221,7 +280,9 @@ async function DashboardHomeContent() {
             </CardHeader>
             <CardContent className="flex flex-col gap-3 px-0">
               {latestAnnouncements.length === 0 ? (
-                <p className="text-sm text-muted-foreground">まだお知らせはありません。</p>
+                <p className="text-sm text-muted-foreground">
+                  まだお知らせはありません。
+                </p>
               ) : (
                 latestAnnouncements.map((announcement) => (
                   <Link
@@ -231,7 +292,9 @@ async function DashboardHomeContent() {
                   >
                     <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
                     <div className="flex min-w-0 flex-col">
-                      <p className="truncate text-sm text-foreground">{announcement.title}</p>
+                      <p className="truncate text-sm text-foreground">
+                        {announcement.title}
+                      </p>
                       {announcement.publishedAt && (
                         <p className="text-xs text-muted-foreground">
                           {formatJstDate(announcement.publishedAt)}
@@ -273,7 +336,9 @@ async function DashboardHomeContent() {
                   </CardHeader>
                   <CardContent>
                     <Badge
-                      variant={company.role === "owner" ? "default" : "secondary"}
+                      variant={
+                        company.role === "owner" ? "default" : "secondary"
+                      }
                     >
                       {company.role === "owner"
                         ? "オーナー"
