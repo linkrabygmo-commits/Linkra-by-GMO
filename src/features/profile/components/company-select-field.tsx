@@ -13,7 +13,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export const COMPANY_NONE_VALUE = "__none__";
 const CREATE_NEW_VALUE = "__create_new__";
 
 interface CompanyOption {
@@ -34,7 +33,7 @@ export function CompanySelectField({
   defaultCompanyId,
 }: CompanySelectFieldProps) {
   const [companies, setCompanies] = useState(initialCompanies);
-  const [selectedId, setSelectedId] = useState(defaultCompanyId ?? COMPANY_NONE_VALUE);
+  const [selectedId, setSelectedId] = useState(defaultCompanyId ?? "");
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newCompanyName, setNewCompanyName] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -70,14 +69,13 @@ export function CompanySelectField({
 
   return (
     <div className="flex flex-col gap-2">
-      <Label htmlFor="companyId">会社名(任意)</Label>
+      <Label htmlFor="companyId">会社名</Label>
       <input type="hidden" name="companyId" value={selectedId} />
       <Select value={selectedId} onValueChange={handleValueChange}>
         <SelectTrigger id="companyId" className="w-full">
           <SelectValue placeholder="会社を選択" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value={COMPANY_NONE_VALUE}>未設定</SelectItem>
           {companies.map((company) => (
             <SelectItem key={company.id} value={company.id}>
               {company.name}

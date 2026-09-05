@@ -6,13 +6,12 @@ import { updateProfileAction } from "@/features/profile/actions";
 import type { ProfileDto } from "@/features/profile/repository";
 import type { UpdateProfileSchema } from "@/features/profile/schema";
 import { CompanySelectField } from "@/features/profile/components/company-select-field";
+import { AvatarUploadField } from "@/features/profile/components/avatar-upload-field";
 import type { CompanyOptionDto } from "@/features/companies/repository";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ImageUploadField } from "@/components/storage/image-upload-field";
 
 type FieldName = keyof z.infer<typeof UpdateProfileSchema>;
 
@@ -29,13 +28,10 @@ export function ProfileForm({ profile, companies }: ProfileFormProps) {
 
   return (
     <form action={action} className="flex flex-col gap-6">
-      <div className="flex items-center gap-4">
-        <Avatar size="lg">
-          <AvatarImage src={profile.avatarUrl ?? undefined} alt="" />
-          <AvatarFallback>{profile.displayName.slice(0, 1)}</AvatarFallback>
-        </Avatar>
-        <p className="text-sm text-muted-foreground">{profile.email}</p>
-      </div>
+      <AvatarUploadField name="avatarUrl" defaultValue={profile.avatarUrl} />
+      {fieldError("avatarUrl") && (
+        <p className="text-center text-sm text-destructive">{fieldError("avatarUrl")}</p>
+      )}
 
       <section className="flex flex-col gap-4">
         <h2 className="text-sm font-medium text-foreground">
@@ -55,30 +51,34 @@ export function ProfileForm({ profile, companies }: ProfileFormProps) {
           )}
         </div>
 
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="email">メールアドレス</Label>
+          <Input id="email" value={profile.email} disabled />
+        </div>
+
         <CompanySelectField
           initialCompanies={companies}
           defaultCompanyId={profile.companyId}
         />
-
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="title">肩書き(任意)</Label>
-          <Input id="title" name="title" defaultValue={profile.title ?? ""} />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="industry">業種(任意)</Label>
-          <Input id="industry" name="industry" defaultValue={profile.industry ?? ""} />
-        </div>
-
-        <ImageUploadField
-          name="avatarUrl"
-          label="アバター画像(任意)"
-          scope="avatars"
-          defaultValue={profile.avatarUrl}
-        />
-        {fieldError("avatarUrl") && (
-          <p className="text-sm text-destructive">{fieldError("avatarUrl")}</p>
+        {fieldError("companyId") && (
+          <p className="text-sm text-destructive">{fieldError("companyId")}</p>
         )}
+
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="title">役職</Label>
+          <Input id="title" name="title" defaultValue={profile.title ?? ""} required />
+          {fieldError("title") && (
+            <p className="text-sm text-destructive">{fieldError("title")}</p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="industry">業種</Label>
+          <Input id="industry" name="industry" defaultValue={profile.industry ?? ""} required />
+          {fieldError("industry") && (
+            <p className="text-sm text-destructive">{fieldError("industry")}</p>
+          )}
+        </div>
       </section>
 
       <section className="flex flex-col gap-4">
@@ -87,8 +87,11 @@ export function ProfileForm({ profile, companies }: ProfileFormProps) {
         </h2>
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor="phone">電話番号(任意)</Label>
-          <Input id="phone" name="phone" defaultValue={profile.phone ?? ""} />
+          <Label htmlFor="phone">電話番号</Label>
+          <Input id="phone" name="phone" defaultValue={profile.phone ?? ""} required />
+          {fieldError("phone") && (
+            <p className="text-sm text-destructive">{fieldError("phone")}</p>
+          )}
         </div>
 
         <div className="flex flex-col gap-2">

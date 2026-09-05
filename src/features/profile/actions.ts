@@ -7,23 +7,18 @@ import {
   UpdateProfileSchema,
   type UpdateProfileFormState,
 } from "@/features/profile/schema";
-import { COMPANY_NONE_VALUE } from "@/features/profile/components/company-select-field";
 
 export async function updateProfileAction(
   _prevState: UpdateProfileFormState,
   formData: FormData,
 ): Promise<UpdateProfileFormState> {
-  const rawCompanyId = formData.get("companyId");
-  const companyId =
-    !rawCompanyId || rawCompanyId === COMPANY_NONE_VALUE ? undefined : rawCompanyId;
-
   const validatedFields = UpdateProfileSchema.safeParse({
     displayName: formData.get("displayName"),
-    title: formData.get("title") || undefined,
+    title: formData.get("title"),
     avatarUrl: formData.get("avatarUrl") || undefined,
-    companyId,
-    industry: formData.get("industry") || undefined,
-    phone: formData.get("phone") || undefined,
+    companyId: formData.get("companyId"),
+    industry: formData.get("industry"),
+    phone: formData.get("phone"),
     address: formData.get("address") || undefined,
     bio: formData.get("bio") || undefined,
     canOffer: formData.get("canOffer") || undefined,
