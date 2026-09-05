@@ -56,6 +56,19 @@ export async function listNewMembers(limit = 6): Promise<MemberSummaryDto[]> {
   return (data ?? []).map(mapSummary);
 }
 
+// ダッシュボードのサマリーカード用。会員ディレクトリ(listMembers)と同じ
+// member_directoryを対象にした件数のみを取得する軽量クエリ。
+export async function getMemberCount(): Promise<number> {
+  const supabase = await createClient();
+  const { count, error } = await supabase
+    .from("member_directory")
+    .select("id", { count: "exact", head: true });
+
+  if (error) throw new Error(error.message);
+
+  return count ?? 0;
+}
+
 export async function listMembers(): Promise<MemberSummaryDto[]> {
   const supabase = await createClient();
 

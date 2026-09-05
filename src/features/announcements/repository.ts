@@ -38,6 +38,20 @@ function toAnnouncementDto(row: AnnouncementRow): AnnouncementDto {
 
 const ANNOUNCEMENT_COLUMNS = "id, title, body, cover_image_url, status, published_at, created_at";
 
+// ダッシュボードのサマリーカード用。「未読」を判定する仕組み(既読管理)が
+// 存在しないため、公開中のお知らせの総件数のみを返す。
+export async function getPublishedAnnouncementCount(): Promise<number> {
+  const supabase = await createClient();
+  const { count, error } = await supabase
+    .from("announcements")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "published");
+
+  if (error) throw new Error(error.message);
+
+  return count ?? 0;
+}
+
 export async function listPublishedAnnouncements(limit?: number): Promise<AnnouncementDto[]> {
   const supabase = await createClient();
   let query = supabase

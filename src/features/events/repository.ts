@@ -71,6 +71,40 @@ export async function listEvents(): Promise<EventDto[]> {
   return (data ?? []).map(toEventDto);
 }
 
+// ダッシュボードの「今後の予定」用。開催日時が未来のイベントのみを対象に、
+// starts_at昇順(開始が近い順)、同時刻の場合はcreated_at昇順で安定させる。
+// 既存の一覧ページ(listEvents/listAllEventsForAdmin)はそれぞれ既存の並び順・
+// 過去イベントを含める仕様のままにしており、このダッシュボード専用の関数は
+// 影響を与えない。
+// ダッシュボードのサマリーカード用。listUpcomingEventsと同じ「今後のイベント」の
+// 定義(starts_at >= 現在時刻)で件数のみを取得する。
+export async function getUpcomingEventCount(): Promise<number> {
+  const supabase = await createClient();
+  const { count, error } = await supabase
+    .from("events")
+    .select("id", { count: "exact", head: true })
+    .gte("starts_at", new Date().toISOString());
+
+  if (error) throw new Error(error.message);
+
+  return count ?? 0;
+}
+
+export async function listUpcomingEvents(limit: number): Promise<EventDto[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("events")
+    .select(EVENT_COLUMNS)
+    .gte("starts_at", new Date().toISOString())
+    .order("starts_at", { ascending: true })
+    .order("created_at", { ascending: true })
+    .limit(limit);
+
+  if (error) throw new Error(error.message);
+
+  return (data ?? []).map(toEventDto);
+}
+
 export async function getEventById(eventId: string): Promise<EventDetailDto | null> {
   const supabase = await createClient();
   const { data: event, error } = await supabase

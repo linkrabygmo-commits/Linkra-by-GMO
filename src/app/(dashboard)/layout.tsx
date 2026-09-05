@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { AppSidebar, AppSidebarSkeleton } from "@/components/layout/app-sidebar";
 import { UserMenu } from "@/components/layout/user-menu";
+import { HeaderUserMenu, HeaderUserMenuSkeleton } from "@/components/layout/header-user-menu";
 import { getMyMemberStatus } from "@/lib/auth/session";
 import {
   SidebarInset,
@@ -45,13 +46,18 @@ export default function DashboardLayout({
         <SidebarInset className="bg-background">
           <header className="flex items-center justify-between gap-2 border-b border-border bg-card/60 px-5 py-3 backdrop-blur-sm">
             <SidebarTrigger />
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-primary"
-            >
-              サイトトップへ
-              <ArrowUpRight className="size-3.5" />
-            </Link>
+            <div className="flex items-center gap-3 sm:gap-5">
+              <Link
+                href="/"
+                className="hidden items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-primary sm:inline-flex"
+              >
+                サイトトップへ
+                <ArrowUpRight className="size-3.5" />
+              </Link>
+              <Suspense fallback={<HeaderUserMenuSkeleton />}>
+                <HeaderUserMenu />
+              </Suspense>
+            </div>
           </header>
           <main className="flex flex-1 flex-col">{children}</main>
         </SidebarInset>

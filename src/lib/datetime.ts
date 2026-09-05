@@ -64,3 +64,25 @@ export function formatJstDate(
 ): string {
   return new Date(iso).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo", ...options });
 }
+
+/**
+ * 「10分前」のような相対時間表記に変換する。Date.now()を参照する(非純粋な)関数
+ * なので、Reactコンポーネントのレンダー本体から直接呼ばない — サーバー側の
+ * データ取得(repository)層で呼び、結果の文字列だけをDTOに含めて渡すこと。
+ */
+export function formatRelativeTime(iso: string): string {
+  const diffMs = Date.now() - new Date(iso).getTime();
+  const diffMinutes = Math.round(diffMs / 60000);
+
+  if (diffMinutes < 1) return "たった今";
+  if (diffMinutes < 60) return `${diffMinutes}分前`;
+
+  const diffHours = Math.round(diffMinutes / 60);
+  if (diffHours < 24) return `${diffHours}時間前`;
+
+  const diffDays = Math.round(diffHours / 24);
+  if (diffDays === 1) return "昨日";
+  if (diffDays < 7) return `${diffDays}日前`;
+
+  return formatJstDate(iso);
+}
