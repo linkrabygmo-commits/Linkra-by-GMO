@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import * as repository from "@/features/events/repository";
 import {
   EventSchema,
@@ -32,22 +33,31 @@ export async function createEventAction(
   const validatedFields = EventSchema.safeParse(readEventFormData(formData));
 
   if (!validatedFields.success) {
-    return { status: "error", errors: validatedFields.error.flatten().fieldErrors };
+    return {
+      status: "error",
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
   }
 
-  const { startsAt, endsAt, applicationDeadline, ...rest } = validatedFields.data;
+  const { startsAt, endsAt, applicationDeadline, ...rest } =
+    validatedFields.data;
 
   try {
     await repository.createEvent({
       ...rest,
       startsAt: jstDatetimeLocalToIso(startsAt),
       endsAt: endsAt ? jstDatetimeLocalToIso(endsAt) : undefined,
-      applicationDeadline: applicationDeadline ? jstDatetimeLocalToIso(applicationDeadline) : undefined,
+      applicationDeadline: applicationDeadline
+        ? jstDatetimeLocalToIso(applicationDeadline)
+        : undefined,
     });
   } catch (error) {
     return {
       status: "error",
-      message: error instanceof Error ? error.message : "イベントの作成に失敗しました。",
+      message:
+        error instanceof Error
+          ? error.message
+          : "イベントの作成に失敗しました。",
     };
   }
 
@@ -66,22 +76,31 @@ export async function updateEventAction(
   const validatedFields = EventSchema.safeParse(readEventFormData(formData));
 
   if (!validatedFields.success) {
-    return { status: "error", errors: validatedFields.error.flatten().fieldErrors };
+    return {
+      status: "error",
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
   }
 
-  const { startsAt, endsAt, applicationDeadline, ...rest } = validatedFields.data;
+  const { startsAt, endsAt, applicationDeadline, ...rest } =
+    validatedFields.data;
 
   try {
     await repository.updateEvent(eventId, {
       ...rest,
       startsAt: jstDatetimeLocalToIso(startsAt),
       endsAt: endsAt ? jstDatetimeLocalToIso(endsAt) : undefined,
-      applicationDeadline: applicationDeadline ? jstDatetimeLocalToIso(applicationDeadline) : undefined,
+      applicationDeadline: applicationDeadline
+        ? jstDatetimeLocalToIso(applicationDeadline)
+        : undefined,
     });
   } catch (error) {
     return {
       status: "error",
-      message: error instanceof Error ? error.message : "イベントの更新に失敗しました。",
+      message:
+        error instanceof Error
+          ? error.message
+          : "イベントの更新に失敗しました。",
     };
   }
 
@@ -99,6 +118,12 @@ export async function deleteEventAction(eventId: string) {
   revalidatePath("/admin/events");
   revalidatePath("/events");
   revalidatePath("/");
+}
+
+export async function duplicateEventAction(eventId: string) {
+  const newEventId = await repository.duplicateEvent(eventId);
+  revalidatePath("/admin/events");
+  redirect(`/admin/events/${newEventId}/edit`);
 }
 
 export async function applyAsMemberAction(eventId: string) {
@@ -125,7 +150,10 @@ export async function applyAsGuestAction(
   });
 
   if (!validatedFields.success) {
-    return { status: "error", errors: validatedFields.error.flatten().fieldErrors };
+    return {
+      status: "error",
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
   }
 
   try {
@@ -148,7 +176,11 @@ export async function updateApplicationStatusAction(
   applicationId: string,
   status: EventApplicationStatus,
 ) {
-  await repository.updateApplicationStatus(applicationType, applicationId, status);
+  await repository.updateApplicationStatus(
+    applicationType,
+    applicationId,
+    status,
+  );
   revalidatePath(`/admin/events/${eventId}`);
 }
 
@@ -158,6 +190,10 @@ export async function updateApplicationAttendanceAction(
   applicationId: string,
   attended: boolean,
 ) {
-  await repository.setApplicationAttendance(applicationType, applicationId, attended);
+  await repository.setApplicationAttendance(
+    applicationType,
+    applicationId,
+    attended,
+  );
   revalidatePath(`/admin/events/${eventId}`);
 }

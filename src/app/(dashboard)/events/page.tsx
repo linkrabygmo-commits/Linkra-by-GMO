@@ -15,7 +15,9 @@ export default function EventsPage() {
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-12">
       <h1 className="text-2xl font-semibold text-foreground">イベント</h1>
-      <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
+      <Suspense
+        fallback={<p className="text-muted-foreground">読み込み中...</p>}
+      >
         <EventList />
       </Suspense>
     </div>
@@ -26,7 +28,11 @@ async function EventList() {
   const events = await listEvents();
 
   if (events.length === 0) {
-    return <p className="text-muted-foreground">現在開催予定のイベントはありません。</p>;
+    return (
+      <p className="text-muted-foreground">
+        現在開催予定のイベントはありません。
+      </p>
+    );
   }
 
   return (
@@ -35,7 +41,9 @@ async function EventList() {
         <Link
           key={event.id}
           href={`/events/${event.id}`}
-          className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card ring-1 ring-foreground/10 transition-all hover:-translate-y-0.5 hover:shadow-md"
+          className={`group flex flex-col overflow-hidden rounded-xl border border-border bg-card ring-1 ring-foreground/10 transition-all hover:-translate-y-0.5 hover:shadow-md ${
+            event.hasEnded ? "opacity-70" : ""
+          }`}
         >
           <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-muted">
             {event.coverImageUrl ? (
@@ -43,11 +51,23 @@ async function EventList() {
               <img
                 src={event.coverImageUrl}
                 alt=""
-                className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+                className={`size-full object-cover transition-transform duration-300 group-hover:scale-105 ${
+                  event.hasEnded ? "grayscale" : ""
+                }`}
               />
             ) : (
               <div className="flex size-full items-center justify-center text-muted-foreground/40">
                 <CalendarDays className="size-10" />
+              </div>
+            )}
+            {event.hasEnded && (
+              <div className="absolute inset-0 flex items-center justify-center bg-background/50">
+                <Badge
+                  variant="secondary"
+                  className="px-3 py-1 text-sm font-semibold"
+                >
+                  終了
+                </Badge>
               </div>
             )}
             {event.audience === "member_only" && (
@@ -65,7 +85,10 @@ async function EventList() {
               {event.title}
             </h2>
             <p className="text-xs text-muted-foreground">
-              {formatJstDateTime(event.startsAt, { dateStyle: "medium", timeStyle: "short" })}
+              {formatJstDateTime(event.startsAt, {
+                dateStyle: "medium",
+                timeStyle: "short",
+              })}
               {event.location && ` ・ ${event.location}`}
             </p>
             {event.description && (

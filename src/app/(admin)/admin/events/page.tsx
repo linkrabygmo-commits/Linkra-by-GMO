@@ -1,9 +1,12 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { CalendarDays, Lock } from "lucide-react";
+import { CalendarDays, Copy, Lock } from "lucide-react";
 import { listAllEventsForAdmin } from "@/features/events/repository";
-import { deleteEventAction } from "@/features/events/actions";
+import {
+  deleteEventAction,
+  duplicateEventAction,
+} from "@/features/events/actions";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,14 +20,21 @@ export const metadata: Metadata = {
 export default function AdminEventsPage() {
   return (
     <div className="flex flex-1 flex-col gap-6 px-6 py-8 sm:px-10 sm:py-10">
-      <Breadcrumb items={[{ label: "管理画面", href: "/admin" }, { label: "イベント管理" }]} />
+      <Breadcrumb
+        items={[
+          { label: "管理画面", href: "/admin" },
+          { label: "イベント管理" },
+        ]}
+      />
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-semibold text-foreground">イベント管理</h1>
         <Button asChild size="sm" className="w-fit">
           <Link href="/admin/events/new">新しいイベントを作成</Link>
         </Button>
       </div>
-      <Suspense fallback={<p className="text-muted-foreground">読み込み中...</p>}>
+      <Suspense
+        fallback={<p className="text-muted-foreground">読み込み中...</p>}
+      >
         <EventList />
       </Suspense>
     </div>
@@ -60,16 +70,22 @@ async function EventList() {
             )}
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <p className="text-sm font-medium text-foreground">{event.title}</p>
+                <p className="text-sm font-medium text-foreground">
+                  {event.title}
+                </p>
                 {event.audience === "member_only" && (
                   <Badge variant="outline" className="gap-1">
                     <Lock className="size-3" />
                     会員限定
                   </Badge>
                 )}
+                {event.hasEnded && <Badge variant="secondary">終了</Badge>}
               </div>
               <p className="text-xs text-muted-foreground">
-                {formatJstDateTime(event.startsAt, { dateStyle: "medium", timeStyle: "short" })}
+                {formatJstDateTime(event.startsAt, {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                })}
                 {event.location && ` ・ ${event.location}`}
               </p>
             </div>
@@ -81,6 +97,17 @@ async function EventList() {
             <Button asChild variant="outline" size="sm">
               <Link href={`/admin/events/${event.id}/edit`}>編集</Link>
             </Button>
+            <form action={duplicateEventAction.bind(null, event.id)}>
+              <Button
+                type="submit"
+                variant="outline"
+                size="sm"
+                className="gap-1"
+              >
+                <Copy className="size-3.5" />
+                複製
+              </Button>
+            </form>
             <form action={deleteEventAction.bind(null, event.id)}>
               <ConfirmSubmitButton
                 variant="destructive"

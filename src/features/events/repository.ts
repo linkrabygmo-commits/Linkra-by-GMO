@@ -1,7 +1,11 @@
 import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
-import { getCurrentUser, verifySession, requireAdmin } from "@/lib/auth/session";
+import {
+  getCurrentUser,
+  verifySession,
+  requireAdmin,
+} from "@/lib/auth/session";
 import { ForbiddenError } from "@/lib/repository/base";
 import type { EventAudience, EventApplicationStatus } from "@/types/database";
 
@@ -16,6 +20,10 @@ export interface EventDto {
   endsAt: string | null;
   capacity: number | null;
   applicationDeadline: string | null;
+  // 終了日時(ends_atが無ければstarts_at)を過ぎているかどうか。一覧表示で「終了」を
+  // 分かりやすく示すために使う。Date.now()呼び出しをコンポーネント本体に書くとpurity
+  // ルールに反するため、ここ(リポジトリ層)で判定済みの真偽値としてDTOに含める。
+  hasEnded: boolean;
 }
 
 export interface EventDetailDto extends EventDto {
@@ -37,6 +45,10 @@ interface EventRow {
   application_deadline: string | null;
 }
 
+function hasEventEnded(startsAt: string, endsAt: string | null): boolean {
+  return new Date(endsAt ?? startsAt).getTime() < Date.now();
+}
+
 function toEventDto(row: EventRow): EventDto {
   return {
     id: row.id,
@@ -49,6 +61,7 @@ function toEventDto(row: EventRow): EventDto {
     endsAt: row.ends_at,
     capacity: row.capacity,
     applicationDeadline: row.application_deadline,
+    hasEnded: hasEventEnded(row.starts_at, row.ends_at),
   };
 }
 
@@ -56,7 +69,10 @@ const EVENT_COLUMNS =
   "id, title, description, cover_image_url, audience, location, starts_at, ends_at, capacity, application_deadline";
 
 function isPastDeadline(applicationDeadline: string | null): boolean {
-  return applicationDeadline != null && new Date(applicationDeadline).getTime() < Date.now();
+  return (
+    applicationDeadline != null &&
+    new Date(applicationDeadline).getTime() < Date.now()
+  );
 }
 
 export async function listEvents(): Promise<EventDto[]> {
@@ -105,7 +121,9 @@ export async function listUpcomingEvents(limit: number): Promise<EventDto[]> {
   return (data ?? []).map(toEventDto);
 }
 
-export async function getEventById(eventId: string): Promise<EventDetailDto | null> {
+export async function getEventById(
+  eventId: string,
+): Promise<EventDetailDto | null> {
   const supabase = await createClient();
   const { data: event, error } = await supabase
     .from("events")
@@ -169,7 +187,9 @@ export async function applyAsMember(eventId: string): Promise<void> {
   if (eventError) throw new Error(eventError.message);
   if (!event) throw new Error("イベントが見つかりません。");
   if (isPastDeadline(event.application_deadline)) {
-    throw new ForbiddenError("回答期限を過ぎたため、参加申込を締め切りました。");
+    throw new ForbiddenError(
+      "回答期限を過ぎたため、参加申込を締め切りました。",
+    );
   }
 
   // 過去にキャンセルした申込の履歴は残したまま、新規の行として再申込を作成する。
@@ -215,7 +235,9 @@ interface GuestApplicationInput {
   title: string;
 }
 
-export async function applyAsGuest(input: GuestApplicationInput): Promise<void> {
+export async function applyAsGuest(
+  input: GuestApplicationInput,
+): Promise<void> {
   const supabase = await createClient();
 
   const { data: event, error: eventError } = await supabase
@@ -232,7 +254,9 @@ export async function applyAsGuest(input: GuestApplicationInput): Promise<void> 
     );
   }
   if (isPastDeadline(event.application_deadline)) {
-    throw new ForbiddenError("回答期限を過ぎたため、参加申込を締め切りました。");
+    throw new ForbiddenError(
+      "回答期限を過ぎたため、参加申込を締め切りました。",
+    );
   }
 
   // 管理者による「確定」作業は不要にしたため、申込時点でconfirmed扱いにする。
@@ -262,7 +286,9 @@ export interface EventApplicationDto {
   createdAt: string;
 }
 
-export async function listEventApplications(eventId: string): Promise<EventApplicationDto[]> {
+export async function listEventApplications(
+  eventId: string,
+): Promise<EventApplicationDto[]> {
   await requireAdmin();
   const supabase = await createClient();
 
@@ -276,7 +302,9 @@ export async function listEventApplications(eventId: string): Promise<EventAppli
       .eq("event_id", eventId),
     supabase
       .from("guest_event_applications")
-      .select("id, name, email, phone, company_name, title, status, attended, created_at")
+      .select(
+        "id, name, email, phone, company_name, title, status, attended, created_at",
+      )
       .eq("event_id", eventId),
   ]);
 
@@ -288,7 +316,12 @@ export async function listEventApplications(eventId: string): Promise<EventAppli
   // 'admin'の場合を許可するビュー側のcase式による)。
   let memberById = new Map<
     string,
-    { displayName: string; companyName: string | null; title: string | null; phone: string | null }
+    {
+      displayName: string;
+      companyName: string | null;
+      title: string | null;
+      phone: string | null;
+    }
   >();
 
   if (memberApps && memberApps.length > 0) {
@@ -314,36 +347,42 @@ export async function listEventApplications(eventId: string): Promise<EventAppli
     );
   }
 
-  const memberDtos: EventApplicationDto[] = (memberApps ?? []).map((application) => {
-    const member = memberById.get(application.user_id);
-    return {
+  const memberDtos: EventApplicationDto[] = (memberApps ?? []).map(
+    (application) => {
+      const member = memberById.get(application.user_id);
+      return {
+        id: application.id,
+        type: "member",
+        name: member?.displayName ?? "(不明な会員)",
+        companyName: member?.companyName ?? null,
+        title: member?.title ?? null,
+        email: null,
+        phone: member?.phone ?? null,
+        status: application.status,
+        attended: application.attended,
+        createdAt: application.created_at,
+      };
+    },
+  );
+
+  const guestDtos: EventApplicationDto[] = (guestApps ?? []).map(
+    (application) => ({
       id: application.id,
-      type: "member",
-      name: member?.displayName ?? "(不明な会員)",
-      companyName: member?.companyName ?? null,
-      title: member?.title ?? null,
-      email: null,
-      phone: member?.phone ?? null,
+      type: "guest",
+      name: application.name,
+      companyName: application.company_name,
+      title: application.title,
+      email: application.email,
+      phone: application.phone,
       status: application.status,
       attended: application.attended,
       createdAt: application.created_at,
-    };
-  });
+    }),
+  );
 
-  const guestDtos: EventApplicationDto[] = (guestApps ?? []).map((application) => ({
-    id: application.id,
-    type: "guest",
-    name: application.name,
-    companyName: application.company_name,
-    title: application.title,
-    email: application.email,
-    phone: application.phone,
-    status: application.status,
-    attended: application.attended,
-    createdAt: application.created_at,
-  }));
-
-  return [...memberDtos, ...guestDtos].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  return [...memberDtos, ...guestDtos].sort((a, b) =>
+    a.createdAt.localeCompare(b.createdAt),
+  );
 }
 
 export async function updateApplicationStatus(
@@ -354,9 +393,14 @@ export async function updateApplicationStatus(
   await requireAdmin();
   const supabase = await createClient();
   const table =
-    applicationType === "member" ? "member_event_applications" : "guest_event_applications";
+    applicationType === "member"
+      ? "member_event_applications"
+      : "guest_event_applications";
 
-  const { error } = await supabase.from(table).update({ status }).eq("id", applicationId);
+  const { error } = await supabase
+    .from(table)
+    .update({ status })
+    .eq("id", applicationId);
 
   if (error) throw new Error(error.message);
 }
@@ -370,9 +414,14 @@ export async function setApplicationAttendance(
   await requireAdmin();
   const supabase = await createClient();
   const table =
-    applicationType === "member" ? "member_event_applications" : "guest_event_applications";
+    applicationType === "member"
+      ? "member_event_applications"
+      : "guest_event_applications";
 
-  const { error } = await supabase.from(table).update({ attended }).eq("id", applicationId);
+  const { error } = await supabase
+    .from(table)
+    .update({ attended })
+    .eq("id", applicationId);
 
   if (error) throw new Error(error.message);
 }
@@ -422,7 +471,10 @@ export async function createEvent(input: EventInput): Promise<void> {
   if (error) throw new Error(error.message);
 }
 
-export async function updateEvent(eventId: string, input: EventInput): Promise<void> {
+export async function updateEvent(
+  eventId: string,
+  input: EventInput,
+): Promise<void> {
   await requireAdmin();
   const supabase = await createClient();
 
@@ -442,6 +494,43 @@ export async function updateEvent(eventId: string, input: EventInput): Promise<v
     .eq("id", eventId);
 
   if (error) throw new Error(error.message);
+}
+
+// 似たイベントを毎回作り直す手間を省くための複製。申込者・出欠記録は新しいイベントには
+// 引き継がない(まっさらな状態で作成し、開催日時などは複製後に編集画面で調整してもらう)。
+export async function duplicateEvent(eventId: string): Promise<string> {
+  const admin = await requireAdmin();
+  const supabase = await createClient();
+
+  const { data: event, error: fetchError } = await supabase
+    .from("events")
+    .select(EVENT_COLUMNS)
+    .eq("id", eventId)
+    .maybeSingle();
+
+  if (fetchError) throw new Error(fetchError.message);
+  if (!event) throw new Error("イベントが見つかりません。");
+
+  const { data: newEvent, error: insertError } = await supabase
+    .from("events")
+    .insert({
+      title: `${event.title}(コピー)`,
+      description: event.description,
+      cover_image_url: event.cover_image_url,
+      audience: event.audience,
+      location: event.location,
+      starts_at: event.starts_at,
+      ends_at: event.ends_at,
+      capacity: event.capacity,
+      application_deadline: event.application_deadline,
+      created_by: admin.id,
+    })
+    .select("id")
+    .single();
+
+  if (insertError) throw new Error(insertError.message);
+
+  return newEvent.id;
 }
 
 export async function deleteEvent(eventId: string): Promise<void> {
