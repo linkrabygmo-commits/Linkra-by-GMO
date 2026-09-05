@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getAdByIdForAdmin } from "@/features/ads/repository";
 import { AdForm } from "@/features/ads/components/ad-form";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { PageHeader } from "@/components/layout/page-header";
 import { FormSkeleton } from "@/components/layout/detail-skeletons";
 
 export const metadata: Metadata = {
@@ -24,7 +25,7 @@ export default function EditAdPage({ params }: EditAdPageProps) {
           { label: "編集" },
         ]}
       />
-      <h1 className="text-2xl font-semibold text-foreground">広告を編集</h1>
+      <PageHeader title="広告を編集" />
       <div className="max-w-md">
         <Suspense fallback={<FormSkeleton fields={3} />}>
           <EditAdForm paramsPromise={params} />
@@ -34,7 +35,11 @@ export default function EditAdPage({ params }: EditAdPageProps) {
   );
 }
 
-async function EditAdForm({ paramsPromise }: { paramsPromise: EditAdPageProps["params"] }) {
+async function EditAdForm({
+  paramsPromise,
+}: {
+  paramsPromise: EditAdPageProps["params"];
+}) {
   const { adId } = await paramsPromise;
   const ad = await getAdByIdForAdmin(adId);
 

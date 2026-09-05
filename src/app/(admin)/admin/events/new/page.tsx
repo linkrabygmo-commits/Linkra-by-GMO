@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { requireAdmin } from "@/lib/auth/session";
 import { EventForm } from "@/features/events/components/event-form";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { PageHeader } from "@/components/layout/page-header";
 
 export const metadata: Metadata = {
   title: "イベントを作成",
@@ -18,7 +19,7 @@ export default function NewEventPage() {
           { label: "新規作成" },
         ]}
       />
-      <h1 className="text-2xl font-semibold text-foreground">イベントを作成</h1>
+      <PageHeader title="イベントを作成" />
       <div className="max-w-md">
         <Suspense fallback={null}>
           <Gate />

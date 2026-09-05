@@ -5,6 +5,7 @@ import { getEventById } from "@/features/events/repository";
 import { EventForm } from "@/features/events/components/event-form";
 import { requireAdmin } from "@/lib/auth/session";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { PageHeader } from "@/components/layout/page-header";
 import { FormSkeleton } from "@/components/layout/detail-skeletons";
 
 export const metadata: Metadata = {
@@ -25,7 +26,11 @@ export default function EditEventPage({ params }: EditEventPageProps) {
   );
 }
 
-async function EditEventForm({ paramsPromise }: { paramsPromise: EditEventPageProps["params"] }) {
+async function EditEventForm({
+  paramsPromise,
+}: {
+  paramsPromise: EditEventPageProps["params"];
+}) {
   // getEventById()は/events/[eventId](ダッシュボード側の公開詳細ページ)とも共有しているため
   // 管理者チェックを内包しない。この編集ページ自体は管理者専用なので、ここで明示的に確認する。
   await requireAdmin();
@@ -47,7 +52,7 @@ async function EditEventForm({ paramsPromise }: { paramsPromise: EditEventPagePr
           { label: "編集" },
         ]}
       />
-      <h1 className="text-2xl font-semibold text-foreground">イベントを編集</h1>
+      <PageHeader title="イベントを編集" />
       <div className="max-w-md">
         <EventForm
           eventId={event.id}

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { requireAdmin } from "@/lib/auth/session";
 import { AdForm } from "@/features/ads/components/ad-form";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
+import { PageHeader } from "@/components/layout/page-header";
 
 export const metadata: Metadata = {
   title: "広告を作成",
@@ -18,7 +19,7 @@ export default function NewAdPage() {
           { label: "新規作成" },
         ]}
       />
-      <h1 className="text-2xl font-semibold text-foreground">広告を作成</h1>
+      <PageHeader title="広告を作成" />
       <div className="max-w-md">
         <Suspense fallback={null}>
           <Gate />
