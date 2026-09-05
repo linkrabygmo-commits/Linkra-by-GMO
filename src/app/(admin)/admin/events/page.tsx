@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Lock } from "lucide-react";
+import { CalendarDays, Lock } from "lucide-react";
 import { listAllEventsForAdmin } from "@/features/events/repository";
 import { deleteEventAction } from "@/features/events/actions";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
@@ -45,20 +45,34 @@ async function EventList() {
           key={event.id}
           className="flex flex-col gap-3 rounded-xl border border-border bg-card px-4 py-3 ring-1 ring-foreground/10 sm:flex-row sm:items-start sm:justify-between sm:gap-4"
         >
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <p className="text-sm font-medium text-foreground">{event.title}</p>
-              {event.audience === "member_only" && (
-                <Badge variant="outline" className="gap-1">
-                  <Lock className="size-3" />
-                  会員限定
-                </Badge>
-              )}
+          <div className="flex min-w-0 flex-1 items-center gap-4">
+            {event.coverImageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={event.coverImageUrl}
+                alt=""
+                className="h-14 w-[4.6667rem] shrink-0 rounded-lg border border-border object-cover"
+              />
+            ) : (
+              <span className="flex h-14 w-[4.6667rem] shrink-0 items-center justify-center rounded-lg border border-border bg-accent text-accent-foreground">
+                <CalendarDays className="size-4" />
+              </span>
+            )}
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-medium text-foreground">{event.title}</p>
+                {event.audience === "member_only" && (
+                  <Badge variant="outline" className="gap-1">
+                    <Lock className="size-3" />
+                    会員限定
+                  </Badge>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {formatJstDateTime(event.startsAt, { dateStyle: "medium", timeStyle: "short" })}
+                {event.location && ` ・ ${event.location}`}
+              </p>
             </div>
-            <p className="text-xs text-muted-foreground">
-              {formatJstDateTime(event.startsAt, { dateStyle: "medium", timeStyle: "short" })}
-              {event.location && ` ・ ${event.location}`}
-            </p>
           </div>
           <div className="flex flex-wrap gap-2 sm:shrink-0">
             <Button asChild variant="outline" size="sm">

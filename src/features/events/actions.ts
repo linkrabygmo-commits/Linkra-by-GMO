@@ -86,8 +86,10 @@ export async function updateEventAction(
   }
 
   revalidatePath("/admin/events");
+  revalidatePath(`/admin/events/${eventId}/edit`);
   revalidatePath(`/events/${eventId}`);
   revalidatePath("/events");
+  revalidatePath("/");
 
   return { status: "success", message: "イベントを更新しました。" };
 }
