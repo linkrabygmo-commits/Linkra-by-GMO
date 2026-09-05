@@ -38,8 +38,9 @@ export async function getCompanyCount(): Promise<number> {
   return count ?? 0;
 }
 
-// query指定時は会社名・概要の部分一致(大文字小文字を区別しない)で絞り込む。
-export async function listCompanies(query?: string): Promise<CompanyDto[]> {
+// 検索はクライアント側でリアルタイムに絞り込む(companies-directory.tsx)ため、
+// ここでは全件取得のみを行う。
+export async function listCompanies(): Promise<CompanyDto[]> {
   const supabase = await createClient();
 
   // 会社の「メンバー」は、company_members(会社作成時のオーナー登録等)と、
@@ -75,7 +76,7 @@ export async function listCompanies(query?: string): Promise<CompanyDto[]> {
     memberIdsByCompany.get(row.company_id)!.add(row.id);
   }
 
-  const results = (companies ?? []).map((row) => ({
+  return (companies ?? []).map((row) => ({
     id: row.id,
     name: row.name,
     description: row.description,
@@ -83,15 +84,6 @@ export async function listCompanies(query?: string): Promise<CompanyDto[]> {
     memberCount: memberIdsByCompany.get(row.id)?.size ?? 0,
     createdAt: row.created_at,
   }));
-
-  const trimmed = query?.trim().toLowerCase();
-  if (!trimmed) return results;
-
-  return results.filter(
-    (company) =>
-      company.name.toLowerCase().includes(trimmed) ||
-      (company.description?.toLowerCase().includes(trimmed) ?? false),
-  );
 }
 
 export async function listNewCompanies(limit: number): Promise<CompanyDto[]> {

@@ -69,23 +69,15 @@ export async function getMemberCount(): Promise<number> {
   return count ?? 0;
 }
 
-// query指定時は氏名・会社名の部分一致(大文字小文字を区別しない)で絞り込む。
-export async function listMembers(query?: string): Promise<MemberSummaryDto[]> {
+// 検索はクライアント側でリアルタイムに絞り込む(members-directory.tsx)ため、
+// ここでは全件取得のみを行う。
+export async function listMembers(): Promise<MemberSummaryDto[]> {
   const supabase = await createClient();
 
-  let request = supabase
+  const { data, error } = await supabase
     .from("member_directory")
     .select("id, display_name, avatar_url, company_name, title, industry")
     .order("created_at", { ascending: false });
-
-  const trimmed = query?.trim();
-  if (trimmed) {
-    // PostgRESTのilikeパターン内で特殊文字として扱われる % と _ をエスケープする。
-    const escaped = trimmed.replace(/[%_]/g, "\\$&");
-    request = request.or(`display_name.ilike.%${escaped}%,company_name.ilike.%${escaped}%`);
-  }
-
-  const { data, error } = await request;
 
   if (error) throw new Error(error.message);
 

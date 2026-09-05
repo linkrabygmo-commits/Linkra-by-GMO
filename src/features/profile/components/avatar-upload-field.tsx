@@ -95,6 +95,8 @@ export function AvatarUploadField({ name, defaultValue }: AvatarUploadFieldProps
       />
       <input type="hidden" name={name} value={value} />
 
+      <p className="text-xs text-muted-foreground">推奨サイズ: 400×400px、正方形</p>
+
       {uploading && <p className="text-xs text-muted-foreground">アップロード中...</p>}
       {error && <p className="text-xs text-destructive">{error}</p>}
     </div>

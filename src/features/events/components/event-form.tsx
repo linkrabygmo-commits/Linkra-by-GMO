@@ -64,7 +64,7 @@ export function EventForm({ eventId, defaultValues }: EventFormProps) {
 
       <ImageUploadField
         name="coverImageUrl"
-        label="カバー画像(任意)"
+        label="カバー画像(任意、推奨サイズ: 1200×900px、縦横比4:3)"
         scope="events"
         defaultValue={defaultValues?.coverImageUrl}
       />

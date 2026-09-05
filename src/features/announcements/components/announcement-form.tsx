@@ -58,7 +58,7 @@ export function AnnouncementForm({ announcementId, defaultValues }: Announcement
 
       <ImageUploadField
         name="coverImageUrl"
-        label="カバー画像(任意)"
+        label="カバー画像(任意、推奨サイズ: 1200×630px、横長)"
         scope="announcements"
         defaultValue={defaultValues?.coverImageUrl}
       />

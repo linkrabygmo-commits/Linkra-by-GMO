@@ -31,7 +31,11 @@ export function CreateCompanyForm() {
         )}
       </div>
 
-      <ImageUploadField name="logoUrl" label="ロゴ画像(任意)" scope="companies" />
+      <ImageUploadField
+        name="logoUrl"
+        label="ロゴ画像(任意、推奨サイズ: 400×400px、正方形)"
+        scope="companies"
+      />
 
       {state?.status === "error" && state.message && (
         <p className="text-sm text-destructive" role="alert">
